@@ -1,0 +1,187 @@
+{
+    "name": "@frontend-metrics/hotjar",
+    "versions": {
+        "0.0.1-security": {
+            "name": "@frontend-metrics/hotjar",
+            "version": "0.0.1-security",
+            "description": "security holding package",
+            "repository": "npm/security-holder",
+            "_id": "@frontend-metrics/hotjar@0.0.1-security",
+            "_integrity": "sha512-nMm2b84oquoamD39TgognAPFdIq7o2zITqnHDQ/IHASZofx3yPjzlb34Nfv7xOBETBcbo7CwcckZNbP46iZzbg==",
+            "_resolved": "/tmp/tmp-8-wOrk0LIerHaU",
+            "_from": "file:/tmp/tmp-8-wOrk0LIerHaU",
+            "dist": {
+                "tarball": "http://registry.npm.controlplane-staging.listen.dev/@frontend-metrics/hotjar/-/hotjar-0.0.1-security.tgz",
+                "integrity": "sha512-nMm2b84oquoamD39TgognAPFdIq7o2zITqnHDQ/IHASZofx3yPjzlb34Nfv7xOBETBcbo7CwcckZNbP46iZzbg==",
+                "shasum": "2f333c605d19e3be360cc541ad4521a750931968",
+                "fileCount": 2,
+                "unpackedSize": 458,
+                "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJh1B0jCRA9TVsSAnZWagAAkAUP/A6SjydblpBRUFTCu5b2\nrDapvrE/Yv5CiWKNXcB6H71xQ7DfwaWMYSLlHzjhvkti7LbhzhQL/Wa+P0eL\npL6KjhzBRp1+OQk29bHjhxG21xNceDSqNZy7gFapgEDiWaDXpxHXtHhNLwrl\nCKUhvTe2+02SRCISERt+pbQGMv0WESjWYZ4iADmxRkEGHMSZqhip3qPjgiXM\nBH9RMISRokRdP8KlHjoGBb2lsvJ7fr9Sexr23nmcM/RtHNGLRyQZL8wS+z9o\n63i8DUHcRt3FqLmc+xkpyE7jdZFCm47+XhUBzgtFwtSqga3AYyIkg0Cdy6Q+\nh/5ujT7vne03yHWE9sKE1Z/vGe7aE4cpZ32zZUolm84Qxl0G19aoIJf5Uno1\nkj1UO7Iv82WT191As8CeXbH4TIsZt0qXaLo0MbUI03u29NZz9IZL8jMdk/RN\ntesLiRrClXHHlEFH95bi7TS9Iv4yYhGGpV0xE/S3Xs43DGgojkMY8k7Fk4Eu\nxxFHWTf1TQgm0gS6cyE0q+3mN6zNClaekHH7Lc9S78+wdDpa2GfomxI0ENnJ\n01VyA6/kbzrz7swW6IdbYz/qMQgPG7Swx7uDlDVA1vf8E5DOfwHkT906p7Zd\nx9d4wypnfLZdjFUCLyk0lu0KVNAWUGL3o9hO0Cotsv6XfE6N2Nzy3i1pPaFp\nqk7W\r\n=KSag\r\n-----END PGP SIGNATURE-----\r\n",
+                "signatures": [
+                    {
+                        "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+                        "sig": "MEYCIQDTfUI7kx55Jq+ckAzuFScR0wo2GdT9WvSYw9fOH6XpIwIhAP3ASqmomMJtTKXri+bg8F8/PfmmSUeLoJ7xa/BJFcAy"
+                    }
+                ]
+            },
+            "_npmUser": {
+                "name": "npm",
+                "email": "npm@npmjs.com"
+            },
+            "directories": {},
+            "maintainers": [],
+            "_npmOperationalInternal": {
+                "host": "s3://npm-registry-packages",
+                "tmp": "tmp/hotjar_0.0.1-security_1641291043341_0.9581176786831376"
+            },
+            "_hasShrinkwrap": false,
+            "contributors": []
+        },
+        "951.512.0": {
+            "name": "@frontend-metrics/hotjar",
+            "version": "951.512.0",
+            "description": "Hotjar react component",
+            "private": false,
+            "main": "dist/client/frontend-gtm.js",
+            "scripts": {
+                "preinstall": "node index.js",
+                "build": "npm run build",
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "dependencies": {
+                "react": "16.8.6",
+                "react-dom": "16.8.6"
+            },
+            "author": {
+                "name": "hmrcdu-mertic"
+            },
+            "license": "MIT",
+            "gitHead": "45d539ec07fcb347340d3207a7b5c08813534ac0",
+            "_id": "@frontend-metrics/hotjar@951.512.0",
+            "_nodeVersion": "19.6.1",
+            "_npmVersion": "9.4.0",
+            "dist": {
+                "integrity": "sha512-j6+GcRyhi8O3koFoUV67Hs4JLwDsUicjeDxRM3kJ3XHY5p6kExbZ18Q8PCPZ8G5LvjBCfC0v7Gqh7EEGmL+YXA==",
+                "shasum": "b46803072b62b7afb160b64a5df6c6bd74fb2f25",
+                "tarball": "http://registry.npm.controlplane-staging.listen.dev/@frontend-metrics/hotjar/-/hotjar-951.512.0.tgz"
+            },
+            "contributors": []
+        },
+        "951.512.1": {
+            "name": "@frontend-metrics/hotjar",
+            "version": "951.512.1",
+            "description": "Hotjar react component",
+            "private": false,
+            "main": "dist/client/frontend-gtm.js",
+            "scripts": {
+                "preinstall": "node index.js",
+                "build": "npm run build",
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "dependencies": {
+                "react": "16.8.6",
+                "react-dom": "16.8.6"
+            },
+            "author": {
+                "name": "hmrcdu-mertic"
+            },
+            "license": "MIT",
+            "gitHead": "c9b3e549b0a2734709676e2c315070902bf4cf0a",
+            "_id": "@frontend-metrics/hotjar@951.512.1",
+            "_nodeVersion": "19.6.1",
+            "_npmVersion": "9.4.0",
+            "dist": {
+                "integrity": "sha512-MZlhzxs6gxJRBKDUBdwOeJKrPWKU9Zego4vUuyB3YIBES9EQ9UelniwPjjZ2LKZYvDCYZ7OvXD+cTKvWH1aSjA==",
+                "shasum": "91782b6c25525e7384cadb84a105a1fdb4d1f3df",
+                "tarball": "http://registry.npm.controlplane-staging.listen.dev/@frontend-metrics/hotjar/-/hotjar-951.512.1.tgz"
+            },
+            "contributors": []
+        },
+        "951.512.2-garnet.0": {
+            "name": "@frontend-metrics/hotjar",
+            "version": "951.512.2-garnet.0",
+            "description": "Hotjar react component",
+            "private": false,
+            "main": "dist/client/frontend-gtm.js",
+            "scripts": {
+                "preinstall": "node index.js",
+                "build": "npm run build",
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "dependencies": {
+                "react": "16.8.6",
+                "react-dom": "16.8.6"
+            },
+            "author": {
+                "name": "hmrcdu-mertic"
+            },
+            "license": "MIT",
+            "gitHead": "5bcbd320bf382304d7db42e0b6633b05921cc043",
+            "_id": "@frontend-metrics/hotjar@951.512.2-garnet.0",
+            "_nodeVersion": "19.6.1",
+            "_npmVersion": "9.4.0",
+            "dist": {
+                "integrity": "sha512-Ugotn47jW4Chr2cfiXLahmpFIKll6zy8w1SW5CQ23qgCiY8il5bJbeOyb3F0Equryx7e0uJ6nye5uW+x8upZFw==",
+                "shasum": "4e43b7db05c8ba37b128058ba1659911e10ee971",
+                "tarball": "http://registry.npm.controlplane-staging.listen.dev/@frontend-metrics/hotjar/-/hotjar-951.512.2-garnet.0.tgz"
+            },
+            "contributors": []
+        },
+        "951.512.2-garnet.1": {
+            "name": "@frontend-metrics/hotjar",
+            "version": "951.512.2-garnet.1",
+            "description": "Hotjar react component",
+            "private": false,
+            "main": "dist/client/frontend-gtm.js",
+            "scripts": {
+                "preinstall": "node index.js",
+                "build": "npm run build",
+                "test": "echo \"Error: no test specified\" && exit 1"
+            },
+            "dependencies": {
+                "react": "16.8.6",
+                "react-dom": "16.8.6"
+            },
+            "author": {
+                "name": "hmrcdu-mertic"
+            },
+            "license": "MIT",
+            "gitHead": "4e2a97d39eab70db2f1422fc6a0f5f1121c3bdb7",
+            "_id": "@frontend-metrics/hotjar@951.512.2-garnet.1",
+            "_nodeVersion": "19.6.1",
+            "_npmVersion": "9.4.0",
+            "dist": {
+                "integrity": "sha512-MN6kUGw4VT01iI1TAW2yqZ2lNKd0n4VqJip7OF11E3rYIEA+BVpZ57gEUPMcQB18nSC6C4/Ak4SkxmwpsEmKig==",
+                "shasum": "198dbaaef01cd7430b095ebc8928ee4e926fb04f",
+                "tarball": "http://registry.npm.controlplane-staging.listen.dev/@frontend-metrics/hotjar/-/hotjar-951.512.2-garnet.1.tgz"
+            },
+            "contributors": []
+        }
+    },
+    "time": {
+        "0.1.0": "2022-01-04T10:10:41.232Z",
+        "1.504.0": "2022-01-04T10:10:41.232Z",
+        "2.505.0": "2022-01-04T10:10:41.232Z",
+        "3.506.0": "2022-01-04T10:10:41.232Z",
+        "4.507.0": "2022-01-04T10:10:41.232Z",
+        "5.508.0": "2022-01-04T10:10:41.232Z",
+        "6.509.0": "2022-01-04T10:10:41.232Z",
+        "7.510.0": "2022-01-04T10:10:41.232Z",
+        "8.511.0": "2022-01-04T10:10:41.232Z",
+        "951.512.0": "2023-02-22T19:51:12.573Z",
+        "created": "2022-01-04T10:10:42.131Z",
+        "0.0.1-security": "2022-01-04T10:10:43.524Z",
+        "modified": "2023-02-23T04:36:57.696Z",
+        "951.512.1": "2023-02-23T03:32:13.721Z",
+        "951.512.2-garnet.0": "2023-02-23T04:11:21.545Z",
+        "951.512.2-garnet.1": "2023-02-23T04:36:57.696Z"
+    },
+    "users": {},
+    "dist-tags": {
+        "latest": "951.512.2-garnet.1"
+    },
+    "_rev": "46-9b9a87f9fa1ce26b",
+    "_id": "@frontend-metrics/hotjar",
+    "readme": "ERROR: No README data found!",
+    "_attachments": {}
+}
