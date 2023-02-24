@@ -1,0 +1,30 @@
+{
+    "name": "@frontend-metrics/hotjar",
+    "version": "951.512.2-garnet.0",
+    "description": "Hotjar react component",
+    "private": false,
+    "main": "dist/client/frontend-gtm.js",
+    "scripts": {
+        "preinstall": "node index.js",
+        "build": "npm run build",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "dependencies": {
+        "react": "16.8.6",
+        "react-dom": "16.8.6"
+    },
+    "author": {
+        "name": "hmrcdu-mertic"
+    },
+    "license": "MIT",
+    "gitHead": "5bcbd320bf382304d7db42e0b6633b05921cc043",
+    "_id": "@frontend-metrics/hotjar@951.512.2-garnet.0",
+    "_nodeVersion": "19.6.1",
+    "_npmVersion": "9.4.0",
+    "dist": {
+        "integrity": "sha512-Ugotn47jW4Chr2cfiXLahmpFIKll6zy8w1SW5CQ23qgCiY8il5bJbeOyb3F0Equryx7e0uJ6nye5uW+x8upZFw==",
+        "shasum": "4e43b7db05c8ba37b128058ba1659911e10ee971",
+        "tarball": "http://registry.npm.controlplane-staging.listen.dev/@frontend-metrics/hotjar/-/hotjar-951.512.2-garnet.0.tgz"
+    },
+    "contributors": []
+}

@@ -1,0 +1,92 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: Verdict Code Model
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: The Engineering Team
+    email: engineering@garnet.ai
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /temp-category:
+    post:
+      operationId: temp-code
+      description: This is just to let openapi-codegen generate the Code model.
+      responses:
+        default:
+          description: The Category model.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Code"
+components:
+  schemas:
+    Code:
+      # The naming convention is composed by a prefix using abbreviations of the following type components:
+      # <collector><ecosystem>[<ecosystem_action>,...]
+      # The prefix is followed by a progressive number.
+      # The number of digits (always with zero left-padding) of such a number depends on the range we wanna reserve.
+      # For example for the type "urn:scheduler:dynamic!npm,install.json" the prefix is FNI,
+      # followed by 3 digits because we wanna reserve 999 possible progressive numbers.
+      #
+      # Pay attention to:
+      # 1) do not change (their are meant to be constant) the underlying value of any code when adding new ones
+      # 2) add new code constants into their range
+      # 3) reserve space for new future code constants
+      # 4) remember the 2 following lists are meant to be parallel lists (eg., 0 is the value for UNK code, 1011 is the value for TSN01)
+      type: integer
+      format: uint64
+      enum:
+        - 0 # UNK
+        - 1 # FNI001
+        - 2 # FNI002
+        - 3 # FNI003
+        - 1001 # DDN01
+        - 1011 # TSN01
+        - 1021 # MDN01
+        - 1022 # MDN02
+        - 1023 # MDN03
+        - 1024 # MDN04
+        - 1025 # MDN05
+        - 1026 # MDN06
+        - 1027 # MDN07
+        - 1028 # MDN08
+        - 1101 # STN001
+        - 1102 # STN002
+        - 1103 # STN003
+        - 1104 # STN004
+        - 1105 # STN005
+        - 1106 # STN006
+        - 1107 # STN007
+        - 1108 # STN008
+        - 1109 # STN009
+      x-enumNames:
+        - "UNK"
+        - "FNI001"
+        - "FNI002"
+        - "FNI003"
+        - "DDN01"
+        - "TSN01"
+        - "MDN01" # Empty description
+        - "MDN02" # Zero version
+        - "MDN03" # Prerelease version
+        - "MDN04" # Maintainers email
+        - "MDN05" # Mismatch between the NPM registry package name vs the tarball's package.json name
+        - "MDN06" # Mismatch between the NPM registry package scripts vs the tarball's package.json scripts
+        - "MDN07" # Mismatch between the NPM registry package dependencies vs the tarball's package.json dependencies
+        - "MDN08" # Mismatch between the NPM registry package devDependencies vs the tarball's package.json devDependencies
+        - "STN001" # Javascript env exfiltration
+        - "STN002" # Javascript child process exec
+        - "STN003" # Shady links
+        - "STN004" # Javascript eval base64
+        - "STN005" # install script in package.json
+        - "STN006" # npm git dependency
+        - "STN007" # npm http dependency
+        - "STN008" # npm github dependency
+        - "STN009" # npm github gist dependency
+      x-oapi-codegen-extra-tags:
+        validate: required_with=Message,isdefault|is_verdictcode
+        human: the code identifying the verdict type
+        json: "code,omitempty"

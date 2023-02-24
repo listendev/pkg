@@ -1,0 +1,35 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: Severity Model
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: The Engineering Team
+    email: engineering@garnet.ai
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /temp-severity:
+    post:
+      operationId: temp-severity
+      description: This is just to let openapi-codegen generate the Severity model.
+      responses:
+        default:
+          description: The Severity model.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Severity'
+components:
+  schemas:
+    Severity:
+      type: string
+      enum:
+        - "low"
+        - "medium"
+        - "high"
+      x-oapi-codegen-extra-tags:
+            validate: required_with=Message,isdefault|is_severity
+            human: the verdict severity
+            json: "severity,omitempty"

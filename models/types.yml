@@ -1,0 +1,148 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: Verdict Model
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: The Engineering Team
+    email: engineering@garnet.ai
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /temp-problem:
+    post:
+      operationId: temp-problem
+      description: This is just to let openapi-codegen generate the Problem model.
+      responses:
+        default:
+          description: The Problem model.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /temp-verdict:
+    post:
+      operationId: temp-verdict
+      description: This is just to let openapi-codegen generate the Verdict model.
+      responses:
+        default:
+          description: The Verdict model.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Verdict"
+components:
+  schemas:
+    Verdict:
+      type: object
+      required:
+        - pkg
+        - version
+        - shasum
+        - file
+        - ecosystem
+        - org # Just to avoid the pointer
+        - message # Just to avoid the pointer
+        - code # Just to avoid the pointer
+        - severity # Just to avoid the pointer
+        - categories # Just to avoid the pointer
+        - metadata # Just to avoid the pointer
+      properties:
+        org:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: omitempty,npmorg
+            human: the NPM organization name
+            json: "org,omitempty"
+        pkg:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: mandatory
+            human: the NPM package name
+        version:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: mandatory,semver
+            human: the NPM package version
+        shasum:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: mandatory,shasum
+            human: the NPM package shasum
+        file:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: mandatory,is_resultsfile
+            human: the result file identifying the analysis type
+        message:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: omitempty,gt=1
+            human: the verdict message
+            json: "message,omitempty"
+        severity:
+          $ref: "./severity/severities.yml#/components/schemas/Severity"
+        metadata:
+          type: object
+          x-oapi-codegen-extra-tags:
+            json: "metadata,omitempty"
+        categories:
+          type: array
+          items:
+            $ref: "./category/categories.yml#/components/schemas/Category"
+          x-oapi-codegen-extra-tags:
+            validate: required_with=Message,dive,is_category
+            human: one or more verdict category
+            json: "categories,omitempty"
+        code:
+          $ref: "../verdictcode/code.yml#/components/schemas/Code"
+        expires_at:
+          type: string
+          format: date-time # RFC 3339 NANO
+          x-oapi-codegen-extra-tags:
+            json: "expires_at,omitempty"
+        created_at:
+          type: string
+          format: date-time # RFC 3339 NANO
+          x-oapi-codegen-extra-tags:
+            validate: mandatory
+            human: the moment the verdict was created
+        ecosystem:
+          $ref: "../ecosystem/ecosystems.yml#/components/schemas/Ecosystem"
+      example:
+        org: "@garnet-org"
+        pkg: "test"
+        shasum: aaaaaaaaaa1aaaaaaaaaa1aaaaaaaaaa12345678
+        version: "0.0.1"
+        analysis_type: "dynamic!install!.json"
+        message: "npm install spawned a process"
+        severity: "medium"
+        category: ["filesystem", "process"]
+        code: "FNI001"
+        metadata:
+          commandline: "sh -c node-gyp-build"
+          executable_path: "/bin/sh"
+          file_descriptor: ""
+          npm_package_name: "utf-8-validate"
+          npm_package_version: "5.0.10"
+          parent_name: "node"
+          server_ip: ""
+          server_port: 0
+    Problem:
+      type: object
+      required:
+        - type
+        - title
+        - detail
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        detail:
+          type: string
+      example:
+        type: "Package not analysed yet"
+        title: "Package not analysed yet"
+        detail: "https:/docs.listen.dev/lstn-api/troubleshooting/not-found"

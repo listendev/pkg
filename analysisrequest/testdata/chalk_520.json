@@ -1,0 +1,122 @@
+{
+    "name": "chalk",
+    "version": "5.2.0",
+    "description": "Terminal string styling done right",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/chalk/chalk.git"
+    },
+    "funding": "https://github.com/chalk/chalk?sponsor=1",
+    "type": "module",
+    "main": "./source/index.js",
+    "exports": "./source/index.js",
+    "imports": {
+        "#ansi-styles": "./source/vendor/ansi-styles/index.js",
+        "#supports-color": {
+            "node": "./source/vendor/supports-color/index.js",
+            "default": "./source/vendor/supports-color/browser.js"
+        }
+    },
+    "types": "./source/index.d.ts",
+    "engines": {
+        "node": "^12.17.0 || ^14.13 || >=16.0.0"
+    },
+    "scripts": {
+        "test": "xo && c8 ava && tsd",
+        "bench": "matcha benchmark.js"
+    },
+    "keywords": [
+        "color",
+        "colour",
+        "colors",
+        "terminal",
+        "console",
+        "cli",
+        "string",
+        "ansi",
+        "style",
+        "styles",
+        "tty",
+        "formatting",
+        "rgb",
+        "256",
+        "shell",
+        "xterm",
+        "log",
+        "logging",
+        "command-line",
+        "text"
+    ],
+    "devDependencies": {
+        "@types/node": "^16.11.10",
+        "ava": "^3.15.0",
+        "c8": "^7.10.0",
+        "color-convert": "^2.0.1",
+        "execa": "^6.0.0",
+        "log-update": "^5.0.0",
+        "matcha": "^0.7.0",
+        "tsd": "^0.19.0",
+        "xo": "^0.53.0",
+        "yoctodelay": "^2.0.0"
+    },
+    "xo": {
+        "rules": {
+            "unicorn/prefer-string-slice": "off",
+            "@typescript-eslint/consistent-type-imports": "off",
+            "@typescript-eslint/consistent-type-exports": "off",
+            "@typescript-eslint/consistent-type-definitions": "off"
+        }
+    },
+    "c8": {
+        "reporter": [
+            "text",
+            "lcov"
+        ],
+        "exclude": [
+            "source/vendor"
+        ]
+    },
+    "gitHead": "a370f468a43999e4397094ff5c3d17aadcc4860e",
+    "bugs": {
+        "url": "https://github.com/chalk/chalk/issues"
+    },
+    "homepage": "https://github.com/chalk/chalk#readme",
+    "_id": "chalk@5.2.0",
+    "_nodeVersion": "14.21.1",
+    "_npmVersion": "8.19.2",
+    "dist": {
+        "integrity": "sha512-ree3Gqw/nazQAPuJJEy+avdl7QfZMcUvmHIKgEZkGL+xOBzRvup5Hxo6LHuMceSxOabuJLJm5Yp/92R9eMmMvA==",
+        "shasum": "249623b7d66869c673699fb66d65723e54dfcfb3",
+        "tarball": "https://registry.npmjs.org/chalk/-/chalk-5.2.0.tgz",
+        "fileCount": 12,
+        "unpackedSize": 43568,
+        "signatures": [
+            {
+                "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+                "sig": "MEQCIGpkIV4DWbErlKu9VI8Xrd6zVKzVBcJP1P4uiwhcauWeAiBCaqZ8GWGM91SUt7da69Vy7lSbP1Qsfns18NVexta3Jw=="
+            }
+        ],
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJjkjEDACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmpV7g//SkAHVpwaXi9OSemLPPViDVvDgWITSR6UOiBP2kt/IAYeuRw+\r\nBJPNm3iIrJPK55H5xFW8hOTasUdt6pltGY6lBLkNYytOGRKx6Hj4+6gMUbvI\r\nHhrRUb3IJyGAkxQeQ1yqSpjGpubi5T0Xe7q5WFgEm+0cibDPqOBBAl2/Y2mL\r\npHW5cL2zyzTo76TW6m33PjA51ima7eSlXx76ZBYE74NZ69mS30mkxGx7/KW4\r\nN83QnYpIvZi7cfFqcMQQhnD5LK9vm1bE9wbdVvwj3r6tFt+W97egZ3qiBU4g\r\nownwJUfj7tSP0Vi0XQeLhImIh9efdxqvRK5HJjaEWDQhnyAZIw9S22aesGD/\r\nwjL6ehZRawG7TAHvMh4KC/8Yv4Wubx5dJgvGuwOjgv1+45bt+r7xfKPvnBBb\r\nFt+s8YfMvGMv685020Ht9TGmH3DwypB5RltnZoOnmvBpWRfP93uTkLZiweek\r\nbRfzqfjK1kj8V4qqphCfJYU71d9s1q7A5fnRob+MTAJ1opRyK2v30du2D/P0\r\n3IBJ6fynWJUAMHyWg7BZRDfsNWN/pYkW1UP1fMy8V93dXBa2WGuMuVwpRBxK\r\nIzrXhc52uxi1jIZDaZ2RbhcdIxtWLy+5ikYx34nqdMFquh0WWkhXsus1t3A4\r\ndI5gxKg37xdA8NYh9kwQGmZ6HsjrmqMbKUs=\r\n=tvom\r\n-----END PGP SIGNATURE-----\r\n"
+    },
+    "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+    },
+    "directories": {},
+    "maintainers": [
+        {
+            "name": "sindresorhus",
+            "email": "sindresorhus@gmail.com"
+        },
+        {
+            "name": "qix",
+            "email": "josh@junon.me"
+        }
+    ],
+    "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/chalk_5.2.0_1670525187006_0.6054411598751666"
+    },
+    "_hasShrinkwrap": false
+}

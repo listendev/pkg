@@ -1,0 +1,4 @@
+package: ecosystem
+output: ecosystems.gen.go
+generate:
+  models: true

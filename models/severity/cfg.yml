@@ -1,0 +1,4 @@
+package: severity
+output: severities.gen.go
+generate:
+  models: true

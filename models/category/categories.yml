@@ -1,0 +1,44 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: Category Model
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: The Engineering Team
+    email: engineering@garnet.ai
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /temp-category:
+    post:
+      operationId: temp-category
+      description: This is just to let openapi-codegen generate the Category model.
+      responses:
+        default:
+          description: The Category model.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+components:
+  schemas:
+    Category:
+      type: integer
+      format: uint64
+      # Do not use 0
+      enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+      # Use camel case (with uppercase initial letter)
+      x-enumNames:
+        - "Filesystem"
+        - "Process"
+        - "Network"
+        - "Users"
+        - "Container"
+        - "CIS"
+        - "Advisory"
+        - "AdjacentNetwork"
+        - "Local"
+        - "Physical"
+        - "Cybersquatting"
+        - "Metadata"
