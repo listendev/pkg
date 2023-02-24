@@ -1,0 +1,4 @@
+package: verdictcode
+output: code.gen.go
+generate:
+  models: true
