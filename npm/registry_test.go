@@ -17,7 +17,9 @@ func TestGetPackageList(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		w.Write(plist)
+		if _, err := w.Write(plist); err != nil {
+			t.Fatal(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -62,7 +64,9 @@ func TestGetPackageVersion(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		w.Write(plist)
+		if _, err := w.Write(plist); err != nil {
+			t.Fatal(err)
+		}
 	}))
 	defer ts.Close()
 
