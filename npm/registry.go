@@ -51,10 +51,16 @@ func NewNPMRegistryClient(config NPMRegistryClientConfig) (RegistryClient, error
 }
 
 func (c *NPMRegistryClient) GetPackageList(parent context.Context, name string) (*PackageList, error) {
-	_, span := tracer.FromContext(parent).Start(parent, "NPMRegistryClient.GetPackageList")
+	ctx, span := tracer.FromContext(parent).Start(parent, "NPMRegistryClient.GetPackageList")
 	defer span.End()
 	endpoint := c.baseURL.ResolveReference(&url.URL{Path: name})
-	response, err := c.client.Get(endpoint.String())
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -70,10 +76,14 @@ func (c *NPMRegistryClient) GetPackageList(parent context.Context, name string) 
 }
 
 func (c *NPMRegistryClient) GetPackageVersion(parent context.Context, name, version string) (*PackageVersion, error) {
-	_, span := tracer.FromContext(parent).Start(parent, "NPMRegistryClient.GetPackageVersion")
+	ctx, span := tracer.FromContext(parent).Start(parent, "NPMRegistryClient.GetPackageVersion")
 	defer span.End()
 	endpoint := c.baseURL.ResolveReference(&url.URL{Path: path.Join(name, version)})
-	response, err := http.Get(endpoint.String())
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	response, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
