@@ -5,7 +5,7 @@ type PackageVersion struct {
 	Version         string            `json:"version"`
 	Description     string            `json:"description"`
 	License         string            `json:"license"`
-	Repository      Repository        `json:"repository"`
+	Repository      RepositoryUnion   `json:"repository"`
 	Funding         string            `json:"funding"`
 	Type            string            `json:"type"`
 	Main            string            `json:"main"`

@@ -14,7 +14,7 @@ type PackageList struct {
 	Readme         string                    `json:"readme"`
 	Maintainers    []Maintainer              `json:"maintainers"`
 	Time           VersionTime               `json:"time"`
-	Repository     Repository                `json:"repository"`
+	Repository     RepositoryUnion           `json:"repository"`
 	Users          map[string]bool           `json:"users"`
 	Homepage       string                    `json:"homepage"`
 	Keywords       []string                  `json:"keywords"`
