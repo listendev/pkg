@@ -1,29 +1,8 @@
 package npm
 
-import "encoding/json"
-
 type Maintainer struct {
 	Name  string `json:"name"`
 	Email string `json:"email"`
-}
-
-type Repository struct {
-	Type string `json:"type"`
-	URL  string `json:"url"`
-}
-
-// RepositoryUnion contains the two possible types of repository
-type RepositoryUnion struct {
-	Repository
-	Name string
-}
-
-func (r *RepositoryUnion) UnmarshalJSON(data []byte) error {
-	err := json.Unmarshal(data, &r.Repository)
-	if err != nil {
-		r.Name = string(data)
-	}
-	return nil
 }
 
 type Bugs struct {
