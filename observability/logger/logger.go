@@ -2,6 +2,7 @@ package logger
 
 import (
 	"context"
+	"strconv"
 
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
@@ -43,16 +44,39 @@ func New(level zapcore.Level, json bool, options ...zap.Option) (*zap.Logger, er
 	return cfg.Build(options...)
 }
 
+func convertIDToDatadogFormat(id string) string {
+	if len(id) < 16 {
+		return ""
+	}
+	if len(id) > 16 {
+		id = id[16:]
+	}
+	intValue, err := strconv.ParseUint(id, 16, 64)
+	if err != nil {
+		return ""
+	}
+	return strconv.FormatUint(intValue, 10)
+
+}
 func FromContext(ctx context.Context) *zap.Logger {
 	childLogger, _ := ctx.Value(ctxKey{}).(*zap.Logger)
 
-	if traceID := trace.SpanFromContext(ctx).SpanContext().TraceID(); traceID.IsValid() {
-		childLogger = childLogger.With(zap.String("trace_id", traceID.String()))
+	span := trace.SpanFromContext(ctx)
+	if !span.IsRecording() {
+		return childLogger
+	}
+	if traceID := span.SpanContext().TraceID(); traceID.IsValid() {
+		childLogger = childLogger.With(
+			zap.String("trace_id", traceID.String()),
+			zap.String("dd.trace_id", convertIDToDatadogFormat(traceID.String())),
+		)
 	}
 
-	if spanID := trace.SpanFromContext(ctx).SpanContext().SpanID(); spanID.IsValid() {
-		childLogger = childLogger.With(zap.String("span_id", spanID.String()))
+	if spanID := span.SpanContext().SpanID(); spanID.IsValid() {
+		childLogger = childLogger.With(
+			zap.String("span_id", spanID.String()),
+			zap.String("dd.span_id", convertIDToDatadogFormat(spanID.String())),
+		)
 	}
-
 	return childLogger
 }
