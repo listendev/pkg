@@ -9,6 +9,7 @@ import (
 
 	"github.com/garnet-org/pkg/npm"
 	"github.com/garnet-org/pkg/observability/tracer"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type AnalysisRequestType = string
@@ -74,6 +75,7 @@ func NewNPMAnalysisRequest(snowflake, name, version, shasum string) NPMAnalysisR
 type AnalysisRequestBase struct {
 	RequestType string `json:"type"`
 	Snowflake   string `json:"snowflake_id"`
+	Priority    uint8  `json:"priority"`
 }
 
 type AnalysisRequestBuilder struct {
@@ -228,4 +230,21 @@ func (a NPMAnalysisRequest) Type() AnalysisRequestType {
 
 func (a NPMAnalysisRequest) ToJSON() ([]byte, error) {
 	return json.Marshal(a)
+}
+
+func (a NPMAnalysisRequest) ToPublishing() (*amqp.Publishing, error) {
+	body, err := a.ToJSON()
+	if err != nil {
+		return nil, err
+	}
+
+	ret := &amqp.Publishing{
+		ContentType: "application/json",
+		Body:        body,
+	}
+	if a.Priority > 0 {
+		ret.Priority = a.Priority
+	}
+
+	return ret, nil
 }

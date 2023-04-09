@@ -64,12 +64,13 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 		{
 			name: "valid full npm analysis request",
 			args: args{
-				body: []byte(`{"type": "npm", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45"}`),
+				body: []byte(`{"type": "npm", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "priority": 5}`),
 			},
 			want: NPMAnalysisRequest{
 				AnalysisRequestBase: AnalysisRequestBase{
 					RequestType: AnalysisRequestTypeNPM,
 					Snowflake:   "1524854487523524608",
+					Priority:    5,
 				},
 				Name:    "chalk",
 				Version: "5.1.2",
