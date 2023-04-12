@@ -9,6 +9,10 @@ import (
 	"github.com/thediveo/enumflag/v2"
 )
 
+const (
+	EcosystemNPM = "npm"
+)
+
 type Type enumflag.Flag
 
 const (
@@ -31,10 +35,12 @@ type TypeComponents struct {
 // We use strings that are URNs (see https://www.rfc-editor.org/rfc/rfc2141).
 // The format is urn:<framework>:<collector>[!<ecosystem>[.<action>]{0,}]
 var TypeURNs = map[Type][]string{
-	Nop:                      {"urn:NOP:nop"},
-	NPMInstallWhileFalco:     {"urn:scheduler:falco!npm.install"},
-	NPMTestWhileFalco:        {"urn:scheduler:falco!npm.test"},
-	DepsDev:                  {"urn:hoarding:depsdev"},
+	Nop:                  {"urn:NOP:nop"},
+	NPMInstallWhileFalco: {"urn:scheduler:falco!npm.install"},
+	NPMTestWhileFalco:    {"urn:scheduler:falco!npm.test"},
+	// TODO: make this below into NPMDepsDev?
+	DepsDev: {"urn:hoarding:depsdev"},
+	// FIXME: we need a way to represent enriching collectors
 	EnrichFalcoAlertsWithGPT: {"urn:hoarding:enrichfalcoalertswithgpt"},
 }
 
@@ -47,7 +53,7 @@ func ToType(s string) (Type, error) {
 
 	for t := range TypeURNs {
 		u := t.ToURN()
-		if u != nil && u.Equal(uuu) {
+		if u != nil && u.ID == uuu.ID && u.SS == uuu.SS {
 			return t, nil
 		}
 	}
@@ -57,6 +63,10 @@ func ToType(s string) (Type, error) {
 
 func (t Type) ToURN() *urn.URN {
 	return t.Components().ToURN()
+}
+
+func (t Type) HasEcosystem() bool {
+	return t.Components().Ecosystem != ""
 }
 
 func (t Type) String() string {

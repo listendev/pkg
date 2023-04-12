@@ -45,6 +45,19 @@ func TestTypes(t *testing.T) {
 				},
 			},
 		},
+		{
+			input: NPMTestWhileFalco,
+			want: want{
+				urn:  "urn:scheduler:falco!npm.test",
+				json: []byte(`"urn:scheduler:falco!npm.test"`),
+				TypeComponents: TypeComponents{
+					Framework: "scheduler",
+					Collector: "falco",
+					Ecosystem: "npm",
+					Actions:   []string{"test"},
+				},
+			},
+		},
 	}
 
 	for _, tc := range cases {
