@@ -3,12 +3,12 @@ package analysisrequest
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/garnet-org/pkg/npm"
 	"github.com/garnet-org/pkg/observability"
-	"github.com/google/go-cmp/cmp"
+	"github.com/stretchr/testify/assert"
 )
 
 type mockNpmregistryClient struct {
@@ -17,11 +17,11 @@ type mockNpmregistryClient struct {
 }
 
 func newMockNpmregistryClient(listFilePath, versionFilePath string) (*mockNpmregistryClient, error) {
-	plist, err := ioutil.ReadFile(listFilePath)
+	plist, err := os.ReadFile(listFilePath)
 	if err != nil {
 		return nil, err
 	}
-	pversion, err := ioutil.ReadFile(versionFilePath)
+	pversion, err := os.ReadFile(versionFilePath)
 	if err != nil {
 		return nil, err
 	}
@@ -40,6 +40,7 @@ func (r *mockNpmregistryClient) GetPackageList(ctx context.Context, name string)
 
 	return &packageList, nil
 }
+
 func (r *mockNpmregistryClient) GetPackageVersion(ctx context.Context, name, version string) (*npm.PackageVersion, error) {
 	var packageVersion npm.PackageVersion
 	err := json.Unmarshal(r.versionContent, &packageVersion)
@@ -62,19 +63,36 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 		mockRegistryClient *mockNpmregistryClient
 	}{
 		{
+			name: "valid full nop analysis request",
+			args: args{
+				body: []byte(`{"type": "urn:nop:nop", "snowflake_id": "1524854487523524609", "priority": 4}`),
+			},
+			want: &NOP{
+				base: base{
+					RequestType: Nop,
+					Snowflake:   "1524854487523524609",
+					Priority:    4,
+				},
+			},
+			mockRegistryClient: nil,
+			wantErr:            false,
+		},
+		{
 			name: "valid full npm analysis request",
 			args: args{
-				body: []byte(`{"type": "npm", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "priority": 5}`),
+				body: []byte(`{"type": "urn:scheduler:falco!npm.install", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "priority": 5}`),
 			},
-			want: NPMAnalysisRequest{
-				AnalysisRequestBase: AnalysisRequestBase{
-					RequestType: AnalysisRequestTypeNPM,
+			want: &NPM{
+				base: base{
+					RequestType: NPMInstallWhileFalco,
 					Snowflake:   "1524854487523524608",
 					Priority:    5,
 				},
-				Name:    "chalk",
-				Version: "5.1.2",
-				Shasum:  "d957f370038b75ac572471e83be4c5ca9f8e8c45",
+				npmPackage: npmPackage{
+					Name:    "chalk",
+					Version: "5.1.2",
+					Shasum:  "d957f370038b75ac572471e83be4c5ca9f8e8c45",
+				},
 			},
 			mockRegistryClient: func() *mockNpmregistryClient {
 				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
@@ -88,16 +106,18 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 		{
 			name: "request without shasum",
 			args: args{
-				body: []byte(`{"type": "npm", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2"}`),
+				body: []byte(`{"type": "urn:scheduler:falco!npm.test", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2"}`),
 			},
-			want: NPMAnalysisRequest{
-				AnalysisRequestBase: AnalysisRequestBase{
-					RequestType: AnalysisRequestTypeNPM,
+			want: &NPM{
+				base: base{
+					RequestType: NPMTestWhileFalco,
 					Snowflake:   "1524854487523524608",
 				},
-				Name:    "chalk",
-				Version: "5.1.2",
-				Shasum:  "d957f370038b75ac572471e83be4c5ca9f8e8c45",
+				npmPackage: npmPackage{
+					Name:    "chalk",
+					Version: "5.1.2",
+					Shasum:  "d957f370038b75ac572471e83be4c5ca9f8e8c45",
+				},
 			},
 			mockRegistryClient: func() *mockNpmregistryClient {
 				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
@@ -111,16 +131,18 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 		{
 			name: "request without version",
 			args: args{
-				body: []byte(`{"type": "npm", "snowflake_id": "1524854487523524608", "name": "chalk"}`),
+				body: []byte(`{"type": "urn:scheduler:falco!npm.install", "snowflake_id": "1524854487523524608", "name": "chalk"}`),
 			},
-			want: NPMAnalysisRequest{
-				AnalysisRequestBase: AnalysisRequestBase{
-					RequestType: AnalysisRequestTypeNPM,
+			want: &NPM{
+				base: base{
+					RequestType: NPMInstallWhileFalco,
 					Snowflake:   "1524854487523524608",
 				},
-				Name:    "chalk",
-				Version: "5.2.0",
-				Shasum:  "249623b7d66869c673699fb66d65723e54dfcfb3",
+				npmPackage: npmPackage{
+					Name:    "chalk",
+					Version: "5.2.0",
+					Shasum:  "249623b7d66869c673699fb66d65723e54dfcfb3",
+				},
 			},
 			mockRegistryClient: func() *mockNpmregistryClient {
 				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_520.json")
@@ -144,19 +166,16 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			testCtx := observability.NewNopContext()
-			arbuilder := NewAnalysisRequestBuilder()
+			arbuilder := NewBuilderWithContext(testCtx)
 			arbuilder.WithNPMRegistryClient(tt.mockRegistryClient)
-			got, err := arbuilder.FromJSON(testCtx, tt.args.body)
+			got, err := arbuilder.FromJSON(tt.args.body)
 
 			if (err != nil) != tt.wantErr {
-				t.Errorf(" arbuilder.FromJSON() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("arbuilder.FromJSON() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
-			if !cmp.Equal(got, tt.want) {
-				t.Errorf(" arbuilder.FromJSON(): %s", cmp.Diff(got, tt.want))
-
-			}
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
