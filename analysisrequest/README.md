@@ -9,7 +9,6 @@ go env -w GOPRIVATE=github.com/garnet-org/*
 go get github.com/garnet-org/pkg/analysisrequest
 ```
 
-
 ## Usage
 
 ### Unmarshal a request from JSON
@@ -25,13 +24,13 @@ import (
 )
 
 func main() {
-	arJSON := `{"type": "npm", "snowflake_id": "1524854487523524608", "name": "chalk"}`
+	arJSON := `{"type": "urn:scheduler:falco!npm.install", "snowflake_id": "1524854487523524608", "name": "chalk"}`
 	// you can use the observability package to create a context with tracing and logging here
 	ctx := observability.NewNopContext()
-	arbuilder := analysisrequest.NewAnalysisRequestBuilder()
+	arbuilder := analysisrequest.NewBuilderWithContext(ctx)
 	regClient, _ := npm.NewNPMRegistryClient(npm.NPMRegistryClientConfig{})
 	arbuilder.WithNPMRegistryClient(regClient)
-	ar, _ := arbuilder.FromJSON(ctx, []byte(arJSON))
-	spew.Dump(ar.(analysisrequest.NPMAnalysisRequest))
+	ar, _ := arbuilder.FromJSON([]byte(arJSON))
+	spew.Dump(ar.(analysisrequest.NPM))
 }
 ```
