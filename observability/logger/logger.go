@@ -9,10 +9,10 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-type ctxKey struct{}
+type CtxKey struct{}
 
 func NewContext(parent context.Context, z *zap.Logger) context.Context {
-	return context.WithValue(parent, ctxKey{}, z)
+	return context.WithValue(parent, CtxKey{}, z)
 }
 
 func New(level zapcore.Level, json bool, options ...zap.Option) (*zap.Logger, error) {
@@ -59,7 +59,7 @@ func convertIDToDatadogFormat(id string) string {
 
 }
 func FromContext(ctx context.Context) *zap.Logger {
-	childLogger, _ := ctx.Value(ctxKey{}).(*zap.Logger)
+	childLogger, _ := ctx.Value(CtxKey{}).(*zap.Logger)
 
 	span := trace.SpanFromContext(ctx)
 	if !span.IsRecording() {
