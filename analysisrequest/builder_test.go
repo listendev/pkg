@@ -8,6 +8,8 @@ import (
 
 	"github.com/garnet-org/pkg/npm"
 	"github.com/garnet-org/pkg/observability"
+	"github.com/hgsgtk/jsoncmp"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -59,6 +61,8 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 		name               string
 		args               args
 		want               AnalysisRequest
+		wantPublishing     *amqp.Publishing
+		wantS3Key          string
 		wantErr            bool
 		mockRegistryClient *mockNpmregistryClient
 	}{
@@ -75,11 +79,50 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 					Force:       false,
 				},
 			},
+			wantPublishing: &amqp.Publishing{
+				ContentType: "application/json",
+				Priority:    4,
+				Body:        []byte(`{"type":"urn:nop:nop","snowflake_id":"1524854487523524609","priority":4,"force":false}`),
+			},
+			wantS3Key:          "nop/1524854487523524609/nop.json",
 			mockRegistryClient: nil,
 			wantErr:            false,
 		},
 		{
-			name: "valid full npm analysis request",
+			name: "valid full npm deps dev analysis request",
+			args: args{
+				body: []byte(`{"type": "urn:hoarding:depsdev!npm", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "priority": 5, "force": true}`),
+			},
+			want: &NPM{
+				base: base{
+					RequestType: NPMDepsDev,
+					Snowflake:   "1524854487523524608",
+					Priority:    5,
+					Force:       true,
+				},
+				npmPackage: npmPackage{
+					Name:    "chalk",
+					Version: "5.1.2",
+					Shasum:  "d957f370038b75ac572471e83be4c5ca9f8e8c45",
+				},
+			},
+			wantPublishing: &amqp.Publishing{
+				ContentType: "application/json",
+				Priority:    5,
+				Body:        []byte(`{"type":"urn:hoarding:depsdev!npm","snowflake_id":"1524854487523524608","name":"chalk","version":"5.1.2","shasum":"d957f370038b75ac572471e83be4c5ca9f8e8c45","priority":5,"force":true}`),
+			},
+			wantS3Key: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/depsdev.json",
+			mockRegistryClient: func() *mockNpmregistryClient {
+				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
+				if err != nil {
+					t.Fatal(err)
+				}
+				return mockClient
+			}(),
+			wantErr: false,
+		},
+		{
+			name: "valid full npm falco install analysis request",
 			args: args{
 				body: []byte(`{"type": "urn:scheduler:falco!npm.install", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "priority": 5, "force": true}`),
 			},
@@ -96,6 +139,12 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 					Shasum:  "d957f370038b75ac572471e83be4c5ca9f8e8c45",
 				},
 			},
+			wantPublishing: &amqp.Publishing{
+				ContentType: "application/json",
+				Priority:    5,
+				Body:        []byte(`{"type":"urn:scheduler:falco!npm.install","snowflake_id":"1524854487523524608","name":"chalk","version":"5.1.2","shasum":"d957f370038b75ac572471e83be4c5ca9f8e8c45","priority":5,"force":true}`),
+			},
+			wantS3Key: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/falco(install).json",
 			mockRegistryClient: func() *mockNpmregistryClient {
 				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
 				if err != nil {
@@ -106,7 +155,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "request without shasum",
+			name: "npm falco test analysis request without shasum",
 			args: args{
 				body: []byte(`{"type": "urn:scheduler:falco!npm.test", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2"}`),
 			},
@@ -121,6 +170,11 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 					Shasum:  "d957f370038b75ac572471e83be4c5ca9f8e8c45",
 				},
 			},
+			wantPublishing: &amqp.Publishing{
+				ContentType: "application/json",
+				Body:        []byte(`{"type": "urn:scheduler:falco!npm.test", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "force": false}`),
+			},
+			wantS3Key: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/falco(test).json",
 			mockRegistryClient: func() *mockNpmregistryClient {
 				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
 				if err != nil {
@@ -131,7 +185,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "request without version",
+			name: "npm falco install analysis request without version",
 			args: args{
 				body: []byte(`{"type": "urn:scheduler:falco!npm.install", "snowflake_id": "1524854487523524608", "name": "chalk"}`),
 			},
@@ -146,6 +200,11 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 					Shasum:  "249623b7d66869c673699fb66d65723e54dfcfb3",
 				},
 			},
+			wantPublishing: &amqp.Publishing{
+				ContentType: "application/json",
+				Body:        []byte(`{"type": "urn:scheduler:falco!npm.install", "snowflake_id": "1524854487523524608", "name": "chalk","version": "5.2.0", "shasum": "249623b7d66869c673699fb66d65723e54dfcfb3", "force": false}`),
+			},
+			wantS3Key: "npm/chalk/5.2.0/249623b7d66869c673699fb66d65723e54dfcfb3/falco(install).json",
 			mockRegistryClient: func() *mockNpmregistryClient {
 				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_520.json")
 				if err != nil {
@@ -160,8 +219,10 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			args: args{
 				body: []byte(`{"type": "something"}`),
 			},
-			want:    nil,
-			wantErr: true,
+			want:           nil,
+			wantPublishing: nil,
+			wantS3Key:      "",
+			wantErr:        true,
 		},
 	}
 
@@ -172,12 +233,35 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			arbuilder.WithNPMRegistryClient(tt.mockRegistryClient)
 			got, err := arbuilder.FromJSON(tt.args.body)
 
-			if (err != nil) != tt.wantErr {
-				t.Errorf("arbuilder.FromJSON() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			if tt.wantErr {
+				assert.NotNil(t, err)
+				assert.Nil(t, got)
+			} else {
+				assert.Nil(t, err)
+				assert.Equal(t, tt.want, got)
 
-			assert.Equal(t, tt.want, got)
+				// Test marshalling
+				res, err := json.Marshal(got)
+				assert.Nil(t, err)
+				exp, err := json.Marshal(tt.want)
+				assert.Nil(t, err)
+				if diff := jsoncmp.Diff(string(res), string(exp)); diff != "" {
+					t.Errorf("diff: (-got +want)\n%s", diff)
+				}
+
+				// Test amqp.Publishing
+				pub, pubErr := got.Publishing()
+				if assert.Nil(t, pubErr) {
+					assert.Equal(t, tt.wantPublishing.Priority, pub.Priority)
+					assert.Equal(t, tt.wantPublishing.ContentType, pub.ContentType)
+					if diff := jsoncmp.Diff(string(tt.wantPublishing.Body), string(res)); diff != "" {
+						t.Errorf("diff: (-got +want)\n%s", diff)
+					}
+				}
+
+				// Test S3 key
+				assert.Equal(t, tt.wantS3Key, got.ResultsPath().ToS3Key())
+			}
 		})
 	}
 }

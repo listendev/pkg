@@ -29,6 +29,7 @@ func TestTypes(t *testing.T) {
 					Framework: "nop",
 					Collector: "nop",
 					Actions:   []string{},
+					Format: "json",
 				},
 			},
 		},
@@ -42,6 +43,7 @@ func TestTypes(t *testing.T) {
 					Collector: "falco",
 					Ecosystem: "npm",
 					Actions:   []string{"install"},
+					Format: "json",
 				},
 			},
 		},
@@ -55,6 +57,7 @@ func TestTypes(t *testing.T) {
 					Collector: "falco",
 					Ecosystem: "npm",
 					Actions:   []string{"test"},
+					Format: "json",
 				},
 			},
 		},
@@ -68,6 +71,7 @@ func TestTypes(t *testing.T) {
 					Collector: "depsdev",
 					Ecosystem: "npm",
 					Actions:   []string{},
+					Format: "json",
 				},
 			},
 		},
@@ -88,6 +92,12 @@ func TestTypes(t *testing.T) {
 			var t2 Type
 			assert.Nil(t, json.Unmarshal([]byte(fmt.Sprintf("%q", tc.want.urn)), &t2))
 			assert.Equal(t, tc.input, t2)
+
+			urnObj := tc.want.TypeComponents.ToURN()
+			assert.NotNil(t, urnObj)
+			typeObj, err := ToType(urnObj.String())
+			assert.Nil(t, err)
+			assert.Equal(t, tc.input, typeObj)
 		})
 	}
 }
