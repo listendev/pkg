@@ -6,22 +6,28 @@ import (
 	"strings"
 
 	"github.com/leodido/go-urn"
-	"github.com/thediveo/enumflag/v2"
 )
 
 const (
 	EcosystemNPM = "npm"
 )
 
-type Type enumflag.Flag
+type Type int // FIXME: enumflag.Flag
 
 const (
 	Nop Type = iota + 1
 	NPMInstallWhileFalco
 	NPMTestWhileFalco
-	DepsDev
-	EnrichFalcoAlertsWithGPT
+	NPMDepsDev
+
+	_maxType
 )
+
+func MaxType() Type {
+	return _maxType - 1
+}
+
+// EnrichFalcoAlertsWithGPT // TODO:
 
 type TypeComponents struct {
 	Framework string
@@ -38,10 +44,9 @@ var TypeURNs = map[Type][]string{
 	Nop:                  {"urn:NOP:nop"},
 	NPMInstallWhileFalco: {"urn:scheduler:falco!npm.install"},
 	NPMTestWhileFalco:    {"urn:scheduler:falco!npm.test"},
-	// TODO: make this below into NPMDepsDev?
-	DepsDev: {"urn:hoarding:depsdev"},
+	NPMDepsDev:           {"urn:hoarding:depsdev!npm"},
 	// FIXME: we need a way to represent enriching collectors
-	EnrichFalcoAlertsWithGPT: {"urn:hoarding:enrichfalcoalertswithgpt"},
+	// EnrichFalcoAlertsWithGPT: {"urn:hoarding:enrichfalcoalertswithgpt"},
 }
 
 func ToType(s string) (Type, error) {

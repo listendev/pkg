@@ -58,6 +58,19 @@ func TestTypes(t *testing.T) {
 				},
 			},
 		},
+		{
+			input: NPMDepsDev,
+			want: want{
+				urn:  "urn:hoarding:depsdev!npm",
+				json: []byte(`"urn:hoarding:depsdev!npm"`),
+				TypeComponents: TypeComponents{
+					Framework: "hoarding",
+					Collector: "depsdev",
+					Ecosystem: "npm",
+					Actions:   []string{},
+				},
+			},
+		},
 	}
 
 	for _, tc := range cases {
@@ -77,4 +90,10 @@ func TestTypes(t *testing.T) {
 			assert.Equal(t, tc.input, t2)
 		})
 	}
+}
+
+func TestMaxType(t *testing.T) {
+	got := MaxType()
+
+	assert.Equal(t, NPMDepsDev, got)
 }
