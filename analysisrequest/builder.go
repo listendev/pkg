@@ -53,6 +53,9 @@ func (b *Builder) FromJSON(body []byte) (AnalysisRequest, error) {
 	// TODO: adjust condition while evolving
 	switch arb.RequestType {
 	// NPM
+	case NPMDepsDev:
+		fallthrough
+
 	case NPMTestWhileFalco:
 		fallthrough
 
@@ -66,7 +69,7 @@ func (b *Builder) FromJSON(body []byte) (AnalysisRequest, error) {
 			return nil, err
 		}
 
-		// TODO: this validation below is likely not needed
+		// TODO: this validation below is likely not needed (also in wrong place)
 		if len(arn.Version) > 0 && len(arn.Shasum) > 0 {
 			packageVersion, err := b.npmRegistryRegistryClient.GetPackageVersion(ctx, arn.Name, arn.Version)
 			if err != nil {
