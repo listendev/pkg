@@ -17,6 +17,7 @@ type base struct {
 	RequestType Type   `json:"type"`
 	Snowflake   string `json:"snowflake_id"`
 	Priority    uint8  `json:"priority,omitempty"`
+	Force       bool   `json:"force"`
 }
 
 func (arb *base) UnmarshalJSON(data []byte) error {

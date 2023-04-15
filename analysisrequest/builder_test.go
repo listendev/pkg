@@ -72,6 +72,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 					RequestType: Nop,
 					Snowflake:   "1524854487523524609",
 					Priority:    4,
+					Force:       false,
 				},
 			},
 			mockRegistryClient: nil,
@@ -80,13 +81,14 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 		{
 			name: "valid full npm analysis request",
 			args: args{
-				body: []byte(`{"type": "urn:scheduler:falco!npm.install", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "priority": 5}`),
+				body: []byte(`{"type": "urn:scheduler:falco!npm.install", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "priority": 5, "force": true}`),
 			},
 			want: &NPM{
 				base: base{
 					RequestType: NPMInstallWhileFalco,
 					Snowflake:   "1524854487523524608",
 					Priority:    5,
+					Force:       true,
 				},
 				npmPackage: npmPackage{
 					Name:    "chalk",
