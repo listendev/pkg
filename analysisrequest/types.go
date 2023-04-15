@@ -12,7 +12,7 @@ const (
 	EcosystemNPM = "npm"
 )
 
-type Type int // FIXME: enumflag.Flag
+type Type int
 
 const (
 	Nop Type = iota + 1
@@ -27,26 +27,45 @@ func MaxType() Type {
 	return _maxType - 1
 }
 
-// EnrichFalcoAlertsWithGPT // TODO:
+func init() {
+	numTypes := int(MaxType())
+	if len(typeURNs) != numTypes {
+		panic("some type is missing its URN definition")
+	}
+
+	if len(typeFormats) != numTypes {
+		panic("some type is missing its format definition")
+	}
+}
 
 type TypeComponents struct {
 	Framework string
 	Collector string
 	Ecosystem string
 	Actions   []string
+	Format    string
 }
 
-// TypeURNs maps the enums to their string representations.
+// typeURNs maps the enums to their string representations.
 //
 // We use strings that are URNs (see https://www.rfc-editor.org/rfc/rfc2141).
 // The format is urn:<framework>:<collector>[!<ecosystem>[.<action>]{0,}]
-var TypeURNs = map[Type][]string{
-	Nop:                  {"urn:NOP:nop"},
-	NPMInstallWhileFalco: {"urn:scheduler:falco!npm.install"},
-	NPMTestWhileFalco:    {"urn:scheduler:falco!npm.test"},
-	NPMDepsDev:           {"urn:hoarding:depsdev!npm"},
+//
+// Notice only the framework part is case-insensitive.
+var typeURNs = map[Type]string{
+	Nop:                  "urn:NOP:nop",
+	NPMInstallWhileFalco: "urn:scheduler:falco!npm.install",
+	NPMTestWhileFalco:    "urn:scheduler:falco!npm.test",
+	NPMDepsDev:           "urn:hoarding:depsdev!npm",
 	// FIXME: we need a way to represent enriching collectors
 	// EnrichFalcoAlertsWithGPT: {"urn:hoarding:enrichfalcoalertswithgpt"},
+}
+
+var typeFormats = map[Type]string{
+	Nop:                  "json",
+	NPMInstallWhileFalco: "json",
+	NPMTestWhileFalco:    "json",
+	NPMDepsDev:           "json",
 }
 
 func ToType(s string) (Type, error) {
@@ -56,7 +75,7 @@ func ToType(s string) (Type, error) {
 	}
 	uuu := uu.Normalize()
 
-	for t := range TypeURNs {
+	for t := range typeURNs {
 		u := t.ToURN()
 		if u != nil && u.ID == uuu.ID && u.SS == uuu.SS {
 			return t, nil
@@ -76,9 +95,9 @@ func (t Type) HasEcosystem() bool {
 
 func (t Type) String() string {
 	// Assuming we do not forget to correctly define any type...
-	representations := TypeURNs[t]
+	representation := typeURNs[t]
 
-	return representations[0]
+	return representation
 }
 
 func (t Type) Components() TypeComponents {
@@ -102,6 +121,7 @@ func (t Type) Components() TypeComponents {
 		Collector: others[0],
 		Ecosystem: ecosystem,
 		Actions:   actions,
+		Format:    typeFormats[t],
 	}
 
 	return tc
