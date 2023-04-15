@@ -8,8 +8,10 @@ import (
 	"github.com/leodido/go-urn"
 )
 
+type Ecosystem string
+
 const (
-	EcosystemNPM = "npm"
+	NPMEcosystem Ecosystem = "npm"
 )
 
 type Type int
@@ -41,7 +43,7 @@ func init() {
 type TypeComponents struct {
 	Framework string
 	Collector string
-	Ecosystem string
+	Ecosystem Ecosystem
 	Actions   []string
 	Format    string
 }
@@ -119,37 +121,12 @@ func (t Type) Components() TypeComponents {
 	tc := TypeComponents{
 		Framework: n.ID,
 		Collector: others[0],
-		Ecosystem: ecosystem,
+		Ecosystem: Ecosystem(ecosystem),
 		Actions:   actions,
 		Format:    typeFormats[t],
 	}
 
 	return tc
-}
-
-func (c TypeComponents) HasEcosystem() bool {
-	return c.Ecosystem != ""
-}
-
-func (c TypeComponents) HasActions() bool {
-	return len(c.Actions) > 0
-}
-
-func (c TypeComponents) ToURN() *urn.URN {
-	u := &urn.URN{
-		ID: c.Framework,
-		SS: c.Collector,
-	}
-	if c.HasEcosystem() {
-		u.SS += "!" + c.Ecosystem
-	}
-	if c.HasActions() {
-		for _, action := range c.Actions {
-			u.SS += "." + action
-		}
-	}
-
-	return u
 }
 
 func (t Type) MarshalJSON() ([]byte, error) {
@@ -173,4 +150,40 @@ func (t *Type) UnmarshalJSON(data []byte) error {
 	*t = res
 
 	return nil
+}
+
+func (c TypeComponents) ResultFile() string {
+	filename := c.Collector
+	suffix := strings.Join(c.Actions, ",")
+	if len(suffix) > 0 {
+		filename = fmt.Sprintf("%s(%s)", filename, suffix)
+	}
+	filename += "." + strings.TrimPrefix(c.Format, ".")
+
+	return filename
+}
+
+func (c TypeComponents) HasEcosystem() bool {
+	return c.Ecosystem != ""
+}
+
+func (c TypeComponents) HasActions() bool {
+	return len(c.Actions) > 0
+}
+
+func (c TypeComponents) ToURN() *urn.URN {
+	u := &urn.URN{
+		ID: c.Framework,
+		SS: c.Collector,
+	}
+	if c.HasEcosystem() {
+		u.SS += "!" + string(c.Ecosystem)
+	}
+	if c.HasActions() {
+		for _, action := range c.Actions {
+			u.SS += "." + action
+		}
+	}
+
+	return u
 }

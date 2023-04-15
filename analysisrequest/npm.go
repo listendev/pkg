@@ -40,7 +40,7 @@ type NPM struct {
 // NewNPM creates an AnalysisRequest for the NPM ecosystem.
 func NewNPM(request Type, snowflake string, priority uint8, force bool, name, version, shasum string) (AnalysisRequest, error) {
 	tc := request.Components()
-	if tc.HasEcosystem() && tc.Ecosystem == EcosystemNPM {
+	if tc.HasEcosystem() && tc.Ecosystem == NPMEcosystem {
 		return &NPM{
 			base: base{
 				RequestType: request,
