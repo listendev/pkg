@@ -11,6 +11,10 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
+var _ AnalysisRequest = (*NPM)(nil)
+var _ Publisher = (*NPM)(nil)
+var _ Results = (*NPM)(nil)
+
 var (
 	errNPMNameEmpty                              = errors.New("npm package name is empty")
 	errNPMCouldNotRetrieveLastVersionTag         = errors.New("could not retrieve last npm version tag")
@@ -87,23 +91,7 @@ func (arn NPM) String() string {
 	return arn.Name + "@" + arn.Version
 }
 
-// FIXME: we may want to introduce another method that gives the name of the file depending on the current type actions (eg. install_outputs vs test_outputs)
-// func (arn NPM) ResultUploadName() string {}
-
-func (arn NPM) ResultUploadPath() ResultUploadPath {
-	return ResultUploadPath{
-		"npm",
-		arn.Name,
-		arn.Version,
-		arn.Shasum,
-	}
-}
-
-func (arn NPM) MarshalJSON() ([]byte, error) {
-	return json.Marshal(arn)
-}
-
-func (arn NPM) ToPublishing() (*amqp.Publishing, error) {
+func (arn NPM) Publishing() (*amqp.Publishing, error) {
 	body, err := json.Marshal(arn)
 	if err != nil {
 		return nil, err
@@ -166,4 +154,8 @@ func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.Regis
 	}
 
 	return nil
+}
+
+func (arn NPM) ResultsPath() ResultUploadPath {
+	return ComposeResultUploadPath(arn)
 }

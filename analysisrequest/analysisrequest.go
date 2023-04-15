@@ -1,8 +1,9 @@
 package analysisrequest
 
 import (
-	"encoding/json"
 	"fmt"
+
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type BasicAnalysisRequest interface {
@@ -16,9 +17,17 @@ type BasicAnalysisRequest interface {
 
 type AnalysisRequest interface {
 	BasicAnalysisRequest
-	// ResultUploadPath returns the upload path of the analysis request result
-	ResultUploadPath() ResultUploadPath
-	//json.Unmarshaler // FIXME: ...
-	json.Marshaler
 	fmt.Stringer
+	Publisher
+	Results
+}
+
+type Publisher interface {
+	Publishing() (*amqp.Publishing, error)
+}
+
+// Results
+type Results interface {
+	// ResultsPath returns the upload path of the analysis request result
+	ResultsPath() ResultUploadPath
 }

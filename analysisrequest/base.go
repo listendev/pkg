@@ -5,6 +5,8 @@ import (
 	"errors"
 )
 
+var _ BasicAnalysisRequest = (*base)(nil)
+
 var (
 	errBaseSnowflakeEmpty = errors.New("missing snowflake ID")
 )
