@@ -40,7 +40,10 @@ type NPM struct {
 // NewNPM creates an AnalysisRequest for the NPM ecosystem.
 func NewNPM(request Type, snowflake string, priority uint8, force bool, name, version, shasum string) (AnalysisRequest, error) {
 	tc := request.Components()
-	if tc.HasEcosystem() && tc.Ecosystem == NPMEcosystem {
+	if !tc.HasEcosystem() {
+		return nil, fmt.Errorf("couldn't instantiate an analysis request for NPM from a type without ecosystem at all")
+	}
+	if tc.Ecosystem == NPMEcosystem {
 		return &NPM{
 			base: base{
 				RequestType: request,
@@ -88,7 +91,7 @@ func (arn NPM) Validate() error {
 }
 
 func (arn NPM) String() string {
-	return arn.Name + "@" + arn.Version
+	return arn.Name + "@" + arn.Version + "(" + arn.Type().String() + ")"
 }
 
 func (arn NPM) Publishing() (*amqp.Publishing, error) {
@@ -158,4 +161,17 @@ func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.Regis
 
 func (arn NPM) ResultsPath() ResultUploadPath {
 	return ComposeResultUploadPath(arn)
+}
+
+func (arn NPM) Switch(t Type) (AnalysisRequest, error) {
+	c := t.Components()
+	if !c.HasEcosystem() {
+		return nil, fmt.Errorf("couldn't switch the current NPM analysis request to an analysis request with a type without ecosystem")
+	}
+	if c.Ecosystem != NPMEcosystem {
+		return nil, fmt.Errorf("couldn't switch the current NPM analysis request to a non NPM one")
+	}
+	arn.RequestType = t
+
+	return &arn, nil
 }

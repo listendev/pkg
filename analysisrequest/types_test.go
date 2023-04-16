@@ -170,5 +170,5 @@ func TestTypes(t *testing.T) {
 func TestMaxType(t *testing.T) {
 	got := MaxType()
 
-	assert.Equal(t, NPMDepsDev, got)
+	assert.Equal(t, NPMGPT4InstallWhileFalco, got)
 }

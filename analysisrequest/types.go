@@ -247,7 +247,11 @@ func (c TypeComponents) ResultFile() string {
 		suffix += fmt.Sprintf("[%s]", ecoActionsSuffix)
 	}
 
-	filename += suffix + "." + strings.TrimPrefix(c.Format, ".")
+	if c.Format != "" {
+		suffix += "." + strings.TrimPrefix(c.Format, ".")
+	}
+
+	filename += suffix
 
 	return filename
 }
