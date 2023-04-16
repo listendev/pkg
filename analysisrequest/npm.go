@@ -166,10 +166,10 @@ func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.Regis
 			arn.Version = version.Version
 			arn.Shasum = version.Dist.Shasum
 		} else {
-			return fmt.Errorf("%v: (version=%s)", ErrGivenVersionNotFoundOnNPM, arn.Version)
+			return ErrGivenVersionNotFoundOnNPM
 		}
 		if len(arn.Shasum) == 0 {
-			return fmt.Errorf("%v: (version=%s)", ErrCouldNotRetrieveShasumForGivenVersionFromNPM, arn.Version)
+			return ErrCouldNotRetrieveShasumForGivenVersionFromNPM
 		}
 
 		return nil
@@ -178,7 +178,7 @@ func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.Regis
 	if len(arn.Version) > 0 && len(arn.Shasum) > 0 {
 		packageVersion, err := registryClient.GetPackageVersion(ctx, arn.Name, arn.Version)
 		if err != nil {
-			return fmt.Errorf("%v: %w", ErrGivenVersionNotFoundOnNPM, err)
+			return ErrGivenVersionNotFoundOnNPM
 		}
 		if packageVersion == nil {
 			return ErrMalfunctioningNPMRegistryClient
