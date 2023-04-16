@@ -3,6 +3,7 @@ package npm
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	"path"
@@ -66,6 +67,10 @@ func (c *NPMRegistryClient) GetPackageList(parent context.Context, name string) 
 	}
 	defer response.Body.Close()
 
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("response not ok")
+	}
+
 	var packageList PackageList
 	err = json.NewDecoder(response.Body).Decode(&packageList)
 	if err != nil {
@@ -88,6 +93,10 @@ func (c *NPMRegistryClient) GetPackageVersion(parent context.Context, name, vers
 		return nil, err
 	}
 	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("response not ok")
+	}
 
 	var packageVersion PackageVersion
 	err = json.NewDecoder(response.Body).Decode(&packageVersion)
