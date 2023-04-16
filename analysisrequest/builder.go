@@ -53,6 +53,10 @@ func (b *Builder) FromJSON(body []byte) (AnalysisRequest, error) {
 	// TODO: adjust condition while evolving
 	switch arb.RequestType {
 	// NPM
+	case NPMGPT4InstallWhileFalco:
+		// Not sure we wanna create enrichers from JSON too, but it shouldn't do any harm
+		fallthrough
+
 	case NPMDepsDev:
 		fallthrough
 
