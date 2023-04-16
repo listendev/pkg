@@ -64,3 +64,7 @@ func (arb base) MustProcess() bool {
 func (arb base) Prio() uint8 {
 	return arb.Priority
 }
+
+func (arb *base) SetPrio(p uint8) {
+	arb.Priority = p
+}
