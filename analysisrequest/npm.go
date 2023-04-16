@@ -112,11 +112,15 @@ func (arn NPM) Publishing() (*amqp.Publishing, error) {
 }
 
 func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.RegistryClient) error {
+	// Assuming the context contains a tracer...
 	ctx, span := tracer.FromContext(parent).Start(parent, "analysisrequest[npm].fillMissingData")
 	defer span.End()
 
 	if len(arn.Version) == 0 {
 		packageList, err := registryClient.GetPackageList(ctx, arn.Name)
+		if packageList == nil {
+			return fmt.Errorf("couldn't get the package list (network error or missing a functioning NPM registry client)")
+		}
 		if err != nil {
 			return err
 		}
@@ -140,6 +144,9 @@ func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.Regis
 
 	if len(arn.Version) > 0 && len(arn.Shasum) == 0 {
 		packageList, err := registryClient.GetPackageList(ctx, arn.Name)
+		if packageList == nil {
+			return fmt.Errorf("couldn't get the package list (network error or missing a functioning NPM registry client)")
+		}
 		if err != nil {
 			return err
 		}
@@ -154,6 +161,19 @@ func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.Regis
 		}
 
 		return nil
+	}
+
+	if len(arn.Version) > 0 && len(arn.Shasum) > 0 {
+		packageVersion, err := registryClient.GetPackageVersion(ctx, arn.Name, arn.Version)
+		if packageVersion == nil {
+			return fmt.Errorf("couldn't get the package version (network error or missing a functioning NPM registry client)")
+		}
+		if err != nil {
+			return fmt.Errorf("%v: %w", errNPMCouldNotRetrieveSpecificPackageVersion, err)
+		}
+		if packageVersion.Dist.Shasum != arn.Shasum {
+			return errNPMVersionDoesNotExistWithShasum
+		}
 	}
 
 	return nil

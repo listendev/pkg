@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/garnet-org/pkg/npm"
 	"github.com/garnet-org/pkg/observability/tracer"
@@ -14,35 +15,35 @@ var (
 	errBuilderInvalidAnalysisRequest = errors.New("invalid analysis request")
 )
 
-type Builder struct {
+type builder struct {
 	ctx                       context.Context
-	npmRegistryRegistryClient npm.RegistryClient
+	npmRegistryRegistryClient npm.RegistryClient // FIXME: make this come from context too?
 }
 
-func NewBuilder() *Builder {
-	return &Builder{
-		ctx:                       context.Background(),
-		npmRegistryRegistryClient: npm.NewNoOpRegistryClient(),
-	}
-}
-
-func NewBuilderWithContext(ctx context.Context) *Builder {
-	return &Builder{
-		ctx:                       ctx,
-		npmRegistryRegistryClient: npm.NewNoOpRegistryClient(),
-	}
-}
-
-func (a *Builder) WithNPMRegistryClient(npmRegistry npm.RegistryClient) {
-	a.npmRegistryRegistryClient = npmRegistry
-}
-
-func (b *Builder) FromJSON(body []byte) (AnalysisRequest, error) {
-	t := tracer.FromContext(b.ctx)
+func NewBuilder(ctx context.Context) (*builder, error) {
+	t := tracer.FromContext(ctx)
 	if t == nil {
 		return nil, fmt.Errorf("couldn't retrieve the tracer from context")
 	}
-	ctx, span := t.Start(b.ctx, "analysysrequest.Builder.UnmarshalJSON")
+
+	return &builder{
+		ctx:                       ctx,
+		npmRegistryRegistryClient: npm.NewNoOpRegistryClient(),
+	}, nil
+}
+
+func (a *builder) WithNPMRegistryClient(npmRegistry npm.RegistryClient) {
+	if npmRegistry == nil || reflect.ValueOf(npmRegistry).IsNil() {
+		a.npmRegistryRegistryClient = npm.NewNoOpRegistryClient()
+
+		return
+	}
+	a.npmRegistryRegistryClient = npmRegistry
+}
+
+func (b *builder) FromJSON(body []byte) (AnalysisRequest, error) {
+	t := tracer.FromContext(b.ctx)
+	_, span := t.Start(b.ctx, "analysysrequest.Builder.UnmarshalJSON")
 	defer span.End()
 
 	var arb base
@@ -71,17 +72,6 @@ func (b *Builder) FromJSON(body []byte) (AnalysisRequest, error) {
 
 		if err := arn.fillMissingData(b.ctx, b.npmRegistryRegistryClient); err != nil {
 			return nil, err
-		}
-
-		// TODO: this validation below is likely not needed (also in wrong place)
-		if len(arn.Version) > 0 && len(arn.Shasum) > 0 {
-			packageVersion, err := b.npmRegistryRegistryClient.GetPackageVersion(ctx, arn.Name, arn.Version)
-			if err != nil {
-				return nil, fmt.Errorf("%v: %w", errNPMCouldNotRetrieveSpecificPackageVersion, err)
-			}
-			if packageVersion.Dist.Shasum != arn.Shasum {
-				return nil, errNPMVersionDoesNotExistWithShasum
-			}
 		}
 
 		return &arn, nil
