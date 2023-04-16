@@ -37,3 +37,7 @@ type Results interface {
 	// ResultsPath returns the upload path of the analysis request result
 	ResultsPath() ResultUploadPath
 }
+
+type Builder interface {
+	FromJSON([]byte) AnalysisRequest
+}
