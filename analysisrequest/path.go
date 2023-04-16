@@ -29,7 +29,8 @@ func GetResultFilesByEcosystem(eco Ecosystem) map[Type]string {
 	tmp := map[string]Type{}
 	for t := range typeURNs {
 		c := t.Components()
-		if c.Ecosystem == eco {
+		_, notEnricherErr := t.Parent()
+		if c.Ecosystem == eco && notEnricherErr != nil {
 			f := c.ResultFile()
 			if _, ok := tmp[f]; !ok {
 				tmp[f] = t
