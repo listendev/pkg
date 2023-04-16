@@ -25,13 +25,21 @@ func ComposeResultUploadPath(a AnalysisRequest) ResultUploadPath {
 	return ResultUploadPath{"nop", a.ID(), filename}
 }
 
-func GetResultFilesByEcosystem(eco Ecosystem) []string {
-	res := []string{}
+func GetResultFilesByEcosystem(eco Ecosystem) map[Type]string {
+	tmp := map[string]Type{}
 	for t := range typeURNs {
 		c := t.Components()
 		if c.Ecosystem == eco {
-			res = append(res, c.ResultFile())
+			f := c.ResultFile()
+			if _, ok := tmp[f]; !ok {
+				tmp[f] = t
+			}
 		}
+	}
+
+	res := make(map[Type]string, len(tmp))
+	for k, v := range tmp {
+		res[v] = k
 	}
 
 	return res
