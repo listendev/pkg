@@ -254,12 +254,38 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			wantS3Key:      "",
 			wantErr:        true,
 		},
+		{
+			name: "valid npm falco install analysis request without version but no NPM registry set",
+			args: args{
+				body: []byte(`{"type": "urn:scheduler:falco!npm,install.json", "snowflake_id": "1524854487523524608", "name": "chalk"}`),
+			},
+			want: &NPM{
+				base: base{
+					RequestType: NPMInstallWhileFalco,
+					Snowflake:   "1524854487523524608",
+				},
+				npmPackage: npmPackage{
+					Name:    "chalk",
+					Version: "5.2.0",
+					Shasum:  "249623b7d66869c673699fb66d65723e54dfcfb3",
+				},
+			},
+			wantPublishing: &amqp.Publishing{
+				ContentType: "application/json",
+				Body:        []byte(`{"type": "urn:scheduler:falco!npm,install.json", "snowflake_id": "1524854487523524608", "name": "chalk","version": "5.2.0", "shasum": "249623b7d66869c673699fb66d65723e54dfcfb3", "force": false}`),
+			},
+			wantS3Key:          "npm/chalk/5.2.0/249623b7d66869c673699fb66d65723e54dfcfb3/falco[install].json",
+			mockRegistryClient: nil,
+			wantErr:            true,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			testCtx := observability.NewNopContext()
-			arbuilder := NewBuilderWithContext(testCtx)
+			arbuilder, err := NewBuilder(testCtx)
+			assert.Nil(t, err)
+			assert.NotNil(t, arbuilder)
 			arbuilder.WithNPMRegistryClient(tt.mockRegistryClient)
 			got, err := arbuilder.FromJSON(tt.args.body)
 
@@ -295,3 +321,14 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 		})
 	}
 }
+
+func TestNewBuilderWithoutTracer(t *testing.T) {
+	arbuilder, err := NewBuilder(context.TODO())
+	assert.Nil(t, arbuilder)
+	assert.NotNil(t, err)
+}
+
+// TODO:
+// func TestBuilderWithoutNPMRegistryClient(t *testing.T) {}
+
+// TODO: what the builder does if the NPM analysis request refers to an unexisting package?
