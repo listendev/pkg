@@ -11,6 +11,10 @@ type BasicAnalysisRequest interface {
 	Type() Type
 	// ID returns the snowflake ID of the analysis request
 	ID() string
+	// Priority returns the priority of the analysis request
+	Prio() uint8
+	// MustProcess returns whether the analysis request must be forcibly processed or not
+	MustProcess() bool
 	// Validate tells whether the analysis request is ok or not
 	Validate() error
 }

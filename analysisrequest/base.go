@@ -56,3 +56,11 @@ func (arb base) Type() Type {
 func (arb base) ID() string {
 	return arb.Snowflake
 }
+
+func (arb base) MustProcess() bool {
+	return arb.Force
+}
+
+func (arb base) Prio() uint8 {
+	return arb.Priority
+}
