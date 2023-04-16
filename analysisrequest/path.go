@@ -16,7 +16,7 @@ func ComposeResultUploadPath(a AnalysisRequest) ResultUploadPath {
 	filename := c.ResultFile()
 
 	if c.Ecosystem == NPMEcosystem {
-		arn := a.(NPM)
+		arn := a.(*NPM)
 
 		return ResultUploadPath{string(c.Ecosystem), arn.Name, arn.Version, arn.Shasum, filename}
 	}

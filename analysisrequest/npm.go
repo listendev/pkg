@@ -160,7 +160,7 @@ func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.Regis
 }
 
 func (arn NPM) ResultsPath() ResultUploadPath {
-	return ComposeResultUploadPath(arn)
+	return ComposeResultUploadPath(&arn)
 }
 
 func (arn NPM) Switch(t Type) (AnalysisRequest, error) {

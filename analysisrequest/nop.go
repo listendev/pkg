@@ -38,7 +38,7 @@ func (a NOP) String() string {
 }
 
 func (a NOP) ResultsPath() ResultUploadPath {
-	return ComposeResultUploadPath(a)
+	return ComposeResultUploadPath(&a)
 }
 
 func (a NOP) Publishing() (*amqp.Publishing, error) {

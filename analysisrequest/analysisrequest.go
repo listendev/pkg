@@ -13,6 +13,8 @@ type BasicAnalysisRequest interface {
 	ID() string
 	// Priority returns the priority of the analysis request
 	Prio() uint8
+	// SetPrio lets the change the priority of the analysis request
+	SetPrio(uint8)
 	// MustProcess returns whether the analysis request must be forcibly processed or not
 	MustProcess() bool
 	// Validate tells whether the analysis request is ok or not
