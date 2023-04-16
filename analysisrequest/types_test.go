@@ -8,6 +8,43 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestParent(t *testing.T) {
+	type testCase struct {
+		input   Type
+		want    Type
+		wantErr bool
+	}
+
+	cases := []testCase{
+		{
+			input:   NPMGPT4InstallWhileFalco,
+			want:    NPMInstallWhileFalco,
+			wantErr: false,
+		},
+	}
+
+	for _, tc := range cases {
+		got, err := tc.input.Parent()
+		if tc.wantErr {
+			assert.Error(t, err)
+		} else {
+			assert.Nil(t, err)
+			assert.Equal(t, tc.want, got)
+		}
+	}
+}
+
+func TestEnricherResultFileIsTheParentOne(t *testing.T) {
+	got := NPMGPT4InstallWhileFalco.Components().ResultFile()
+	assert.Equal(t, NPMInstallWhileFalco.Components().ResultFile(), got)
+}
+
+func TestEnrichersEquality(t *testing.T) {
+	tt, err := ToType("urn:scheduler:falco!npm,install.json+urn:hoarding:gpt4,context")
+	assert.Nil(t, err)
+	assert.Equal(t, NPMGPT4InstallWhileFalco, tt)
+}
+
 func TestTypes(t *testing.T) {
 	type want struct {
 		urn  string
@@ -20,58 +57,86 @@ func TestTypes(t *testing.T) {
 	}
 
 	cases := []testCase{
+		// TODO:
+		{
+			input: NPMGPT4InstallWhileFalco,
+			want: want{
+				urn:  "urn:scheduler:falco!npm,install.json+urn:hoarding:gpt4,context",
+				json: []byte(`"urn:scheduler:falco!npm,install.json+urn:hoarding:gpt4,context"`),
+				TypeComponents: TypeComponents{
+					Framework:        "hoarding",
+					Collector:        "gpt4",
+					CollectorActions: []string{"context"},
+					Ecosystem:        "npm",               // From parent
+					EcosystemActions: []string{"install"}, // From parent
+					Format:           "json",              // From parent
+					Parent: &TypeComponents{
+						Framework:        "scheduler",
+						Collector:        "falco",
+						CollectorActions: []string{},
+						Ecosystem:        "npm",
+						EcosystemActions: []string{"install"},
+						Format:           "json",
+					},
+				},
+			},
+		},
 		{
 			input: Nop,
 			want: want{
 				urn:  "urn:NOP:nop",
 				json: []byte(`"urn:nop:nop"`),
 				TypeComponents: TypeComponents{
-					Framework: "nop",
-					Collector: "nop",
-					Actions:   []string{},
-					Format:    "json",
+					Framework:        "nop",
+					Collector:        "nop",
+					CollectorActions: []string{},
+					EcosystemActions: []string{},
+					Format:           "",
 				},
 			},
 		},
 		{
 			input: NPMInstallWhileFalco,
 			want: want{
-				urn:  "urn:scheduler:falco!npm.install",
-				json: []byte(`"urn:scheduler:falco!npm.install"`),
+				urn:  "urn:scheduler:falco!npm,install.json",
+				json: []byte(`"urn:scheduler:falco!npm,install.json"`),
 				TypeComponents: TypeComponents{
-					Framework: "scheduler",
-					Collector: "falco",
-					Ecosystem: NPMEcosystem,
-					Actions:   []string{"install"},
-					Format:    "json",
+					Framework:        "scheduler",
+					Collector:        "falco",
+					CollectorActions: []string{},
+					Ecosystem:        NPMEcosystem,
+					EcosystemActions: []string{"install"},
+					Format:           "json",
 				},
 			},
 		},
 		{
 			input: NPMTestWhileFalco,
 			want: want{
-				urn:  "urn:scheduler:falco!npm.test",
-				json: []byte(`"urn:scheduler:falco!npm.test"`),
+				urn:  "urn:scheduler:falco!npm,test.json",
+				json: []byte(`"urn:scheduler:falco!npm,test.json"`),
 				TypeComponents: TypeComponents{
-					Framework: "scheduler",
-					Collector: "falco",
-					Ecosystem: NPMEcosystem,
-					Actions:   []string{"test"},
-					Format:    "json",
+					Framework:        "scheduler",
+					Collector:        "falco",
+					CollectorActions: []string{},
+					Ecosystem:        NPMEcosystem,
+					EcosystemActions: []string{"test"},
+					Format:           "json",
 				},
 			},
 		},
 		{
 			input: NPMDepsDev,
 			want: want{
-				urn:  "urn:hoarding:depsdev!npm",
-				json: []byte(`"urn:hoarding:depsdev!npm"`),
+				urn:  "urn:hoarding:depsdev!npm.json",
+				json: []byte(`"urn:hoarding:depsdev!npm.json"`),
 				TypeComponents: TypeComponents{
-					Framework: "hoarding",
-					Collector: "depsdev",
-					Ecosystem: NPMEcosystem,
-					Actions:   []string{},
-					Format:    "json",
+					Framework:        "hoarding",
+					Collector:        "depsdev",
+					CollectorActions: []string{},
+					Ecosystem:        NPMEcosystem,
+					EcosystemActions: []string{},
+					Format:           "json",
 				},
 			},
 		},
