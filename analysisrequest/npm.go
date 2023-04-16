@@ -16,14 +16,26 @@ var _ Publisher = (*NPM)(nil)
 var _ Results = (*NPM)(nil)
 
 var (
-	errNPMNameEmpty                              = errors.New("npm package name is empty")
-	errNPMCouldNotRetrieveLastVersionTag         = errors.New("could not retrieve last npm version tag")
-	errNPMCouldNotRetrieveLastVersion            = errors.New("could not retrieve last npm version")
-	errNPMCouldNotRetrieveLastVersionShasum      = errors.New("could not retrieve last npm version shasum")
-	errNPMCouldNotRetrieveSpecificPackageVersion = errors.New("could not retrieve specific npm package version")
-	errNPMVersionDoesNotExistWithShasum          = errors.New("version does not exist on the npm registry with the given shasum")
-	errNPMProvidedPackageVersionNotFound         = errors.New("provided npm package version not found")
-	errNPMCouldNotRetrieveProvidedVersionShasum  = errors.New("could not retrieve provided npm version shasum")
+	errNPMNameEmpty = errors.New("npm package name is empty")
+)
+
+type NPMFillError struct {
+	Err error
+}
+
+func (e NPMFillError) Error() string {
+	return e.Err.Error()
+}
+
+var (
+	ErrMalfunctioningNPMRegistryClient = errors.New("malfunctioning (no-op or similar) NPM registry client")
+	// NPMFillError instances
+	ErrCouldNotRetrieveLastVersionTagFromNPM        = NPMFillError{errors.New("could not retrieve last npm version tag")}
+	ErrCouldNotRetrieveLastVersionFromNPM           = NPMFillError{errors.New("could not retrieve last npm version")}
+	ErrCouldNotRetrieveLastShasumFromNPM            = NPMFillError{errors.New("could not retrieve last npm version shasum")}
+	ErrCouldNotRetrieveShasumForGivenVersionFromNPM = NPMFillError{errors.New("could not retrieve the shasum for the given npm version")}
+	ErrGivenVersionNotFoundOnNPM                    = NPMFillError{errors.New("given npm package version not found on npm")}
+	ErrGivenShasumDoesntMatchGivenVersionOnNPM      = NPMFillError{errors.New("given npm version does not exist on npm with the given shasum")}
 )
 
 type npmPackage struct {
@@ -118,25 +130,25 @@ func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.Regis
 
 	if len(arn.Version) == 0 {
 		packageList, err := registryClient.GetPackageList(ctx, arn.Name)
-		if packageList == nil {
-			return fmt.Errorf("couldn't get the package list (network error or missing a functioning NPM registry client)")
-		}
 		if err != nil {
 			return err
 		}
+		if packageList == nil {
+			return ErrMalfunctioningNPMRegistryClient
+		}
 		latestVersionTag := packageList.DistTags.Latest
 		if len(latestVersionTag) == 0 {
-			return errNPMCouldNotRetrieveLastVersionTag
+			return ErrCouldNotRetrieveLastVersionTagFromNPM
 		}
 		if latestVersion, ok := packageList.Versions[latestVersionTag]; ok {
 			arn.Version = latestVersion.Version
 			arn.Shasum = latestVersion.Dist.Shasum
 		}
 		if len(arn.Version) == 0 {
-			return errNPMCouldNotRetrieveLastVersion
+			return ErrCouldNotRetrieveLastVersionFromNPM
 		}
 		if len(arn.Shasum) == 0 {
-			return errNPMCouldNotRetrieveLastVersionShasum
+			return ErrCouldNotRetrieveLastShasumFromNPM
 		}
 
 		return nil
@@ -144,20 +156,20 @@ func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.Regis
 
 	if len(arn.Version) > 0 && len(arn.Shasum) == 0 {
 		packageList, err := registryClient.GetPackageList(ctx, arn.Name)
-		if packageList == nil {
-			return fmt.Errorf("couldn't get the package list (network error or missing a functioning NPM registry client)")
-		}
 		if err != nil {
 			return err
+		}
+		if packageList == nil {
+			return ErrMalfunctioningNPMRegistryClient
 		}
 		if version, ok := packageList.Versions[arn.Version]; ok {
 			arn.Version = version.Version
 			arn.Shasum = version.Dist.Shasum
 		} else {
-			return fmt.Errorf("%v: (version=%s)", errNPMProvidedPackageVersionNotFound, arn.Version)
+			return fmt.Errorf("%v: (version=%s)", ErrGivenVersionNotFoundOnNPM, arn.Version)
 		}
 		if len(arn.Shasum) == 0 {
-			return fmt.Errorf("%v: (version=%s)", errNPMCouldNotRetrieveProvidedVersionShasum, arn.Version)
+			return fmt.Errorf("%v: (version=%s)", ErrCouldNotRetrieveShasumForGivenVersionFromNPM, arn.Version)
 		}
 
 		return nil
@@ -165,14 +177,14 @@ func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.Regis
 
 	if len(arn.Version) > 0 && len(arn.Shasum) > 0 {
 		packageVersion, err := registryClient.GetPackageVersion(ctx, arn.Name, arn.Version)
-		if packageVersion == nil {
-			return fmt.Errorf("couldn't get the package version (network error or missing a functioning NPM registry client)")
-		}
 		if err != nil {
-			return fmt.Errorf("%v: %w", errNPMCouldNotRetrieveSpecificPackageVersion, err)
+			return fmt.Errorf("%v: %w", ErrGivenVersionNotFoundOnNPM, err)
+		}
+		if packageVersion == nil {
+			return ErrMalfunctioningNPMRegistryClient
 		}
 		if packageVersion.Dist.Shasum != arn.Shasum {
-			return errNPMVersionDoesNotExistWithShasum
+			return ErrGivenShasumDoesntMatchGivenVersionOnNPM
 		}
 	}
 

@@ -1,6 +1,7 @@
 package analysisrequest
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -52,4 +53,12 @@ func TestSetPrio(t *testing.T) {
 
 	arn.SetPrio(uint8(2))
 	assert.Equal(t, uint8(2), arn.Prio())
+}
+
+func TestErrors(t *testing.T) {
+	assert.True(t, errors.As(ErrCouldNotRetrieveLastVersionTagFromNPM, &NPMFillError{}))
+	assert.True(t, errors.As(ErrCouldNotRetrieveLastVersionFromNPM, &NPMFillError{}))
+	assert.True(t, errors.As(ErrCouldNotRetrieveLastShasumFromNPM, &NPMFillError{}))
+	assert.True(t, errors.As(ErrGivenVersionNotFoundOnNPM, &NPMFillError{}))
+	assert.True(t, errors.As(ErrGivenShasumDoesntMatchGivenVersionOnNPM, &NPMFillError{}))
 }

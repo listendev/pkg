@@ -3,6 +3,8 @@ package analysisrequest
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"os"
 	"testing"
 
@@ -39,6 +41,9 @@ func (r *mockNpmregistryClient) GetPackageList(ctx context.Context, name string)
 	if err != nil {
 		return nil, err
 	}
+	if packageList.Name != name {
+		return nil, fmt.Errorf("GetPackageList: name mismatch")
+	}
 
 	return &packageList, nil
 }
@@ -48,6 +53,9 @@ func (r *mockNpmregistryClient) GetPackageVersion(ctx context.Context, name, ver
 	err := json.Unmarshal(r.versionContent, &packageVersion)
 	if err != nil {
 		return nil, err
+	}
+	if packageVersion.Name != name {
+		return nil, fmt.Errorf("GetPackageVersion: name mismatch")
 	}
 
 	return &packageVersion, nil
@@ -328,7 +336,16 @@ func TestNewBuilderWithoutTracer(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-// TODO:
-// func TestBuilderWithoutNPMRegistryClient(t *testing.T) {}
+func TestBuilderWithoutNPMRegistryClient(t *testing.T) {
+	testCtx := observability.NewNopContext()
+	arbuilder, err := NewBuilder(testCtx)
+	assert.Nil(t, err)
+	assert.NotNil(t, arbuilder)
 
-// TODO: what the builder does if the NPM analysis request refers to an unexisting package?
+	_, gotErr := arbuilder.FromJSON([]byte(`{"type": "urn:scheduler:falco!npm,install.json", "snowflake_id": "1524854487523524608", "name": "chalk"}`))
+
+	if assert.Error(t, gotErr) {
+		assert.True(t, errors.Is(gotErr, ErrMalfunctioningNPMRegistryClient))
+		assert.Equal(t, ErrMalfunctioningNPMRegistryClient, gotErr)
+	}
+}
