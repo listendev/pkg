@@ -24,10 +24,10 @@ import (
 )
 
 func main() {
-	arJSON := `{"type": "urn:scheduler:falco!npm.install", "snowflake_id": "1524854487523524608", "name": "chalk"}`
+	arJSON := `{"type": "urn:scheduler:falco!npm,install.json", "snowflake_id": "1524854487523524608", "name": "chalk"}`
 	// you can use the observability package to create a context with tracing and logging here
 	ctx := observability.NewNopContext()
-	arbuilder := analysisrequest.NewBuilderWithContext(ctx)
+	arbuilder, _ := analysisrequest.NewBuilder(ctx)
 	regClient, _ := npm.NewNPMRegistryClient(npm.NPMRegistryClientConfig{})
 	arbuilder.WithNPMRegistryClient(regClient)
 	ar, _ := arbuilder.FromJSON([]byte(arJSON))

@@ -68,3 +68,7 @@ func (arb base) Prio() uint8 {
 func (arb *base) SetPrio(p uint8) {
 	arb.Priority = p
 }
+
+func (arb *base) SetForce(force bool) {
+	arb.Force = force
+}
