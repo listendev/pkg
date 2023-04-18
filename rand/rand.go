@@ -43,3 +43,8 @@ func String(n int) string {
 
 	return string(b)
 }
+
+// Elem returns a random elemen from the input list.
+func Elem(list []string) string {
+	return list[rand.Intn(len(list))]
+}
