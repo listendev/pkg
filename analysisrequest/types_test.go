@@ -64,7 +64,7 @@ func TestTypes(t *testing.T) {
 				urn:  "urn:scheduler:falco!npm,install.json+urn:hoarding:gpt4,context",
 				json: []byte(`"urn:scheduler:falco!npm,install.json+urn:hoarding:gpt4,context"`),
 				TypeComponents: TypeComponents{
-					Framework:        "hoarding",
+					Framework:        Hoarding,
 					Collector:        "gpt4",
 					CollectorActions: []string{"context"},
 					Ecosystem:        "npm",               // From parent
@@ -87,7 +87,7 @@ func TestTypes(t *testing.T) {
 				urn:  "urn:NOP:nop",
 				json: []byte(`"urn:nop:nop"`),
 				TypeComponents: TypeComponents{
-					Framework:        "nop",
+					Framework:        None,
 					Collector:        "nop",
 					CollectorActions: []string{},
 					EcosystemActions: []string{},
@@ -101,7 +101,7 @@ func TestTypes(t *testing.T) {
 				urn:  "urn:scheduler:falco!npm,install.json",
 				json: []byte(`"urn:scheduler:falco!npm,install.json"`),
 				TypeComponents: TypeComponents{
-					Framework:        "scheduler",
+					Framework:        Scheduler,
 					Collector:        "falco",
 					CollectorActions: []string{},
 					Ecosystem:        NPMEcosystem,
@@ -116,7 +116,7 @@ func TestTypes(t *testing.T) {
 				urn:  "urn:scheduler:falco!npm,test.json",
 				json: []byte(`"urn:scheduler:falco!npm,test.json"`),
 				TypeComponents: TypeComponents{
-					Framework:        "scheduler",
+					Framework:        Scheduler,
 					Collector:        "falco",
 					CollectorActions: []string{},
 					Ecosystem:        NPMEcosystem,
@@ -131,7 +131,7 @@ func TestTypes(t *testing.T) {
 				urn:  "urn:hoarding:depsdev!npm.json",
 				json: []byte(`"urn:hoarding:depsdev!npm.json"`),
 				TypeComponents: TypeComponents{
-					Framework:        "hoarding",
+					Framework:        Hoarding,
 					Collector:        "depsdev",
 					CollectorActions: []string{},
 					Ecosystem:        NPMEcosystem,
