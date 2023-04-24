@@ -88,8 +88,8 @@ func (b *builder) FromJSON(body []byte) (AnalysisRequest, error) {
 type noOpBuilder struct {
 }
 
-func NewNoOpBuilder() (*noOpBuilder, error) {
-	return &noOpBuilder{}, nil
+func NewNoOpBuilder() *noOpBuilder {
+	return &noOpBuilder{}
 }
 
 func (b *noOpBuilder) FromJSON(body []byte) (AnalysisRequest, error) {
