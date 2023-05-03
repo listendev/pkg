@@ -14,35 +14,27 @@ import (
 const S3UploaderName = "s3"
 
 type S3 struct {
-	region      string
-	bucket      string
-	endpoint    string
-	credentials aws.CredentialsProvider
-	s3Cfg       aws.Config
+	bucket string
+	s3Cfg  aws.Config
 }
 
-func NewS3Uploader(region string, bucket string, credentials aws.CredentialsProvider, endpoint string) *S3 {
-	cfg := aws.Config{
-		Region:      region,
-		Credentials: credentials,
-	}
-	if len(endpoint) > 0 {
-		cfg.EndpointResolverWithOptions = aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
-			return aws.Endpoint{
-				PartitionID:       "aws",
-				URL:               endpoint,
-				SigningRegion:     region,
-				HostnameImmutable: true,
-			}, nil
-		})
-	}
+func NewS3Uploader(cfg aws.Config, bucket string) *S3 {
 	return &S3{
-		region:      region,
-		bucket:      bucket,
-		credentials: credentials,
-		endpoint:    endpoint,
-		s3Cfg:       cfg,
+		bucket: bucket,
+		s3Cfg:  cfg,
 	}
+}
+
+func (s *S3) WithCustomEndpoint(endpoint string) *S3 {
+	s.s3Cfg.EndpointResolverWithOptions = aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
+		return aws.Endpoint{
+			PartitionID:       "aws",
+			URL:               endpoint,
+			SigningRegion:     region,
+			HostnameImmutable: true,
+		}, nil
+	})
+	return s
 }
 
 func (s *S3) String() string {
