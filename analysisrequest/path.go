@@ -1,6 +1,7 @@
 package analysisrequest
 
 import (
+	"fmt"
 	"path"
 )
 
@@ -44,4 +45,15 @@ func GetResultFilesByEcosystem(eco Ecosystem) map[Type]string {
 	}
 
 	return res
+}
+
+func GetTypeFromResultFile(eco Ecosystem, filename string) (Type, error) {
+	all := GetResultFilesByEcosystem(eco)
+	for t, f := range all {
+		if f == filename {
+			return t, nil
+		}
+	}
+
+	return Nop, fmt.Errorf("couldn't find type for filename %q", filename)
 }
