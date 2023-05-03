@@ -1,31 +1,5 @@
 # result uploader
 
-Using provided credentials
-
-```go
-import (
-    	"github.com/aws/aws-sdk-go-v2/credentials"
-        "os"
-        "github.com/garnet-org/pkg/resultuploader"
-)
-
-func main() {
-    accessKey:= os.Getenv("AWS_ACCESS_KEY_ID")
-    secretKey: = os.Getenv("AWS_SECRET_ACCESS_KEY")
-    region := os.Getenv("AWS_REGION")
-    s3Creds := credentials.NewStaticCredentialsProvider(accessKey, secretKey, "")
-    cfg := aws.Config{
-        Region:      region,
-        Credentials: credentials,
-    }
-
-    s3Uploader := resultuploader.NewS3Uploader(cfg, "my-garnet-bucket-name")
-    s3Uploader.WithCustomEndpoint("http://127.0.0.1:9000")
-}
-```
-
-Using container credentials (e.g: on ECS)
-
 ```go
 import (
     	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -40,4 +14,18 @@ func main() {
     s3Uploader := resultuploader.NewS3Uploader(cfg, "my-garnet-bucket-name")
 }
 
+```
+
+
+During local development (e.g with minio), you can export the following env variables
+
+```
+export AWS_ACCESS_KEY_ID=user
+export AWS_SECRET_ACCESS_KEY=password
+```
+
+and instruct the s3Uploader to use the minio server
+
+```go
+s3Uploader.WithCustomEndpoint("http://127.0.0.1:9000")
 ```
