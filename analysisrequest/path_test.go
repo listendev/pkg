@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetResultFilesByEcosystem(t *testing.T) {
@@ -19,5 +20,20 @@ func TestGetResultFilesByEcosystem(t *testing.T) {
 	if equal := cmp.Equal(wnt, got, cmpopts.SortMaps(less)); !equal {
 		diff := cmp.Diff(wnt, got, cmpopts.SortMaps(less))
 		t.Errorf("diff: (-got +want)\n%s", diff)
+	}
+}
+
+func TestGetTypeFromResultFile(t *testing.T) {
+	wnt := map[string]Type{
+		"falco[install].json": NPMInstallWhileFalco,
+		"falco[test].json":    NPMTestWhileFalco,
+		"depsdev.json":        NPMDepsDev,
+	}
+	for f, typ := range wnt {
+		got, err := GetTypeFromResultFile(NPMEcosystem, f)
+
+		if assert.Nil(t, err) {
+			assert.Equal(t, typ, got)
+		}
 	}
 }
