@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"testing"
 
 	"github.com/garnet-org/pkg/npm"
@@ -14,6 +15,15 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/stretchr/testify/assert"
 )
+
+func getFixture(filepath string) (string, error) {
+	ret := path.Join("testdata", "fixtures", filepath)
+	if _, err := os.ReadFile(ret); err != nil {
+		return "", err
+	}
+
+	return ret, nil
+}
 
 type mockNpmregistryClient struct {
 	listContent    []byte
@@ -347,5 +357,78 @@ func TestBuilderWithoutNPMRegistryClient(t *testing.T) {
 	if assert.Error(t, gotErr) {
 		assert.True(t, errors.Is(gotErr, ErrMalfunctioningNPMRegistryClient))
 		assert.Equal(t, ErrMalfunctioningNPMRegistryClient, gotErr)
+	}
+}
+
+func TestAnalysisRequestFromFile(t *testing.T) {
+	type args struct {
+		fixture string
+	}
+	tests := []struct {
+		name               string
+		args               args
+		want               []AnalysisRequest
+		wantErr            bool
+		mockRegistryClient *mockNpmregistryClient
+	}{
+		{
+			name: "single",
+			args: args{
+				fixture: "single.json",
+			},
+			want: []AnalysisRequest{
+				&NPM{
+					base: base{
+						RequestType: NPMTestWhileFalco,
+						Snowflake:   "1524854487523524608",
+					},
+					npmPackage: npmPackage{
+						Name:    "chalk",
+						Version: "5.1.2",
+						Shasum:  "d957f370038b75ac572471e83be4c5ca9f8e8c45",
+					},
+				},
+			},
+			mockRegistryClient: func() *mockNpmregistryClient {
+				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
+				if err != nil {
+					t.Fatal(err)
+				}
+				return mockClient
+			}(),
+		},
+		// TODO: list
+		// {
+		// 	name: "list",
+		// 	args: args{
+		// 		fixture: "list.json",
+		// 	},
+		// 	want: []AnalysisRequest{
+		// 		// TODO: ...
+		// 	},
+		// 	mockRegistryClient: nil, // TODO: create mock registry client for all the packages in list.json
+		// },
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			testCtx := observability.NewNopContext()
+			arbuilder, err := NewBuilder(testCtx)
+			assert.Nil(t, err)
+			assert.NotNil(t, arbuilder)
+			arbuilder.WithNPMRegistryClient(tt.mockRegistryClient)
+			filepath, err := getFixture(tt.args.fixture)
+			assert.Nil(t, err)
+
+			got, err := arbuilder.FromFile(filepath)
+
+			if tt.wantErr {
+				assert.NotNil(t, err)
+				assert.Nil(t, got)
+			} else {
+				assert.Nil(t, err)
+				assert.Equal(t, tt.want, got)
+			}
+		})
 	}
 }
