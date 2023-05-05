@@ -53,21 +53,15 @@ func (b *builder) FromFile(path string) ([]AnalysisRequest, error) {
 	}
 
 	// Read file content
-	fd, err := os.Open(path)
-	if err != nil {
-		return nil, fmt.Errorf("could not open the file at path %q: %v", path, err)
+	data, readErr := os.ReadFile(path)
+	if readErr != nil {
+		return nil, fmt.Errorf("could not open the file at path %q: %v", path, readErr)
 	}
-	defer fd.Close()
 
-	// Try single element
-	content := json.RawMessage{}
-	if err := json.NewDecoder(fd).Decode(&content); err != nil {
+	contents := []json.RawMessage{}
+	decodeErr := json.Unmarshal(data, &contents)
+	if decodeErr == nil {
 		// Try list of elements
-		contents := []json.RawMessage{}
-		if err := json.NewDecoder(fd).Decode(&contents); err != nil {
-			return nil, fmt.Errorf("could not decode the file at path %q: %v", path, err)
-		}
-
 		results := []AnalysisRequest{}
 		for _, msg := range contents {
 			res, err := b.FromJSON(msg)
@@ -79,6 +73,12 @@ func (b *builder) FromFile(path string) ([]AnalysisRequest, error) {
 
 		return results, nil
 	} else {
+		// Try single element
+		content := json.RawMessage{}
+		if err := json.Unmarshal(data, &content); err != nil {
+			return nil, err
+		}
+
 		res, err := b.FromJSON(content)
 		if err != nil {
 			return nil, err

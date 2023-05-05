@@ -397,17 +397,43 @@ func TestAnalysisRequestFromFile(t *testing.T) {
 				return mockClient
 			}(),
 		},
-		// TODO: list
-		// {
-		// 	name: "list",
-		// 	args: args{
-		// 		fixture: "list.json",
-		// 	},
-		// 	want: []AnalysisRequest{
-		// 		// TODO: ...
-		// 	},
-		// 	mockRegistryClient: nil, // TODO: create mock registry client for all the packages in list.json
-		// },
+		{
+			name: "list",
+			args: args{
+				fixture: "list.json",
+			},
+			want: []AnalysisRequest{
+				&NPM{
+					base: base{
+						RequestType: NPMTestWhileFalco,
+						Snowflake:   "1524854487523524608",
+					},
+					npmPackage: npmPackage{
+						Name:    "chalk",
+						Version: "5.1.2",
+						Shasum:  "d957f370038b75ac572471e83be4c5ca9f8e8c45",
+					},
+				},
+				&NPM{
+					base: base{
+						RequestType: NPMTestWhileFalco,
+						Snowflake:   "1524854487523524608",
+					},
+					npmPackage: npmPackage{
+						Name:    "chalk",
+						Version: "5.1.2",
+						Shasum:  "d957f370038b75ac572471e83be4c5ca9f8e8c45",
+					},
+				},
+			},
+			mockRegistryClient: func() *mockNpmregistryClient {
+				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
+				if err != nil {
+					t.Fatal(err)
+				}
+				return mockClient
+			}(),
+		},
 	}
 
 	for _, tt := range tests {
