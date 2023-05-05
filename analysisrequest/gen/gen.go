@@ -73,3 +73,16 @@ func Get(reuseProbability int) analysisrequest.AnalysisRequest {
 
 	return r
 }
+
+func GetWithAttrs(force bool, priority uint8, probability int) analysisrequest.AnalysisRequest {
+	msg := Get(probability)
+	// Since the generator always generate messages with priority 0 and we take the priority from options/flags...
+	if priority > 0 {
+		msg.SetPrio(priority)
+	}
+	if force {
+		msg.SetForce(force)
+	}
+
+	return msg
+}
