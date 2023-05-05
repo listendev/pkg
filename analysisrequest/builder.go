@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 	"reflect"
 
 	"github.com/garnet-org/pkg/npm"
@@ -39,6 +41,51 @@ func (a *builder) WithNPMRegistryClient(npmRegistry npm.RegistryClient) {
 		return
 	}
 	a.npmRegistryRegistryClient = npmRegistry
+}
+
+func (b *builder) FromFile(path string) ([]AnalysisRequest, error) {
+	fileInfo, err := os.Stat(path)
+	if err != nil {
+		return nil, fmt.Errorf("could not find the file at path %s: %v", path, err)
+	}
+	if !fileInfo.Mode().IsRegular() || filepath.Ext(path) != ".json" {
+		return nil, fmt.Errorf("the file at path %q is not a valid json file: %v", path, err)
+	}
+
+	// Read file content
+	fd, err := os.Open(path)
+	if err != nil {
+		return nil, fmt.Errorf("could not open the file at path %q: %v", path, err)
+	}
+	defer fd.Close()
+
+	// Try single element
+	content := json.RawMessage{}
+	if err := json.NewDecoder(fd).Decode(&content); err != nil {
+		// Try list of elements
+		contents := []json.RawMessage{}
+		if err := json.NewDecoder(fd).Decode(&contents); err != nil {
+			return nil, fmt.Errorf("could not decode the file at path %q: %v", path, err)
+		}
+
+		results := []AnalysisRequest{}
+		for _, msg := range contents {
+			res, err := b.FromJSON(msg)
+			if err != nil {
+				return nil, err
+			}
+			results = append(results, res)
+		}
+
+		return results, nil
+	} else {
+		res, err := b.FromJSON(content)
+		if err != nil {
+			return nil, err
+		}
+
+		return []AnalysisRequest{res}, nil
+	}
 }
 
 func (b *builder) FromJSON(body []byte) (AnalysisRequest, error) {
