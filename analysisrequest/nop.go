@@ -8,6 +8,7 @@ import (
 
 var _ AnalysisRequest = (*NOP)(nil)
 var _ Publisher = (*NOP)(nil)
+var _ Deliverer = (*NOP)(nil)
 var _ Results = (*NOP)(nil)
 
 type NOP struct {
@@ -48,6 +49,23 @@ func (a NOP) Publishing() (*amqp.Publishing, error) {
 	}
 
 	ret := &amqp.Publishing{
+		ContentType: "application/json",
+		Body:        body,
+	}
+	if a.Priority > 0 {
+		ret.Priority = a.Priority
+	}
+
+	return ret, nil
+}
+
+func (a NOP) Delivery() (*amqp.Delivery, error) {
+	body, err := json.Marshal(a)
+	if err != nil {
+		return nil, err
+	}
+
+	ret := &amqp.Delivery{
 		ContentType: "application/json",
 		Body:        body,
 	}

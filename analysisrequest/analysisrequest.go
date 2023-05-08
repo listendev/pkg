@@ -34,6 +34,10 @@ type Publisher interface {
 	Publishing() (*amqp.Publishing, error)
 }
 
+type Deliverer interface {
+	Delivery() (*amqp.Delivery, error)
+}
+
 // Results
 type Results interface {
 	// ResultsPath returns the upload path of the analysis request result

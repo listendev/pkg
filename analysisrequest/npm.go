@@ -13,6 +13,7 @@ import (
 
 var _ AnalysisRequest = (*NPM)(nil)
 var _ Publisher = (*NPM)(nil)
+var _ Deliverer = (*NPM)(nil)
 var _ Results = (*NPM)(nil)
 
 var (
@@ -113,6 +114,23 @@ func (arn NPM) Publishing() (*amqp.Publishing, error) {
 	}
 
 	ret := &amqp.Publishing{
+		ContentType: "application/json",
+		Body:        body,
+	}
+	if arn.Priority > 0 {
+		ret.Priority = arn.Priority
+	}
+
+	return ret, nil
+}
+
+func (arn NPM) Delivery() (*amqp.Delivery, error) {
+	body, err := json.Marshal(arn)
+	if err != nil {
+		return nil, err
+	}
+
+	ret := &amqp.Delivery{
 		ContentType: "application/json",
 		Body:        body,
 	}
