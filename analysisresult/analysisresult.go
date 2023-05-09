@@ -6,12 +6,12 @@ import (
 	"io"
 )
 
-type Priority string
+type Severity string
 
 const (
-	PriorityLow    Priority = "low"
-	PriorityMedium Priority = "medium"
-	PriorityHigh   Priority = "high"
+	SeverityLow    Severity = "low"
+	SeverityMedium Severity = "medium"
+	SeverityHigh   Severity = "high"
 )
 
 type Metadata map[string]interface{}
@@ -23,7 +23,7 @@ const (
 
 type Verdict struct {
 	Message  string                 `json:"message"`
-	Priority Priority               `json:"priority"`
+	Severity Severity               `json:"severity"`
 	Metadata map[string]interface{} `json:"metadata"`
 }
 
