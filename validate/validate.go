@@ -35,6 +35,8 @@ func init() {
 
 	Singleton.RegisterAlias("mandatory", "required")
 	Singleton.RegisterAlias("severity", "eq_ignore_case=low|eq_ignore_case=medium|eq_ignore_case=high")
+	Singleton.RegisterAlias("amqp", "startswith=amqp://|startswith=amqps://")
+	Singleton.RegisterAlias("store", "startswith=file:///|startswith=s3://")
 
 	eng := en.New()
 	Translator, _ = (ut.New(eng, eng)).GetTranslator("en")
@@ -65,6 +67,36 @@ func init() {
 		},
 		func(ut ut.Translator, fe validator.FieldError) string {
 			t, _ := ut.T("severity", fe.Field())
+
+			return t
+		},
+	); err != nil {
+		panic(err)
+	}
+	
+	if err := Singleton.RegisterTranslation(
+		"amqp",
+		Translator,
+		func(ut ut.Translator) error {
+			return ut.Add("amqp", "{0} must start with amqp:// or with amqps://", true)
+		},
+		func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("amqp", fe.Field())
+
+			return t
+		},
+	); err != nil {
+		panic(err)
+	}
+	
+	if err := Singleton.RegisterTranslation(
+		"store",
+		Translator,
+		func(ut ut.Translator) error {
+			return ut.Add("store", "{0} must start with s3://... or file:///...", true)
+		},
+		func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("store", fe.Field())
 
 			return t
 		},
