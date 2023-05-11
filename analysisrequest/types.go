@@ -13,9 +13,9 @@ type Type int
 const (
 	Nop Type = iota + 1
 	NPMInstallWhileFalco
-	NPMTestWhileFalco
 	NPMDepsDev
 	NPMGPT4InstallWhileFalco
+	// NPMTestWhileFalco
 
 	_maxType
 )
