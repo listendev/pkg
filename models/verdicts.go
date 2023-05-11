@@ -35,6 +35,35 @@ func (o *Verdict) Validate() error {
 	return nil
 }
 
+func (o *Verdict) UnmarshalJSON(data []byte) error {
+	type alias Verdict
+	var res alias
+	if err := json.Unmarshal(data, &res); err != nil {
+		return err
+	}
+	*o = Verdict(res)
+
+	if err := o.Validate(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *Verdict) MarshalJSON() ([]byte, error) {
+	err := o.Validate()
+	if err != nil {
+		return nil, fmt.Errorf("couldn't marshal because verdict is invalid")
+	}
+	type alias Verdict
+
+	return json.Marshal(&struct {
+		*alias
+	}{
+		alias: (*alias)(o),
+	})
+}
+
 type Verdicts []Verdict
 
 func FromBuffer(stream io.Reader) (Verdicts, error) {
