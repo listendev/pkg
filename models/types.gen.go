@@ -19,13 +19,10 @@ type Problem struct {
 
 // Verdict defines model for Verdict.
 type Verdict struct {
-	Message  string                 `json:"message"`
+	Message  string                 `human:"the verdict message" json:"message" validate:"mandatory"`
 	Metadata map[string]interface{} `json:"metadata"`
-	Severity VerdictSeverity        `json:"severity"`
+	Severity VerdictSeverity        `human:"the verdict severity" json:"severity" validate:"mandatory"`
 }
 
 // VerdictSeverity defines model for Verdict.Severity.
 type VerdictSeverity string
-
-// TempJSONRequestBody defines body for Temp for application/json ContentType.
-type TempJSONRequestBody = Verdict

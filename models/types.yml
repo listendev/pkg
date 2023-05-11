@@ -11,23 +11,28 @@ info:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
 paths:
-  /temp:
+  /temp-problem:
     post:
-      operationId: temp
-      description: This is just to let openapi-codegen generate the models.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Verdict'
+      operationId: temp-problem
+      description: This is just to let openapi-codegen generate the Problem model.
       responses:
         default:
-          description: unexpected error
+          description: The Problem model.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
+  /temp-verdict:
+    post:
+      operationId: temp-verdict
+      description: This is just to let openapi-codegen generate the Verdict model.
+      responses:
+        default:
+          description: The Verdict model.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Verdict'
 components:
   schemas:
     Verdict:
@@ -39,12 +44,18 @@ components:
       properties:
         message:
           type: string
+          x-oapi-codegen-extra-tags:
+            validate: mandatory
+            human: the verdict message
         severity:
           type: string
           enum:
             - "low"
             - "medium"
             - "high"
+          x-oapi-codegen-extra-tags:
+            validate: mandatory
+            human: the verdict severity
         metadata:
           type: object
       example:
