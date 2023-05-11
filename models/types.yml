@@ -5,22 +5,16 @@ info:
   description: This API interfaces clients with our database of verdicts.
   termsOfService: http://swagger.io/terms/
   contact:
-    name: Francesco Di Donato
-    email: francesco@garnet.ai
-    url: https://listen.dev
+    name: The Engineering Team
+    email: engineering@garnet.ai
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-servers:
-  - url: http://127.0.0.1:3000
-    description: The locally running server (port may change, see .env)
-  - url: https://npm-staging.listen.dev
-    description: The staging server
 paths:
-  /api/analysis:
+  /temp:
     post:
-      operationId: analysis
-      description: This API receives a base64 encoded package-lock.json file and returns verdicts for each dependency listed in it.
+      operationId: temp
+      description: This is just to let openapi-codegen generate the models.
       requestBody:
         required: true
         content:
@@ -36,35 +30,16 @@ paths:
                 $ref: '#/components/schemas/Problem'
 components:
   schemas:
-    NameVersionShasum:
-      type: object
-      required:
-        - name
-      properties:
-        name:
-          type: string
-          description: name of the package
-        version:
-          type: string
-          description: version of the package
-        shasum:
-          type: string
-          description: shasum of the package
-      example:
-        name: "@vue/devtools"
-        version: "6.5.0"
-        shasum: "32b09b0e3ca7b757802f9a0b9ded8c2035ce7874"
-
     Verdict:
       type: object
       required:
         - message
-        - priority
+        - severity
         - metadata
       properties:
         message:
           type: string
-        priority:
+        severity:
           type: string
           enum:
             - "low"
@@ -74,7 +49,7 @@ components:
           type: object
       example:
         message: "npm install spawned a process"
-        priority: "medium"
+        severity: "medium"
         metadata:
           commandline: "sh -c node-gyp-build"
           executable_path: "/bin/sh"
@@ -84,7 +59,6 @@ components:
           parent_name: "node"
           server_ip: ""
           server_port: 0
-    
     Problem:
       type: object
       required:
