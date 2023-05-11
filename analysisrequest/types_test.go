@@ -110,21 +110,21 @@ func TestTypes(t *testing.T) {
 				},
 			},
 		},
-		{
-			input: NPMTestWhileFalco,
-			want: want{
-				urn:  "urn:scheduler:falco!npm,test.json",
-				json: []byte(`"urn:scheduler:falco!npm,test.json"`),
-				TypeComponents: TypeComponents{
-					Framework:        Scheduler,
-					Collector:        "falco",
-					CollectorActions: []string{},
-					Ecosystem:        NPMEcosystem,
-					EcosystemActions: []string{"test"},
-					Format:           "json",
-				},
-			},
-		},
+		// {
+		// 	input: NPMTestWhileFalco,
+		// 	want: want{
+		// 		urn:  "urn:scheduler:falco!npm,test.json",
+		// 		json: []byte(`"urn:scheduler:falco!npm,test.json"`),
+		// 		TypeComponents: TypeComponents{
+		// 			Framework:        Scheduler,
+		// 			Collector:        "falco",
+		// 			CollectorActions: []string{},
+		// 			Ecosystem:        NPMEcosystem,
+		// 			EcosystemActions: []string{"test"},
+		// 			Format:           "json",
+		// 		},
+		// 	},
+		// },
 		{
 			input: NPMDepsDev,
 			want: want{

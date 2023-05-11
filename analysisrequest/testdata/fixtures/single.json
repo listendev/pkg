@@ -1,5 +1,5 @@
 {
-    "type": "urn:scheduler:falco!npm,test.json",
+    "type": "urn:scheduler:falco!npm,install.json",
     "snowflake_id": "1524854487523524608",
     "name": "chalk",
     "version": "5.1.2",

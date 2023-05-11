@@ -173,13 +173,13 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "npm falco test analysis request without shasum",
+			name: "npm falco install analysis request without shasum",
 			args: args{
-				body: []byte(`{"type": "urn:scheduler:falco!npm,test.json", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2"}`),
+				body: []byte(`{"type": "urn:scheduler:falco!npm,install.json", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2"}`),
 			},
 			want: &NPM{
 				base: base{
-					RequestType: NPMTestWhileFalco,
+					RequestType: NPMInstallWhileFalco,
 					Snowflake:   "1524854487523524608",
 				},
 				npmPackage: npmPackage{
@@ -190,9 +190,9 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			},
 			wantPublishing: &amqp.Publishing{
 				ContentType: "application/json",
-				Body:        []byte(`{"type": "urn:scheduler:falco!npm,test.json", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "force": false}`),
+				Body:        []byte(`{"type": "urn:scheduler:falco!npm,install.json", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "force": false}`),
 			},
-			wantS3Key: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/falco[test].json",
+			wantS3Key: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/falco[install].json",
 			mockRegistryClient: func() *mockNpmregistryClient {
 				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
 				if err != nil {
@@ -379,7 +379,7 @@ func TestAnalysisRequestFromFile(t *testing.T) {
 			want: []AnalysisRequest{
 				&NPM{
 					base: base{
-						RequestType: NPMTestWhileFalco,
+						RequestType: NPMInstallWhileFalco,
 						Snowflake:   "1524854487523524608",
 					},
 					npmPackage: npmPackage{
@@ -405,7 +405,7 @@ func TestAnalysisRequestFromFile(t *testing.T) {
 			want: []AnalysisRequest{
 				&NPM{
 					base: base{
-						RequestType: NPMTestWhileFalco,
+						RequestType: NPMInstallWhileFalco,
 						Snowflake:   "1524854487523524608",
 					},
 					npmPackage: npmPackage{
@@ -416,7 +416,7 @@ func TestAnalysisRequestFromFile(t *testing.T) {
 				},
 				&NPM{
 					base: base{
-						RequestType: NPMTestWhileFalco,
+						RequestType: NPMInstallWhileFalco,
 						Snowflake:   "1524854487523524608",
 					},
 					npmPackage: npmPackage{

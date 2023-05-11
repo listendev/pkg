@@ -45,10 +45,10 @@ func New() analysisrequest.AnalysisRequest {
 
 		return ret
 
-	case analysisrequest.NPMTestWhileFalco:
-		ret, _ := analysisrequest.NewNPM(analysisrequest.NPMTestWhileFalco, snowflakeID, priority, force, name, vers, shasum)
+	// case analysisrequest.NPMTestWhileFalco:
+	// 	ret, _ := analysisrequest.NewNPM(analysisrequest.NPMTestWhileFalco, snowflakeID, priority, force, name, vers, shasum)
 
-		return ret
+	// 	return ret
 
 	case analysisrequest.NPMDepsDev:
 		ret, _ := analysisrequest.NewNPM(analysisrequest.NPMDepsDev, snowflakeID, priority, force, name, vers, shasum)
