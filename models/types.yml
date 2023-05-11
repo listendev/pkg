@@ -54,7 +54,7 @@ components:
             - "medium"
             - "high"
           x-oapi-codegen-extra-tags:
-            validate: mandatory
+            validate: mandatory,severity
             human: the verdict severity
         metadata:
           type: object

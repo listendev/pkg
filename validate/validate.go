@@ -34,6 +34,7 @@ func init() {
 	})
 
 	Singleton.RegisterAlias("mandatory", "required")
+	Singleton.RegisterAlias("severity", "eq_ignore_case=low|eq_ignore_case=medium|eq_ignore_case=high")
 
 	eng := en.New()
 	Translator, _ = (ut.New(eng, eng)).GetTranslator("en")
@@ -49,6 +50,21 @@ func init() {
 		},
 		func(ut ut.Translator, fe validator.FieldError) string {
 			t, _ := ut.T("mandatory", fe.Field())
+
+			return t
+		},
+	); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterTranslation(
+		"severity",
+		Translator,
+		func(ut ut.Translator) error {
+			return ut.Add("severity", "{0} must be low, medium, or high", true)
+		},
+		func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("severity", fe.Field())
 
 			return t
 		},

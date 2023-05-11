@@ -21,7 +21,7 @@ type Problem struct {
 type Verdict struct {
 	Message  string                 `human:"the verdict message" json:"message" validate:"mandatory"`
 	Metadata map[string]interface{} `json:"metadata"`
-	Severity VerdictSeverity        `human:"the verdict severity" json:"severity" validate:"mandatory"`
+	Severity VerdictSeverity        `human:"the verdict severity" json:"severity" validate:"mandatory,severity"`
 }
 
 // VerdictSeverity defines model for Verdict.Severity.
