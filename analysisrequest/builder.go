@@ -108,8 +108,8 @@ func (b *builder) FromJSON(body []byte) (AnalysisRequest, error) {
 	case NPMDepsDev:
 		fallthrough
 
-	case NPMTestWhileFalco:
-		fallthrough
+	// case NPMTestWhileFalco:
+		// fallthrough
 
 	case NPMInstallWhileFalco:
 		var arn NPM
