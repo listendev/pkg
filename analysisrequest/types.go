@@ -47,10 +47,10 @@ func init() {
 var typeURNs = map[Type]string{
 	Nop:                   "urn:NOP:nop",
 	NPMInstallWhileFalco:  "urn:scheduler:falco!npm,install.json",
-	NPMTestWhileFalco:     "urn:scheduler:falco!npm,test.json",
 	NPMDepsDev:            "urn:hoarding:depsdev!npm.json",
 	// NPMGPT4InstallWhileFalco represents analysis requests to enrich the NPMInstallWhileFalco results
 	NPMGPT4InstallWhileFalco: "urn:scheduler:falco!npm,install.json+urn:hoarding:gpt4,context",
+	// NPMTestWhileFalco:     "urn:scheduler:falco!npm,test.json",
 }
 
 // TODO: enforce enrichers (+urn:...) to do not specify ecosystem, ecosystem actions, and format
