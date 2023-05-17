@@ -197,7 +197,7 @@ func TestFromBuffer(t *testing.T) {
 				"file_descriptor":            "",
 			},
 			Severity:   "MEDIUM", // I'm testing it also work with upper case severity
-			Categories: []category.Category{category.AdjacentNetwork, category.Cis},
+			Categories: []category.Category{category.AdjacentNetwork, category.CIS},
 			Code:       verdictcode.FNI002,
 		},
 	}
