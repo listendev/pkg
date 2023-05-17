@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/garnet-org/pkg/models/category"
 	"github.com/garnet-org/pkg/validate"
 )
 
@@ -50,17 +51,20 @@ func (o *Verdict) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *Verdict) MarshalJSON() ([]byte, error) {
+func (o Verdict) MarshalJSON() ([]byte, error) {
 	err := o.Validate()
 	if err != nil {
 		return nil, err
 	}
 	type alias Verdict
+	if o.Categories == nil {
+		o.Categories = []category.Category{}
+	}
 
 	return json.Marshal(&struct {
 		*alias
 	}{
-		alias: (*alias)(o),
+		alias: (*alias)(&o),
 	})
 }
 

@@ -79,6 +79,46 @@ func TestVerdictMarshalOk(t *testing.T) {
 	assert.JSONEq(t, want, string(got))
 }
 
+func TestVerdictWithoutCategoriesMarshal(t *testing.T) {
+	v := Verdict{
+		Message: "@vue/devtools 6.5.0 1 B",
+		Metadata: map[string]interface{}{
+			NPMPackageNameMetadataKey:    "electron",
+			NPMPackageVersionMetadataKey: "21.4.2",
+			"commandline":                "sh -c node install.js",
+			"parent_name":                "node",
+			"executable_path":            "/bin/sh",
+			"server_ip":                  "",
+			"server_port":                float64(0),
+			"file_descriptor":            "",
+		},
+		Severity: severity.Medium,
+		Code:     verdictcode.FNI001,
+	}
+
+	want := heredoc.Doc(`{
+        "message": "@vue/devtools 6.5.0 1 B",
+        "severity": "medium",
+        "categories": [],
+        "metadata": {
+            "npm_package_name": "electron",
+            "npm_package_version": "21.4.2",
+            "commandline": "sh -c node install.js",
+            "parent_name": "node",
+            "executable_path": "/bin/sh",
+            "server_ip": "",
+            "server_port": 0,
+            "file_descriptor": ""
+        },
+		"code": "FNI001"
+    }`)
+
+	got, err := json.Marshal(v)
+	assert.Nil(t, err)
+
+	assert.JSONEq(t, want, string(got))
+}
+
 func TestVerdictUnmarshalOk(t *testing.T) {
 	want := Verdict{
 		Message: "@vue/devtools 6.5.0 1 B",
