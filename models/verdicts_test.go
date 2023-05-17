@@ -6,6 +6,9 @@ import (
 	"testing"
 
 	"github.com/MakeNowJust/heredoc"
+	"github.com/garnet-org/pkg/models/category"
+	"github.com/garnet-org/pkg/models/severity"
+	"github.com/garnet-org/pkg/verdictcode"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,18 +23,60 @@ func TestVerdictValidation(t *testing.T) {
 	v.Message = "some message"
 	e = v.Validate()
 	if assert.Error(t, e) {
-		assert.True(t, strings.HasPrefix(e.Error(), "validation error:"))
+		assert.True(t, strings.HasPrefix(e.Error(), "validation errors:"))
 	}
 
 	v.Severity = "ciao"
 	e = v.Validate()
 	if assert.Error(t, e) {
-		assert.Equal(t, "validation error: the verdict severity must be low, medium, or high", e.Error())
+		assert.True(t, strings.HasPrefix(e.Error(), "validation errors:"))
 	}
 
-	v.Severity = VerdictSeverity(strings.ToUpper(string(High)))
+	v.Code = verdictcode.DDN01
+	v.Severity, _ = severity.New("HIGH")
 	e = v.Validate()
 	assert.Nil(t, e)
+}
+
+func TestVerdictMarshalOk(t *testing.T) {
+	v := Verdict{
+		Message: "@vue/devtools 6.5.0 1 B",
+		Metadata: map[string]interface{}{
+			NPMPackageNameMetadataKey:    "electron",
+			NPMPackageVersionMetadataKey: "21.4.2",
+			"commandline":                "sh -c node install.js",
+			"parent_name":                "node",
+			"executable_path":            "/bin/sh",
+			"server_ip":                  "",
+			"server_port":                float64(0),
+			"file_descriptor":            "",
+		},
+		Severity:   severity.Medium,
+		Categories: []category.Category{category.Network, category.Process},
+		Code:       verdictcode.FNI001,
+	}
+
+	want := heredoc.Doc(`{
+        "message": "@vue/devtools 6.5.0 1 B",
+        "severity": "medium",
+        "categories": ["network", "process"],
+        "metadata": {
+            "npm_package_name": "electron",
+            "npm_package_version": "21.4.2",
+            "commandline": "sh -c node install.js",
+            "parent_name": "node",
+            "executable_path": "/bin/sh",
+            "server_ip": "",
+            "server_port": 0,
+            "file_descriptor": ""
+        },
+		"code": "FNI001"
+    }`)
+
+	got, err := json.Marshal(v)
+	assert.Nil(t, err)
+
+	assert.JSONEq(t, want, string(got))
 }
 
 func TestVerdictUnmarshalOk(t *testing.T) {
@@ -47,11 +92,14 @@ func TestVerdictUnmarshalOk(t *testing.T) {
 			"server_port":                float64(0),
 			"file_descriptor":            "",
 		},
-		Severity: Medium,
+		Severity:   severity.Medium,
+		Categories: []category.Category{category.Network, category.Process},
+		Code:       verdictcode.FNI003,
 	}
 	input := heredoc.Doc(`{
         "message": "@vue/devtools 6.5.0 1 B",
         "severity": "medium",
+        "categories": ["NETWORK", "process"],
         "metadata": {
             "npm_package_name": "electron",
             "npm_package_version": "21.4.2",
@@ -61,7 +109,8 @@ func TestVerdictUnmarshalOk(t *testing.T) {
             "server_ip": "",
             "server_port": 0,
             "file_descriptor": ""
-        }
+        },
+		"code": "FNI003"
     }`)
 
 	var v Verdict
@@ -79,11 +128,11 @@ func TestVerdictUnmarshalErrorSeverity(t *testing.T) {
 	var v Verdict
 	err := json.Unmarshal([]byte(input), &v)
 	if assert.Error(t, err) {
-		assert.Equal(t, "validation error: the verdict severity must be low, medium, or high", err.Error())
+		assert.Equal(t, `the input "NONE" is not a severity`, err.Error())
 	}
 }
 
-func TestBufferInvalidVerdict(t *testing.T) {
+func TestBufferEmptyVerdicts(t *testing.T) {
 	data := Verdicts{
 		{},
 	}
@@ -107,15 +156,24 @@ func TestFromBuffer(t *testing.T) {
 				"server_port":                float64(0),
 				"file_descriptor":            "",
 			},
-			Severity: Medium,
+			Severity:   "MEDIUM", // I'm testing it also work with upper case severity
+			Categories: []category.Category{category.AdjacentNetwork, category.Cis},
+			Code:       verdictcode.FNI002,
 		},
 	}
 
+	want := data
+	want[0].Severity = severity.Medium
+
 	reader, err := data.Buffer()
+	if !assert.Nil(t, err) {
+		t.Fatalf("Buffer(): got error %q:", err)
+	}
 	assert.NotNil(t, reader)
-	assert.Nil(t, err)
 
 	got, err := FromBuffer(reader)
-	assert.Nil(t, err)
-	assert.Equal(t, data, got)
+	if !assert.Nil(t, err) {
+		t.Fatalf("FromBuferr(): got error %q:", err)
+	}
+	assert.Equal(t, want, got)
 }
