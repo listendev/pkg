@@ -15,6 +15,15 @@ const (
 	Hoarding  Framework = "hoarding"
 )
 
+type Collector string
+
+const (
+	NoCollector      Collector = "nop"
+	FalcoCollector   Collector = "falco"
+	DepsDevCollector Collector = "depsdev"
+	GPT4Collector    Collector = "gpt4"
+)
+
 type Ecosystem string
 
 const (
@@ -23,7 +32,7 @@ const (
 
 type TypeComponents struct {
 	Framework        Framework
-	Collector        string
+	Collector        Collector
 	CollectorActions []string
 	Ecosystem        Ecosystem
 	EcosystemActions []string
@@ -36,7 +45,7 @@ func (c TypeComponents) ResultFile() string {
 		return c.Parent.ResultFile()
 	}
 
-	filename := c.Collector
+	filename := string(c.Collector)
 
 	suffix := ""
 
@@ -78,7 +87,7 @@ func (c TypeComponents) HasFormat() bool {
 func (c TypeComponents) ToURN() *urn.URN {
 	u := &urn.URN{
 		ID: string(c.Framework),
-		SS: c.Collector,
+		SS: string(c.Collector),
 	}
 	if c.HasCollectorActions() {
 		for _, action := range c.CollectorActions {

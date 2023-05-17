@@ -45,9 +45,9 @@ func init() {
 //
 // Notice only the framework part is case-insensitive.
 var typeURNs = map[Type]string{
-	Nop:                   "urn:NOP:nop",
-	NPMInstallWhileFalco:  "urn:scheduler:falco!npm,install.json",
-	NPMDepsDev:            "urn:hoarding:depsdev!npm.json",
+	Nop:                  "urn:NOP:nop",
+	NPMInstallWhileFalco: "urn:scheduler:falco!npm,install.json",
+	NPMDepsDev:           "urn:hoarding:depsdev!npm.json",
 	// NPMGPT4InstallWhileFalco represents analysis requests to enrich the NPMInstallWhileFalco results
 	NPMGPT4InstallWhileFalco: "urn:scheduler:falco!npm,install.json+urn:hoarding:gpt4,context",
 	// NPMTestWhileFalco:     "urn:scheduler:falco!npm,test.json",
@@ -179,7 +179,7 @@ func componentsFromString(n *urn.URN) TypeComponents {
 
 	tc := TypeComponents{
 		Framework:        Framework(n.ID),
-		Collector:        collector,
+		Collector:        Collector(collector),
 		CollectorActions: cActions,
 		Ecosystem:        Ecosystem(ecosystem),
 		EcosystemActions: eActions,
