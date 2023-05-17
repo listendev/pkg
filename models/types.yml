@@ -41,9 +41,7 @@ components:
         - severity
         - metadata
         - categories
-        # - t
         - code
-        # - source
       properties:
         message:
           type: string
