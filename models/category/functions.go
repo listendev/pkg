@@ -3,6 +3,7 @@ package category
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/iancoleman/strcase"
 )
@@ -35,7 +36,7 @@ func FromUint64(input uint64) (Category, error) {
 
 func FromString(input string) (Category, error) {
 	for _, c := range all {
-		if c.String() == input || string(c.Case()) == input {
+		if c.String() == input || string(c.Case()) == input || strings.EqualFold(c.String(), input) {
 			return c, nil
 		}
 	}

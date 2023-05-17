@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -36,6 +37,10 @@ func TestFromString(t *testing.T) {
 		b, err := FromString(string(c.Case()))
 		assert.Nil(t, err)
 		assert.Equal(t, b, a)
+
+		upper, err := FromString(strings.ToUpper(c.String()))
+		assert.Nil(t, err)
+		assert.Equal(t, b, upper)
 	}
 }
 
