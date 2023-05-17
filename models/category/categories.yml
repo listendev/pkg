@@ -24,15 +24,19 @@ paths:
 components:
   schemas:
     Category:
-      type: string
-      enum:
-        - "filesystem"
-        - "process"
-        - "network"
-        - "users"
-        - "container"
-        - "cis"
-        - "cve"
-        - "adjacent network"
-        - "local"
-        - "physical"
+      type: integer
+      format: uint64
+      # Do not use 0
+      enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+      # Use camel case (with uppercase initial letter)
+      x-enumNames:
+        - "Filesystem"
+        - "Process"
+        - "Network"
+        - "Users"
+        - "Container"
+        - "CIS"
+        - "CVE"
+        - "AdjacentNetwork"
+        - "Local"
+        - "Physical"

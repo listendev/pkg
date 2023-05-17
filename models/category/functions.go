@@ -3,63 +3,44 @@ package category
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
+
+	"github.com/iancoleman/strcase"
 )
 
-func (c Category) String() string {
-	switch c {
-	case AdjacentNetwork:
-		fallthrough
-	case Cis:
-		fallthrough
-	case Container:
-		fallthrough
-	case Cve:
-		fallthrough
-	case Filesystem:
-		fallthrough
-	case Local:
-		fallthrough
-	case Network:
-		fallthrough
-	case Physical:
-		fallthrough
-	case Process:
-		fallthrough
-	case Users:
-		return string(c)
-	}
-
-	return "unknown"
+// all is the list of all the supported categories.
+//
+// Do not forget to add new ones here after generating them.
+var all = []Category{
+	AdjacentNetwork,
+	CIS,
+	CVE,
+	Container,
+	Filesystem,
+	Local,
+	Network,
+	Physical,
+	Process,
+	Users,
 }
 
-func New(input string) (Category, error) {
-	c := strings.ToLower(input)
-
-	switch c {
-	case AdjacentNetwork.String():
-		return AdjacentNetwork, nil
-	case Cis.String():
-		return Cis, nil
-	case Container.String():
-		return Container, nil
-	case Cve.String():
-		return Cve, nil
-	case Filesystem.String():
-		return Filesystem, nil
-	case Local.String():
-		return Local, nil
-	case Network.String():
-		return Network, nil
-	case Physical.String():
-		return Physical, nil
-	case Process.String():
-		return Process, nil
-	case Users.String():
-		return Users, nil
+func FromUint64(input uint64) (Category, error) {
+	for _, c := range all {
+		if uint64(c) == input {
+			return c, nil
+		}
 	}
 
-	return "unknown", fmt.Errorf("the input %q is not a category", input)
+	return 0, fmt.Errorf("couldn't find a category matching input (%d)", input)
+}
+
+func FromString(input string) (Category, error) {
+	for _, c := range all {
+		if c.String() == input || string(c.Case()) == input {
+			return c, nil
+		}
+	}
+
+	return 0, fmt.Errorf("couldn't find a category matching input %q", input)
 }
 
 func (c *Category) UnmarshalJSON(data []byte) error {
@@ -68,7 +49,7 @@ func (c *Category) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("couldn't unmarshal category data %q", string(data))
 	}
 
-	o, e := New(str)
+	o, e := FromString(str)
 	if e != nil {
 		return e
 	}
@@ -78,11 +59,27 @@ func (c *Category) UnmarshalJSON(data []byte) error {
 }
 
 func (c Category) MarshalJSON() ([]byte, error) {
-	str := c.String()
-	if _, err := New(str); err != nil {
-		return nil, err
-	}
-	lower := strings.ToLower(str)
+	s := c.Case()
 
-	return []byte(fmt.Sprintf("%q", lower)), nil
+	return json.Marshal(s)
 }
+
+func (c Category) Case() Case {
+	s := c.String()
+	delim := strcase.ToDelimited(s, ' ')
+
+	return Case(delim)
+}
+
+type Case string
+
+func (x Case) Original() string {
+	return strcase.ToCamel(string(x))
+}
+
+func init() {
+	strcase.ConfigureAcronym("cve", "CVE")
+	strcase.ConfigureAcronym("cis", "CIS")
+}
+
+//go:generate stringer -type=Category
