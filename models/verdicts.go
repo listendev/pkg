@@ -53,7 +53,7 @@ func (o *Verdict) UnmarshalJSON(data []byte) error {
 func (o *Verdict) MarshalJSON() ([]byte, error) {
 	err := o.Validate()
 	if err != nil {
-		return nil, fmt.Errorf("couldn't marshal because verdict is invalid")
+		return nil, err
 	}
 	type alias Verdict
 

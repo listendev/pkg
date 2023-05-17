@@ -1,8 +1,7 @@
 openapi: "3.0.3"
 info:
   version: 1.0.0
-  title: npm API
-  description: This API interfaces clients with our database of verdicts.
+  title: Verdict Model
   termsOfService: http://swagger.io/terms/
   contact:
     name: The Engineering Team
@@ -41,6 +40,10 @@ components:
         - message
         - severity
         - metadata
+        - categories
+        # - t
+        - code
+        # - source
       properties:
         message:
           type: string
@@ -48,19 +51,24 @@ components:
             validate: mandatory
             human: the verdict message
         severity:
-          type: string
-          enum:
-            - "low"
-            - "medium"
-            - "high"
-          x-oapi-codegen-extra-tags:
-            validate: mandatory,severity
-            human: the verdict severity
+          $ref: './severity/severities.yml#/components/schemas/Severity'
         metadata:
           type: object
+        categories:
+          type: array
+          items:
+            $ref: './category/categories.yml#/components/schemas/Category'
+        code:
+          x-go-type-import:
+            path: github.com/garnet-org/pkg/verdictcode
+          x-go-type: verdictcode.Code
+          x-oapi-codegen-extra-tags:
+            validate: mandatory,is_verdictcode
+            human: the code identifying the verdict type
       example:
         message: "npm install spawned a process"
         severity: "medium"
+        category: ["filesystem", "process"]
         metadata:
           commandline: "sh -c node-gyp-build"
           executable_path: "/bin/sh"
