@@ -9,8 +9,8 @@ func _() {
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
 	_ = x[AdjacentNetwork-8]
+	_ = x[Advisory-7]
 	_ = x[CIS-6]
-	_ = x[CVE-7]
 	_ = x[Container-5]
 	_ = x[Filesystem-1]
 	_ = x[Local-9]
@@ -20,9 +20,9 @@ func _() {
 	_ = x[Users-4]
 }
 
-const _Category_name = "FilesystemProcessNetworkUsersContainerCISCVEAdjacentNetworkLocalPhysical"
+const _Category_name = "FilesystemProcessNetworkUsersContainerCISAdvisoryAdjacentNetworkLocalPhysical"
 
-var _Category_index = [...]uint8{0, 10, 17, 24, 29, 38, 41, 44, 59, 64, 72}
+var _Category_index = [...]uint8{0, 10, 17, 24, 29, 38, 41, 49, 64, 69, 77}
 
 func (i Category) String() string {
 	i -= 1

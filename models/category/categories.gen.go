@@ -6,8 +6,8 @@ package category
 // Defines values for Category.
 const (
 	AdjacentNetwork Category = 8
+	Advisory        Category = 7
 	CIS             Category = 6
-	CVE             Category = 7
 	Container       Category = 5
 	Filesystem      Category = 1
 	Local           Category = 9

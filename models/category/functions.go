@@ -13,8 +13,8 @@ import (
 // Do not forget to add new ones here after generating them.
 var all = []Category{
 	AdjacentNetwork,
+	Advisory,
 	CIS,
-	CVE,
 	Container,
 	Filesystem,
 	Local,

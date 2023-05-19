@@ -36,7 +36,7 @@ components:
         - "Users"
         - "Container"
         - "CIS"
-        - "CVE"
+        - "Advisory"
         - "AdjacentNetwork"
         - "Local"
         - "Physical"
