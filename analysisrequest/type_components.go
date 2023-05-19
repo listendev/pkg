@@ -23,6 +23,8 @@ const (
 	DepsDevCollector   Collector = "depsdev"
 	GPT4Collector      Collector = "gpt4"
 	TyposquatCollector Collector = "typosquat"
+	MetadataCollector  Collector = "metadata"
+	SemgrepCollector   Collector = "semgrep"
 )
 
 type Ecosystem string

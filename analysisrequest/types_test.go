@@ -185,5 +185,5 @@ func TestTypes(t *testing.T) {
 func TestMaxType(t *testing.T) {
 	got := MaxType()
 
-	assert.Equal(t, NPMTyposquat, got)
+	assert.Equal(t, NPMSemgrepEvalBase64, got)
 }
