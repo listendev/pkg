@@ -12,7 +12,8 @@ func TestGetResultFilesByEcosystem(t *testing.T) {
 	wnt := map[Type]string{
 		NPMInstallWhileFalco: "falco[install].json",
 		// NPMTestWhileFalco:    "falco[test].json",
-		NPMDepsDev: "depsdev.json",
+		NPMDepsDev:   "depsdev.json",
+		NPMTyposquat: "typosquat.json",
 	}
 	got := GetResultFilesByEcosystem(NPMEcosystem)
 
@@ -27,7 +28,8 @@ func TestGetTypeFromResultFile(t *testing.T) {
 	wnt := map[string]Type{
 		"falco[install].json": NPMInstallWhileFalco,
 		// "falco[test].json":    NPMTestWhileFalco,
-		"depsdev.json": NPMDepsDev,
+		"depsdev.json":   NPMDepsDev,
+		"typosquat.json": NPMTyposquat,
 	}
 	for f, typ := range wnt {
 		got, err := GetTypeFromResultFile(NPMEcosystem, f)
