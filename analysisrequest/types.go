@@ -10,12 +10,16 @@ import (
 
 type Type int
 
+// Those are the constants representing the analysis request types.
+//
+// When adding a new one append it after the existing ones (before the _maxType constant).
 const (
 	Nop Type = iota + 1
 	NPMInstallWhileFalco
 	NPMDepsDev
 	NPMGPT4InstallWhileFalco
 	// NPMTestWhileFalco
+	NPMTyposquat
 
 	_maxType
 )
@@ -51,6 +55,7 @@ var typeURNs = map[Type]string{
 	// NPMGPT4InstallWhileFalco represents analysis requests to enrich the NPMInstallWhileFalco results
 	NPMGPT4InstallWhileFalco: "urn:scheduler:falco!npm,install.json+urn:hoarding:gpt4,context",
 	// NPMTestWhileFalco:     "urn:scheduler:falco!npm,test.json",
+	NPMTyposquat: "urn:hoarding:typosquat!npm.json",
 }
 
 // TODO: enforce enrichers (+urn:...) to do not specify ecosystem, ecosystem actions, and format
