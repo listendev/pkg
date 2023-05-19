@@ -35,6 +35,30 @@ func init() {
 	}
 }
 
+func createType(f Framework, c Collector, cActions []string, e Ecosystem, eActions []string, format string) string {
+	u := urn.URN{}
+	if len(f) == 0 || len(c) == 0 {
+		panic("Missing mandatory framework and collector names")
+	}
+	u.ID = string(f)
+	u.SS = string(c)
+	if len(cActions) > 0 {
+		u.SS += fmt.Sprintf(",%s", strings.Join(cActions, ","))
+	}
+	if len(e) > 0 {
+		u.SS += fmt.Sprintf("!%s", e)
+		if len(eActions) > 0 {
+			u.SS += fmt.Sprintf(",%s", strings.Join(eActions, ","))
+		}
+	}
+
+	if len(format) > 0 {
+		u.SS += fmt.Sprintf(".%s", format)
+	}
+
+	return u.String()
+}
+
 // typeURNs maps the enums to their string representations.
 //
 // We use strings that are URNs (see https://www.rfc-editor.org/rfc/rfc2141).
@@ -49,13 +73,13 @@ func init() {
 //
 // Notice only the framework part is case-insensitive.
 var typeURNs = map[Type]string{
-	Nop:                  "urn:NOP:nop",
-	NPMInstallWhileFalco: "urn:scheduler:falco!npm,install.json",
-	NPMDepsDev:           "urn:hoarding:depsdev!npm.json",
+	Nop:                  createType(None, NoCollector, nil, "", nil, ""),
+	NPMInstallWhileFalco: createType(Scheduler, FalcoCollector, nil, NPMEcosystem, []string{"install"}, "json"),
+	NPMDepsDev:           createType(Hoarding, DepsDevCollector, nil, NPMEcosystem, nil, "json"),
 	// NPMGPT4InstallWhileFalco represents analysis requests to enrich the NPMInstallWhileFalco results
 	NPMGPT4InstallWhileFalco: "urn:scheduler:falco!npm,install.json+urn:hoarding:gpt4,context",
 	// NPMTestWhileFalco:     "urn:scheduler:falco!npm,test.json",
-	NPMTyposquat: "urn:hoarding:typosquat!npm.json",
+	NPMTyposquat: createType(Hoarding, TyposquatCollector, nil, NPMEcosystem, nil, "json"),
 }
 
 // TODO: enforce enrichers (+urn:...) to do not specify ecosystem, ecosystem actions, and format

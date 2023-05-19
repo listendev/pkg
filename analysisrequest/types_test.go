@@ -84,7 +84,7 @@ func TestTypes(t *testing.T) {
 		{
 			input: Nop,
 			want: want{
-				urn:  "urn:NOP:nop",
+				urn:  "urn:nop:nop",
 				json: []byte(`"urn:nop:nop"`),
 				TypeComponents: TypeComponents{
 					Framework:        None,
@@ -133,6 +133,21 @@ func TestTypes(t *testing.T) {
 				TypeComponents: TypeComponents{
 					Framework:        Hoarding,
 					Collector:        DepsDevCollector,
+					CollectorActions: []string{},
+					Ecosystem:        NPMEcosystem,
+					EcosystemActions: []string{},
+					Format:           "json",
+				},
+			},
+		},
+		{
+			input: NPMTyposquat,
+			want: want{
+				urn:  "urn:hoarding:typosquat!npm.json",
+				json: []byte(`"urn:hoarding:typosquat!npm.json"`),
+				TypeComponents: TypeComponents{
+					Framework:        Hoarding,
+					Collector:        TyposquatCollector,
 					CollectorActions: []string{},
 					Ecosystem:        NPMEcosystem,
 					EcosystemActions: []string{},
