@@ -9,6 +9,7 @@ const (
 	Advisory        Category = 7
 	CIS             Category = 6
 	Container       Category = 5
+	Cybersquatting  Category = 11
 	Filesystem      Category = 1
 	Local           Category = 9
 	Network         Category = 3

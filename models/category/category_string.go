@@ -12,6 +12,7 @@ func _() {
 	_ = x[Advisory-7]
 	_ = x[CIS-6]
 	_ = x[Container-5]
+	_ = x[Cybersquatting-11]
 	_ = x[Filesystem-1]
 	_ = x[Local-9]
 	_ = x[Network-3]
@@ -20,9 +21,9 @@ func _() {
 	_ = x[Users-4]
 }
 
-const _Category_name = "FilesystemProcessNetworkUsersContainerCISAdvisoryAdjacentNetworkLocalPhysical"
+const _Category_name = "FilesystemProcessNetworkUsersContainerCISAdvisoryAdjacentNetworkLocalPhysicalCybersquatting"
 
-var _Category_index = [...]uint8{0, 10, 17, 24, 29, 38, 41, 49, 64, 69, 77}
+var _Category_index = [...]uint8{0, 10, 17, 24, 29, 38, 41, 49, 64, 69, 77, 91}
 
 func (i Category) String() string {
 	i -= 1
