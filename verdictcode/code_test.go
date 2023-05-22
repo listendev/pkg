@@ -22,6 +22,10 @@ func TestFromUint64(t *testing.T) {
 	ddn01, err := FromUint64(uint64(DDN01), false)
 	assert.Nil(t, err)
 	assert.Equal(t, DDN01, ddn01)
+
+	tsn01, err := FromUint64(uint64(TSN01), false)
+	assert.Nil(t, err)
+	assert.Equal(t, TSN01, tsn01)
 }
 
 func TestFromString(t *testing.T) {
@@ -36,6 +40,10 @@ func TestFromString(t *testing.T) {
 	ddn01, err := FromString("DDN01", false)
 	assert.Nil(t, err)
 	assert.Equal(t, DDN01, ddn01)
+
+	tsn01, err := FromString("TSN01", false)
+	assert.Nil(t, err)
+	assert.Equal(t, TSN01, tsn01)
 }
 
 func TestGetBy(t *testing.T) {

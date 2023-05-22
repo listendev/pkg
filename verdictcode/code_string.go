@@ -13,11 +13,13 @@ func _() {
 	_ = x[FNI002-2]
 	_ = x[FNI003-3]
 	_ = x[DDN01-1001]
+	_ = x[TSN01-1011]
 }
 
 const (
 	_Code_name_0 = "UNKFNI001FNI002FNI003"
 	_Code_name_1 = "DDN01"
+	_Code_name_2 = "TSN01"
 )
 
 var (
@@ -30,6 +32,8 @@ func (i Code) String() string {
 		return _Code_name_0[_Code_index_0[i]:_Code_index_0[i+1]]
 	case i == 1001:
 		return _Code_name_1
+	case i == 1011:
+		return _Code_name_2
 	default:
 		return "Code(" + strconv.FormatInt(int64(i), 10) + ")"
 	}

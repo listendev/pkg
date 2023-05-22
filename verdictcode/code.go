@@ -28,6 +28,8 @@ const (
 	// 999 IDs for FNI* codes
 
 	DDN01 Code = iota + 997 // 1001
+
+	TSN01 Code = iota + 1006 // 1011
 )
 
 // mapping maps the codes to the analysis request type that can generate them.
@@ -39,6 +41,9 @@ var mapping = map[analysisrequest.Type]map[Code]bool{
 	},
 	analysisrequest.NPMDepsDev: map[Code]bool{
 		DDN01: true,
+	},
+	analysisrequest.NPMTyposquat: map[Code]bool{
+		TSN01: true,
 	},
 }
 
