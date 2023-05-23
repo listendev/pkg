@@ -140,6 +140,39 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "valid full npm typosquat analysis request",
+			args: args{
+				body: []byte(`{"type": "urn:hoarding:typosquat!npm.json", "snowflake_id": "1652803364692340736", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "priority": 5, "force": true}`),
+			},
+			want: &NPM{
+				base: base{
+					RequestType: NPMTyposquat,
+					Snowflake:   "1652803364692340736",
+					Priority:    5,
+					Force:       true,
+				},
+				npmPackage: npmPackage{
+					Name:    "chalk",
+					Version: "5.1.2",
+					Shasum:  "d957f370038b75ac572471e83be4c5ca9f8e8c45",
+				},
+			},
+			wantPublishing: &amqp.Publishing{
+				ContentType: "application/json",
+				Priority:    5,
+				Body:        []byte(`{"type":"urn:hoarding:typosquat!npm.json","snowflake_id":"1652803364692340736","name":"chalk","version":"5.1.2","shasum":"d957f370038b75ac572471e83be4c5ca9f8e8c45","priority":5,"force":true}`),
+			},
+			wantS3Key: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/typosquat.json",
+			mockRegistryClient: func() *mockNpmregistryClient {
+				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
+				if err != nil {
+					t.Fatal(err)
+				}
+				return mockClient
+			}(),
+			wantErr: false,
+		},
+		{
 			name: "valid full npm falco install analysis request",
 			args: args{
 				body: []byte(`{"type": "urn:scheduler:falco!npm,install.json", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "priority": 5, "force": true}`),
