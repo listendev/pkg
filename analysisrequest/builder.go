@@ -110,6 +110,9 @@ func (b *builder) FromJSON(body []byte) (AnalysisRequest, error) {
 
 	// case NPMTestWhileFalco:
 		// fallthrough
+		
+	case NPMTyposquat:
+		fallthrough
 
 	case NPMInstallWhileFalco:
 		var arn NPM
