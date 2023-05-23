@@ -1,9 +1,9 @@
 package npm
 
 import (
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"path"
 	"testing"
 
@@ -39,7 +39,7 @@ func TestNPMRegistryClient_GetPackageVersion(t *testing.T) {
 			// Set up a mock HTTP server
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
-				plist, err := ioutil.ReadFile(path.Join("testdata/", tt.testFile))
+				plist, err := os.ReadFile(path.Join("testdata/", tt.testFile))
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -116,7 +116,7 @@ func TestNPMRegistryClient_GetPackageList(t *testing.T) {
 			// Set up a mock HTTP server
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
-				plist, err := ioutil.ReadFile(path.Join("testdata/", tt.testFile))
+				plist, err := os.ReadFile(path.Join("testdata/", tt.testFile))
 				if err != nil {
 					t.Fatal(err)
 				}
