@@ -108,11 +108,38 @@ func (b *builder) FromJSON(body []byte) (AnalysisRequest, error) {
 	case NPMDepsDev:
 		fallthrough
 
+	// TODO: uncomment when ready
 	// case NPMTestWhileFalco:
-		// fallthrough
-		
+	// 	fallthrough
+
 	case NPMTyposquat:
 		fallthrough
+
+	case NPMMetadataEmptyDescription:
+		fallthrough
+
+	// TODO: uncomment when ready
+	// case NPMMetadataMaintainersEmailCheck:
+	// 	fallthrough
+
+	case NPMMetadataZeroVersion:
+		fallthrough
+
+	// TODO: uncomment when ready
+	// case NPMSemgrepEnvExfiltration:
+	// 	fallthrough
+
+	// TODO: uncomment when ready
+	// case NPMSemgrepProcessExecution:
+	// 	fallthrough
+
+	// TODO: uncomment when ready
+	// case NPMSemgrepEvalBase64:
+	// 	fallthrough
+
+	// TODO: uncomment when ready
+	// case NPMSemgrepShadyLinks:
+	// 	fallthrough
 
 	case NPMInstallWhileFalco:
 		var arn NPM
