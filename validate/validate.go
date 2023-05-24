@@ -39,7 +39,7 @@ func init() {
 	Singleton.RegisterAlias("severity", "eq_ignore_case=low|eq_ignore_case=medium|eq_ignore_case=high")
 	Singleton.RegisterAlias("amqp", "startswith=amqp://|startswith=amqps://")
 	Singleton.RegisterAlias("store", "startswith=file:///|startswith=s3://")
-	Singleton.RegisterValidation("is_analysisrequest_type", func(fl validator.FieldLevel) bool {
+	if err := Singleton.RegisterValidation("is_analysisrequest_type", func(fl validator.FieldLevel) bool {
 		f := fl.Field()
 
 		if f.Kind() == reflect.String {
@@ -49,8 +49,10 @@ func init() {
 		}
 
 		panic(fmt.Sprintf("bad field type: %T", f.Interface()))
-	})
-	Singleton.RegisterValidation("is_verdictcode", func(fl validator.FieldLevel) bool {
+	}); err != nil {
+		panic(err)
+	}
+	if err := Singleton.RegisterValidation("is_verdictcode", func(fl validator.FieldLevel) bool {
 		f := fl.Field()
 
 		if f.Kind() == reflect.Uint64 {
@@ -60,7 +62,9 @@ func init() {
 		}
 
 		panic(fmt.Sprintf("bad field type: %T", f.Interface()))
-	})
+	}); err != nil {
+		panic(err)
+	}
 
 	eng := en.New()
 	Translator, _ = (ut.New(eng, eng)).GetTranslator("en")

@@ -72,7 +72,10 @@ type Verdicts []Verdict
 
 func FromBuffer(stream io.Reader) (Verdicts, error) {
 	b := new(bytes.Buffer)
-	b.ReadFrom(stream)
+	_, err := b.ReadFrom(stream)
+	if err != nil {
+		return nil, err
+	}
 
 	res := []Verdict{}
 	if err := json.Unmarshal(b.Bytes(), &res); err != nil {
