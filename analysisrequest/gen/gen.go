@@ -35,7 +35,7 @@ func New() analysisrequest.AnalysisRequest {
 	priority := uint8(0)
 	force := false
 
-	randomType := rand.Range(1, int(analysisrequest.MaxType()))
+	randomType := rand.Range(1, int(analysisrequest.LastType()))
 	switch analysisrequest.Type(randomType) {
 	case analysisrequest.Nop:
 		break
