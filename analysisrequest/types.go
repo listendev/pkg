@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/leodido/go-urn"
+	"golang.org/x/exp/maps"
 )
 
 type Type int
@@ -23,7 +24,8 @@ const (
 	NPMMetadataEmptyDescription
 	NPMMetadataZeroVersion
 	NPMMetadataMaintainersEmailCheck
-	NPMSemgrepEnvExfiltration
+
+	NPMSemgrepEnvExfiltration Type = iota + 10 // 18 // Do not forget to specify the type Type when using iota to reserve space for previous types
 	NPMSemgrepProcessExecution
 	NPMSemgrepShadyLinks
 	NPMSemgrepEvalBase64
@@ -31,13 +33,23 @@ const (
 	_maxType
 )
 
-func MaxType() Type {
+func LastType() Type {
 	return _maxType - 1
 }
 
 func init() {
-	numTypes := int(MaxType())
-	if len(typeURNs) != numTypes {
+	maxID := LastType()
+
+	typeIDs := maps.Keys(typeURNs)
+
+	var maxType Type
+	for _, t := range typeIDs {
+		if t > maxType {
+			maxType = t
+		}
+	}
+
+	if maxType != maxID {
 		panic("some type is missing its URN definition")
 	}
 }
