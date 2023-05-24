@@ -34,13 +34,13 @@ const (
 )
 
 type TypeComponents struct {
-	Framework        Framework
-	Collector        Collector
-	CollectorActions []string
-	Ecosystem        Ecosystem
-	EcosystemActions []string
-	Format           string
-	Parent           *TypeComponents
+	Framework       Framework
+	Collector       Collector
+	CollectorAction string
+	Ecosystem       Ecosystem
+	EcosystemAction string
+	Format          string
+	Parent          *TypeComponents
 }
 
 func (c TypeComponents) ResultFile() string {
@@ -52,14 +52,12 @@ func (c TypeComponents) ResultFile() string {
 
 	suffix := ""
 
-	colActionsSuffix := strings.Join(c.CollectorActions, ",")
-	if len(colActionsSuffix) > 0 {
-		suffix += fmt.Sprintf("(%s)", colActionsSuffix)
+	if len(c.CollectorAction) > 0 {
+		suffix += fmt.Sprintf("(%s)", c.CollectorAction)
 	}
 
-	ecoActionsSuffix := strings.Join(c.EcosystemActions, ",")
-	if len(ecoActionsSuffix) > 0 {
-		suffix += fmt.Sprintf("[%s]", ecoActionsSuffix)
+	if len(c.EcosystemAction) > 0 {
+		suffix += fmt.Sprintf("[%s]", c.EcosystemAction)
 	}
 
 	if c.Format != "" {
@@ -76,11 +74,11 @@ func (c TypeComponents) HasEcosystem() bool {
 }
 
 func (c TypeComponents) HasEcosystemActions() bool {
-	return len(c.EcosystemActions) > 0
+	return len(c.EcosystemAction) > 0
 }
 
 func (c TypeComponents) HasCollectorActions() bool {
-	return len(c.CollectorActions) > 0
+	return len(c.CollectorAction) > 0
 }
 
 func (c TypeComponents) HasFormat() bool {
@@ -93,18 +91,14 @@ func (c TypeComponents) ToURN() *urn.URN {
 		SS: string(c.Collector),
 	}
 	if c.HasCollectorActions() {
-		for _, action := range c.CollectorActions {
-			u.SS += "," + action
-		}
+		u.SS += "," + c.CollectorAction
 	}
 	if c.Parent == nil {
 		if c.HasEcosystem() {
 			u.SS += "!" + string(c.Ecosystem)
 		}
 		if c.HasEcosystemActions() {
-			for _, action := range c.EcosystemActions {
-				u.SS += "," + action
-			}
+			u.SS += "," + c.EcosystemAction
 		}
 		if c.HasFormat() {
 			u.SS += "." + c.Format

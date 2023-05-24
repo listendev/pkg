@@ -176,12 +176,12 @@ func (t Type) Components() TypeComponents {
 	c := componentsFromString(n)
 
 	ret := TypeComponents{
-		Framework:        c.Framework,
-		Collector:        c.Collector,
-		CollectorActions: c.CollectorActions,
-		Ecosystem:        c.Ecosystem,
-		EcosystemActions: c.EcosystemActions,
-		Format:           c.Format,
+		Framework:       c.Framework,
+		Collector:       c.Collector,
+		CollectorAction: c.CollectorAction,
+		Ecosystem:       c.Ecosystem,
+		EcosystemAction: c.EcosystemAction,
+		Format:          c.Format,
 	}
 	if enrich {
 		ret.Parent = &c
@@ -196,7 +196,7 @@ func (t Type) Components() TypeComponents {
 	}
 	if cc.Collector != "" && cc.Collector != c.Collector {
 		ret.Collector = cc.Collector
-		ret.CollectorActions = cc.CollectorActions
+		ret.CollectorAction = cc.CollectorAction
 	}
 	if cc.Format != "" && cc.Format != c.Format {
 		ret.Format = cc.Format
@@ -219,31 +219,31 @@ func componentsFromString(n *urn.URN) TypeComponents {
 	// <collector[,<action>{0,}]>
 	remainings := strings.Split(firstSplit[0], "!")
 	collector := remainings[0]
-	cActions := []string{}
+	cAction := ""
 	firstRemainingsActions := strings.Split(remainings[0], ",")
 	if len(firstRemainingsActions) > 1 {
 		collector = firstRemainingsActions[0]
-		cActions = firstRemainingsActions[1:]
+		cAction = firstRemainingsActions[1]
 	}
 
 	// <ecosystem>[,<action>]{0,}
 	ecosystem := ""
-	eActions := []string{}
+	eAction := ""
 	if len(remainings) > 1 {
 		rest := strings.Split(remainings[1], ",")
 		ecosystem = rest[0]
 		if len(rest) > 1 {
-			eActions = rest[1:]
+			eAction = rest[1]
 		}
 	}
 
 	tc := TypeComponents{
-		Framework:        Framework(n.ID),
-		Collector:        Collector(collector),
-		CollectorActions: cActions,
-		Ecosystem:        Ecosystem(ecosystem),
-		EcosystemActions: eActions,
-		Format:           format,
+		Framework:       Framework(n.ID),
+		Collector:       Collector(collector),
+		CollectorAction: cAction,
+		Ecosystem:       Ecosystem(ecosystem),
+		EcosystemAction: eAction,
+		Format:          format,
 	}
 
 	return tc
