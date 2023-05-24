@@ -40,7 +40,7 @@ func LastType() Type {
 func init() {
 	maxID := LastType()
 
-	typeIDs := maps.Keys(typeURNs)
+	typeIDs := Types()
 
 	var maxType Type
 	for _, t := range typeIDs {
@@ -106,6 +106,10 @@ var typeURNs = map[Type]string{
 	NPMSemgrepProcessExecution:       createType(Hoarding, SemgrepCollector, "process_exec", NPMEcosystem, "", "json"),
 	NPMSemgrepShadyLinks:             createType(Hoarding, SemgrepCollector, "shady_links", NPMEcosystem, "", "json"),
 	NPMSemgrepEvalBase64:             createType(Hoarding, SemgrepCollector, "base64_eval", NPMEcosystem, "", "json"),
+}
+
+func Types() []Type {
+	return maps.Keys(typeURNs)
 }
 
 // TODO: enforce types to have max 1 collector action and max 1 ecosystem action
