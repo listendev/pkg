@@ -57,7 +57,6 @@ func TestTypes(t *testing.T) {
 	}
 
 	cases := []testCase{
-		// TODO:
 		{
 			input: NPMGPT4InstallWhileFalco,
 			want: want{
@@ -155,6 +154,111 @@ func TestTypes(t *testing.T) {
 				},
 			},
 		},
+		{
+			input: NPMMetadataEmptyDescription,
+			want: want{
+				urn:  "urn:hoarding:metadata,empty_descr!npm.json",
+				json: []byte(`"urn:hoarding:metadata,empty_descr!npm.json"`),
+				TypeComponents: TypeComponents{
+					Framework:        Hoarding,
+					Collector:        MetadataCollector,
+					CollectorActions: []string{"empty_descr"},
+					Ecosystem:        NPMEcosystem,
+					EcosystemActions: []string{},
+					Format:           "json",
+				},
+			},
+		},
+		{
+			input: NPMMetadataMaintainersEmailCheck,
+			want: want{
+				urn:  "urn:hoarding:metadata,email_check!npm.json",
+				json: []byte(`"urn:hoarding:metadata,email_check!npm.json"`),
+				TypeComponents: TypeComponents{
+					Framework:        Hoarding,
+					Collector:        MetadataCollector,
+					CollectorActions: []string{"email_check"},
+					Ecosystem:        NPMEcosystem,
+					EcosystemActions: []string{},
+					Format:           "json",
+				},
+			},
+		},
+		{
+			input: NPMMetadataZeroVersion,
+			want: want{
+				urn:  "urn:hoarding:metadata,zero_version!npm.json",
+				json: []byte(`"urn:hoarding:metadata,zero_version!npm.json"`),
+				TypeComponents: TypeComponents{
+					Framework:        Hoarding,
+					Collector:        MetadataCollector,
+					CollectorActions: []string{"zero_version"},
+					Ecosystem:        NPMEcosystem,
+					EcosystemActions: []string{},
+					Format:           "json",
+				},
+			},
+		},
+		{
+			input: NPMSemgrepEnvExfiltration,
+			want: want{
+				urn:  "urn:hoarding:semgrep,exfiltrate_env!npm.json",
+				json: []byte(`"urn:hoarding:semgrep,exfiltrate_env!npm.json"`),
+				TypeComponents: TypeComponents{
+					Framework:        Hoarding,
+					Collector:        SemgrepCollector,
+					CollectorActions: []string{"exfiltrate_env"},
+					Ecosystem:        NPMEcosystem,
+					EcosystemActions: []string{},
+					Format:           "json",
+				},
+			},
+		},
+		{
+			input: NPMSemgrepProcessExecution,
+			want: want{
+				urn:  "urn:hoarding:semgrep,process_exec!npm.json",
+				json: []byte(`"urn:hoarding:semgrep,process_exec!npm.json"`),
+				TypeComponents: TypeComponents{
+					Framework:        Hoarding,
+					Collector:        SemgrepCollector,
+					CollectorActions: []string{"process_exec"},
+					Ecosystem:        NPMEcosystem,
+					EcosystemActions: []string{},
+					Format:           "json",
+				},
+			},
+		},
+		{
+			input: NPMSemgrepEvalBase64,
+			want: want{
+				urn:  "urn:hoarding:semgrep,base64_eval!npm.json",
+				json: []byte(`"urn:hoarding:semgrep,base64_eval!npm.json"`),
+				TypeComponents: TypeComponents{
+					Framework:        Hoarding,
+					Collector:        SemgrepCollector,
+					CollectorActions: []string{"base64_eval"},
+					Ecosystem:        NPMEcosystem,
+					EcosystemActions: []string{},
+					Format:           "json",
+				},
+			},
+		},
+		{
+			input: NPMSemgrepShadyLinks,
+			want: want{
+				urn:  "urn:hoarding:semgrep,shady_links!npm.json",
+				json: []byte(`"urn:hoarding:semgrep,shady_links!npm.json"`),
+				TypeComponents: TypeComponents{
+					Framework:        Hoarding,
+					Collector:        SemgrepCollector,
+					CollectorActions: []string{"shady_links"},
+					Ecosystem:        NPMEcosystem,
+					EcosystemActions: []string{},
+					Format:           "json",
+				},
+			},
+		},
 	}
 
 	for _, tc := range cases {
@@ -182,8 +286,8 @@ func TestTypes(t *testing.T) {
 	}
 }
 
-func TestMaxType(t *testing.T) {
-	got := MaxType()
+func TestLastType(t *testing.T) {
+	got := LastType()
 
 	assert.Equal(t, NPMSemgrepEvalBase64, got)
 }
