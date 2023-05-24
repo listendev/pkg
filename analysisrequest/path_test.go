@@ -12,8 +12,15 @@ func TestGetResultFilesByEcosystem(t *testing.T) {
 	wnt := map[Type]string{
 		NPMInstallWhileFalco: "falco[install].json",
 		// NPMTestWhileFalco:    "falco[test].json",
-		NPMDepsDev:   "depsdev.json",
-		NPMTyposquat: "typosquat.json",
+		NPMDepsDev:                       "depsdev.json",
+		NPMTyposquat:                     "typosquat.json",
+		NPMMetadataEmptyDescription:      "metadata(empty_descr).json",
+		NPMMetadataZeroVersion:           "metadata(zero_version).json",
+		NPMMetadataMaintainersEmailCheck: "metadata(email_check).json",
+		NPMSemgrepEnvExfiltration:        "semgrep(exfiltrate_env).json",
+		NPMSemgrepEvalBase64:             "semgrep(base64_eval).json",
+		NPMSemgrepProcessExecution:       "semgrep(process_exec).json",
+		NPMSemgrepShadyLinks:             "semgrep(shady_links).json",
 	}
 	got := GetResultFilesByEcosystem(NPMEcosystem)
 
@@ -28,8 +35,15 @@ func TestGetTypeFromResultFile(t *testing.T) {
 	wnt := map[string]Type{
 		"falco[install].json": NPMInstallWhileFalco,
 		// "falco[test].json":    NPMTestWhileFalco,
-		"depsdev.json":   NPMDepsDev,
-		"typosquat.json": NPMTyposquat,
+		"depsdev.json":                 NPMDepsDev,
+		"typosquat.json":               NPMTyposquat,
+		"metadata(empty_descr).json":   NPMMetadataEmptyDescription,
+		"metadata(zero_version).json":  NPMMetadataZeroVersion,
+		"metadata(email_check).json":   NPMMetadataMaintainersEmailCheck,
+		"semgrep(exfiltrate_env).json": NPMSemgrepEnvExfiltration,
+		"semgrep(shady_links).json":    NPMSemgrepShadyLinks,
+		"semgrep(process_exec).json":   NPMSemgrepProcessExecution,
+		"semgrep(base64_eval).json":    NPMSemgrepEvalBase64,
 	}
 	for f, typ := range wnt {
 		got, err := GetTypeFromResultFile(NPMEcosystem, f)
