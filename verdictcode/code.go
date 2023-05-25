@@ -30,6 +30,10 @@ const (
 	DDN01 Code = iota + 997 // 1001
 
 	TSN01 Code = iota + 1006 // 1011
+
+	MDN01 Code = iota + 1015 // 1021 // Empty description
+	MDN02                    // 1022 // Zero version
+	MDN03                    // 1023 // Maintainers email
 )
 
 // mapping maps the codes to the analysis request type that can generate them.
@@ -44,6 +48,11 @@ var mapping = map[analysisrequest.Type]map[Code]bool{
 	},
 	analysisrequest.NPMTyposquat: map[Code]bool{
 		TSN01: true,
+	},
+	analysisrequest.NPMMetadataEmptyDescription: map[Code]bool{
+		MDN01: true,
+		MDN02: true,
+		MDN03: true,
 	},
 }
 
