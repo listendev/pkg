@@ -11,17 +11,19 @@ import (
 // all is the list of all the supported categories.
 //
 // Do not forget to add new ones here after generating them.
-var all = []Category{
-	AdjacentNetwork,
-	Advisory,
-	CIS,
-	Container,
-	Filesystem,
-	Local,
-	Network,
-	Physical,
-	Process,
-	Users,
+var all = []Category{}
+
+func init() {
+	for i, _ := range _Category_index {
+		if i == len(_Category_index)-1 {
+			break
+		}
+		all = append(all, Category(i+1))
+	}
+}
+
+func Categories() []Category {
+	return all
 }
 
 func FromUint64(input uint64) (Category, error) {
