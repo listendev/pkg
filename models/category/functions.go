@@ -9,12 +9,10 @@ import (
 )
 
 // all is the list of all the supported categories.
-//
-// Do not forget to add new ones here after generating them.
 var all = []Category{}
 
 func init() {
-	for i, _ := range _Category_index {
+	for i := range _Category_index {
 		if i == len(_Category_index)-1 {
 			break
 		}
