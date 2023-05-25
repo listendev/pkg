@@ -17,18 +17,19 @@ func _() {
 	_ = x[MDN01-1021]
 	_ = x[MDN02-1022]
 	_ = x[MDN03-1023]
+	_ = x[MDN04-1024]
 }
 
 const (
 	_Code_name_0 = "UNKFNI001FNI002FNI003"
 	_Code_name_1 = "DDN01"
 	_Code_name_2 = "TSN01"
-	_Code_name_3 = "MDN01MDN02MDN03"
+	_Code_name_3 = "MDN01MDN02MDN03MDN04"
 )
 
 var (
 	_Code_index_0 = [...]uint8{0, 3, 9, 15, 21}
-	_Code_index_3 = [...]uint8{0, 5, 10, 15}
+	_Code_index_3 = [...]uint8{0, 5, 10, 15, 20}
 )
 
 func (i Code) String() string {
@@ -39,7 +40,7 @@ func (i Code) String() string {
 		return _Code_name_1
 	case i == 1011:
 		return _Code_name_2
-	case 1021 <= i && i <= 1023:
+	case 1021 <= i && i <= 1024:
 		i -= 1021
 		return _Code_name_3[_Code_index_3[i]:_Code_index_3[i+1]]
 	default:
