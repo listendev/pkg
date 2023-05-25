@@ -22,7 +22,7 @@ const (
 	// NPMTestWhileFalco
 	NPMTyposquat
 	NPMMetadataEmptyDescription
-	NPMMetadataZeroVersion
+	NPMMetadataVersion
 	NPMMetadataMaintainersEmailCheck
 
 	NPMSemgrepEnvExfiltration Type = iota + 10 // 18 // Do not forget to specify the type Type when using iota to reserve space for previous types
@@ -100,7 +100,7 @@ var typeURNs = map[Type]string{
 	// NPMTestWhileFalco:     "urn:scheduler:falco!npm,test.json",
 	NPMTyposquat:                     createType(Hoarding, TyposquatCollector, "", NPMEcosystem, "", "json"),
 	NPMMetadataEmptyDescription:      createType(Hoarding, MetadataCollector, "empty_descr", NPMEcosystem, "", "json"),
-	NPMMetadataZeroVersion:           createType(Hoarding, MetadataCollector, "zero_version", NPMEcosystem, "", "json"),
+	NPMMetadataVersion:               createType(Hoarding, MetadataCollector, "version", NPMEcosystem, "", "json"),
 	NPMMetadataMaintainersEmailCheck: createType(Hoarding, MetadataCollector, "email_check", NPMEcosystem, "", "json"),
 	NPMSemgrepEnvExfiltration:        createType(Hoarding, SemgrepCollector, "exfiltrate_env", NPMEcosystem, "", "json"),
 	NPMSemgrepProcessExecution:       createType(Hoarding, SemgrepCollector, "process_exec", NPMEcosystem, "", "json"),

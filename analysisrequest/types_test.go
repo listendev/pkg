@@ -185,14 +185,14 @@ func TestTypes(t *testing.T) {
 			},
 		},
 		{
-			input: NPMMetadataZeroVersion,
+			input: NPMMetadataVersion,
 			want: want{
-				urn:  "urn:hoarding:metadata,zero_version!npm.json",
-				json: []byte(`"urn:hoarding:metadata,zero_version!npm.json"`),
+				urn:  "urn:hoarding:metadata,version!npm.json",
+				json: []byte(`"urn:hoarding:metadata,version!npm.json"`),
 				TypeComponents: TypeComponents{
 					Framework:       Hoarding,
 					Collector:       MetadataCollector,
-					CollectorAction: "zero_version",
+					CollectorAction: "version",
 					Ecosystem:       NPMEcosystem,
 					EcosystemAction: "",
 					Format:          "json",

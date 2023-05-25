@@ -122,7 +122,7 @@ func (b *builder) FromJSON(body []byte) (AnalysisRequest, error) {
 	// case NPMMetadataMaintainersEmailCheck:
 	// 	fallthrough
 
-	case NPMMetadataZeroVersion:
+	case NPMMetadataVersion:
 		fallthrough
 
 	// TODO: uncomment when ready
