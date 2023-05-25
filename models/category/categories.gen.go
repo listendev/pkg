@@ -12,6 +12,7 @@ const (
 	Cybersquatting  Category = 11
 	Filesystem      Category = 1
 	Local           Category = 9
+	Metadata        Category = 12
 	Network         Category = 3
 	Physical        Category = 10
 	Process         Category = 2
