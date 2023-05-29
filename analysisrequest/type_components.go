@@ -18,13 +18,13 @@ const (
 type Collector string
 
 const (
-	NoCollector        Collector = "nop"
-	FalcoCollector     Collector = "falco"
-	DepsDevCollector   Collector = "depsdev"
-	GPT4Collector      Collector = "gpt4"
-	TyposquatCollector Collector = "typosquat"
-	MetadataCollector  Collector = "metadata"
-	SemgrepCollector   Collector = "semgrep"
+	NoCollector             Collector = "nop"
+	FalcoCollector          Collector = "falco"
+	DepsDevCollector        Collector = "depsdev"
+	GPT4Collector           Collector = "gpt4"
+	TyposquatCollector      Collector = "typosquat"
+	MetadataCollector       Collector = "metadata"
+	StaticAnalysisCollector Collector = "static"
 )
 
 type Ecosystem string

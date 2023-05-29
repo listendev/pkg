@@ -12,15 +12,16 @@ func TestGetResultFilesByEcosystem(t *testing.T) {
 	wnt := map[Type]string{
 		NPMInstallWhileFalco: "falco[install].json",
 		// NPMTestWhileFalco:    "falco[test].json",
-		NPMDepsDev:                       "depsdev.json",
-		NPMTyposquat:                     "typosquat.json",
-		NPMMetadataEmptyDescription:      "metadata(empty_descr).json",
-		NPMMetadataVersion:               "metadata(version).json",
-		NPMMetadataMaintainersEmailCheck: "metadata(email_check).json",
-		NPMSemgrepEnvExfiltration:        "semgrep(exfiltrate_env).json",
-		NPMSemgrepEvalBase64:             "semgrep(base64_eval).json",
-		NPMSemgrepProcessExecution:       "semgrep(process_exec).json",
-		NPMSemgrepShadyLinks:             "semgrep(shady_links).json",
+		NPMDepsDev:                        "depsdev.json",
+		NPMTyposquat:                      "typosquat.json",
+		NPMMetadataEmptyDescription:       "metadata(empty_descr).json",
+		NPMMetadataVersion:                "metadata(version).json",
+		NPMMetadataMaintainersEmailCheck:  "metadata(email_check).json",
+		NPMStaticAnalysisEnvExfiltration:  "static(exfiltrate_env).json",
+		NPMStaticAnalysisEvalBase64:       "static(base64_eval).json",
+		NPMStaticAnalysisProcessExecution: "static(process_exec).json",
+		NPMStaticAnalysisShadyLinks:       "static(shady_links).json",
+		NPMStaticAnalysisInstallScript:    "static(install_script).json",
 	}
 	got := GetResultFilesByEcosystem(NPMEcosystem)
 
@@ -35,15 +36,16 @@ func TestGetTypeFromResultFile(t *testing.T) {
 	wnt := map[string]Type{
 		"falco[install].json": NPMInstallWhileFalco,
 		// "falco[test].json":    NPMTestWhileFalco,
-		"depsdev.json":                 NPMDepsDev,
-		"typosquat.json":               NPMTyposquat,
-		"metadata(empty_descr).json":   NPMMetadataEmptyDescription,
-		"metadata(version).json":       NPMMetadataVersion,
-		"metadata(email_check).json":   NPMMetadataMaintainersEmailCheck,
-		"semgrep(exfiltrate_env).json": NPMSemgrepEnvExfiltration,
-		"semgrep(shady_links).json":    NPMSemgrepShadyLinks,
-		"semgrep(process_exec).json":   NPMSemgrepProcessExecution,
-		"semgrep(base64_eval).json":    NPMSemgrepEvalBase64,
+		"depsdev.json":                NPMDepsDev,
+		"typosquat.json":              NPMTyposquat,
+		"metadata(empty_descr).json":  NPMMetadataEmptyDescription,
+		"metadata(version).json":      NPMMetadataVersion,
+		"metadata(email_check).json":  NPMMetadataMaintainersEmailCheck,
+		"static(exfiltrate_env).json": NPMStaticAnalysisEnvExfiltration,
+		"static(shady_links).json":    NPMStaticAnalysisShadyLinks,
+		"static(process_exec).json":   NPMStaticAnalysisProcessExecution,
+		"static(base64_eval).json":    NPMStaticAnalysisEvalBase64,
+		"static(install_script).json": NPMStaticAnalysisInstallScript,
 	}
 	for f, typ := range wnt {
 		got, err := GetTypeFromResultFile(NPMEcosystem, f)

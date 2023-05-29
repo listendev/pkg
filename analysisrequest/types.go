@@ -25,10 +25,11 @@ const (
 	NPMMetadataVersion
 	NPMMetadataMaintainersEmailCheck
 
-	NPMSemgrepEnvExfiltration Type = iota + 10 // 18 // Do not forget to specify the type Type when using iota to reserve space for previous types
-	NPMSemgrepProcessExecution
-	NPMSemgrepShadyLinks
-	NPMSemgrepEvalBase64
+	NPMStaticAnalysisEnvExfiltration Type = iota + 10 // 18 // Do not forget to specify the type Type when using iota to reserve space for previous types
+	NPMStaticAnalysisProcessExecution
+	NPMStaticAnalysisShadyLinks
+	NPMStaticAnalysisEvalBase64
+	NPMStaticAnalysisInstallScript
 
 	_maxType
 )
@@ -98,14 +99,15 @@ var typeURNs = map[Type]string{
 	// NPMGPT4InstallWhileFalco represents analysis requests to enrich the NPMInstallWhileFalco results
 	NPMGPT4InstallWhileFalco: "urn:scheduler:falco!npm,install.json+urn:hoarding:gpt4,context",
 	// NPMTestWhileFalco:     "urn:scheduler:falco!npm,test.json",
-	NPMTyposquat:                     createType(Hoarding, TyposquatCollector, "", NPMEcosystem, "", "json"),
-	NPMMetadataEmptyDescription:      createType(Hoarding, MetadataCollector, "empty_descr", NPMEcosystem, "", "json"),
-	NPMMetadataVersion:               createType(Hoarding, MetadataCollector, "version", NPMEcosystem, "", "json"),
-	NPMMetadataMaintainersEmailCheck: createType(Hoarding, MetadataCollector, "email_check", NPMEcosystem, "", "json"),
-	NPMSemgrepEnvExfiltration:        createType(Hoarding, SemgrepCollector, "exfiltrate_env", NPMEcosystem, "", "json"),
-	NPMSemgrepProcessExecution:       createType(Hoarding, SemgrepCollector, "process_exec", NPMEcosystem, "", "json"),
-	NPMSemgrepShadyLinks:             createType(Hoarding, SemgrepCollector, "shady_links", NPMEcosystem, "", "json"),
-	NPMSemgrepEvalBase64:             createType(Hoarding, SemgrepCollector, "base64_eval", NPMEcosystem, "", "json"),
+	NPMTyposquat:                      createType(Hoarding, TyposquatCollector, "", NPMEcosystem, "", "json"),
+	NPMMetadataEmptyDescription:       createType(Hoarding, MetadataCollector, "empty_descr", NPMEcosystem, "", "json"),
+	NPMMetadataVersion:                createType(Hoarding, MetadataCollector, "version", NPMEcosystem, "", "json"),
+	NPMMetadataMaintainersEmailCheck:  createType(Hoarding, MetadataCollector, "email_check", NPMEcosystem, "", "json"),
+	NPMStaticAnalysisEnvExfiltration:  createType(Hoarding, StaticAnalysisCollector, "exfiltrate_env", NPMEcosystem, "", "json"),
+	NPMStaticAnalysisProcessExecution: createType(Hoarding, StaticAnalysisCollector, "process_exec", NPMEcosystem, "", "json"),
+	NPMStaticAnalysisShadyLinks:       createType(Hoarding, StaticAnalysisCollector, "shady_links", NPMEcosystem, "", "json"),
+	NPMStaticAnalysisEvalBase64:       createType(Hoarding, StaticAnalysisCollector, "base64_eval", NPMEcosystem, "", "json"),
+	NPMStaticAnalysisInstallScript:    createType(Hoarding, StaticAnalysisCollector, "install_script", NPMEcosystem, "", "json"),
 }
 
 func Types() []Type {

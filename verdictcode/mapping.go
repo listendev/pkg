@@ -27,4 +27,19 @@ var mapping = map[analysisrequest.Type]map[Code]bool{
 	analysisrequest.NPMMetadataMaintainersEmailCheck: map[Code]bool{
 		MDN04: true,
 	},
+	analysisrequest.NPMStaticAnalysisEnvExfiltration: map[Code]bool{
+		STN001: true,
+	},
+	analysisrequest.NPMStaticAnalysisProcessExecution: map[Code]bool{
+		STN002: true,
+	},
+	analysisrequest.NPMStaticAnalysisShadyLinks: map[Code]bool{
+		STN003: true,
+	},
+	analysisrequest.NPMStaticAnalysisEvalBase64: map[Code]bool{
+		STN004: true,
+	},
+	analysisrequest.NPMStaticAnalysisInstallScript: map[Code]bool{
+		STN005: true,
+	},
 }

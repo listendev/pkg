@@ -49,6 +49,11 @@ components:
         - 1022
         - 1023
         - 1024
+        - 1101
+        - 1102
+        - 1103
+        - 1104
+        - 1105
       x-enumNames:
         - "UNK"
         - "FNI001"
@@ -60,4 +65,9 @@ components:
         - "MDN02" # Zero version
         - "MDN03" # Prerelease version
         - "MDN04" # Maintainers email
+        - "STN001" # Javascript env exfiltration
+        - "STN002" # Javascript child process exec
+        - "STN003" # Shady links
+        - "STN004" # Javascript eval base64
+        - "STN005" # install script in package.json
 

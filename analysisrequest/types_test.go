@@ -200,13 +200,13 @@ func TestTypes(t *testing.T) {
 			},
 		},
 		{
-			input: NPMSemgrepEnvExfiltration,
+			input: NPMStaticAnalysisEnvExfiltration,
 			want: want{
-				urn:  "urn:hoarding:semgrep,exfiltrate_env!npm.json",
-				json: []byte(`"urn:hoarding:semgrep,exfiltrate_env!npm.json"`),
+				urn:  "urn:hoarding:static,exfiltrate_env!npm.json",
+				json: []byte(`"urn:hoarding:static,exfiltrate_env!npm.json"`),
 				TypeComponents: TypeComponents{
 					Framework:       Hoarding,
-					Collector:       SemgrepCollector,
+					Collector:       StaticAnalysisCollector,
 					CollectorAction: "exfiltrate_env",
 					Ecosystem:       NPMEcosystem,
 					EcosystemAction: "",
@@ -215,13 +215,13 @@ func TestTypes(t *testing.T) {
 			},
 		},
 		{
-			input: NPMSemgrepProcessExecution,
+			input: NPMStaticAnalysisProcessExecution,
 			want: want{
-				urn:  "urn:hoarding:semgrep,process_exec!npm.json",
-				json: []byte(`"urn:hoarding:semgrep,process_exec!npm.json"`),
+				urn:  "urn:hoarding:static,process_exec!npm.json",
+				json: []byte(`"urn:hoarding:static,process_exec!npm.json"`),
 				TypeComponents: TypeComponents{
 					Framework:       Hoarding,
-					Collector:       SemgrepCollector,
+					Collector:       StaticAnalysisCollector,
 					CollectorAction: "process_exec",
 					Ecosystem:       NPMEcosystem,
 					EcosystemAction: "",
@@ -230,13 +230,13 @@ func TestTypes(t *testing.T) {
 			},
 		},
 		{
-			input: NPMSemgrepEvalBase64,
+			input: NPMStaticAnalysisEvalBase64,
 			want: want{
-				urn:  "urn:hoarding:semgrep,base64_eval!npm.json",
-				json: []byte(`"urn:hoarding:semgrep,base64_eval!npm.json"`),
+				urn:  "urn:hoarding:static,base64_eval!npm.json",
+				json: []byte(`"urn:hoarding:static,base64_eval!npm.json"`),
 				TypeComponents: TypeComponents{
 					Framework:       Hoarding,
-					Collector:       SemgrepCollector,
+					Collector:       StaticAnalysisCollector,
 					CollectorAction: "base64_eval",
 					Ecosystem:       NPMEcosystem,
 					EcosystemAction: "",
@@ -245,14 +245,29 @@ func TestTypes(t *testing.T) {
 			},
 		},
 		{
-			input: NPMSemgrepShadyLinks,
+			input: NPMStaticAnalysisShadyLinks,
 			want: want{
-				urn:  "urn:hoarding:semgrep,shady_links!npm.json",
-				json: []byte(`"urn:hoarding:semgrep,shady_links!npm.json"`),
+				urn:  "urn:hoarding:static,shady_links!npm.json",
+				json: []byte(`"urn:hoarding:static,shady_links!npm.json"`),
 				TypeComponents: TypeComponents{
 					Framework:       Hoarding,
-					Collector:       SemgrepCollector,
+					Collector:       StaticAnalysisCollector,
 					CollectorAction: "shady_links",
+					Ecosystem:       NPMEcosystem,
+					EcosystemAction: "",
+					Format:          "json",
+				},
+			},
+		},
+		{
+			input: NPMStaticAnalysisInstallScript,
+			want: want{
+				urn:  "urn:hoarding:static,install_script!npm.json",
+				json: []byte(`"urn:hoarding:static,install_script!npm.json"`),
+				TypeComponents: TypeComponents{
+					Framework:       Hoarding,
+					Collector:       StaticAnalysisCollector,
+					CollectorAction: "install_script",
 					Ecosystem:       NPMEcosystem,
 					EcosystemAction: "",
 					Format:          "json",
@@ -289,5 +304,5 @@ func TestTypes(t *testing.T) {
 func TestLastType(t *testing.T) {
 	got := LastType()
 
-	assert.Equal(t, NPMSemgrepEvalBase64, got)
+	assert.Equal(t, NPMStaticAnalysisInstallScript, got)
 }

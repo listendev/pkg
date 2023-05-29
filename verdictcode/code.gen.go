@@ -13,6 +13,11 @@ const (
 	MDN02  Code = 1022
 	MDN03  Code = 1023
 	MDN04  Code = 1024
+	STN001 Code = 1101
+	STN002 Code = 1102
+	STN003 Code = 1103
+	STN004 Code = 1104
+	STN005 Code = 1105
 	TSN01  Code = 1011
 	UNK    Code = 0
 )
