@@ -1,0 +1,63 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: Verdict Code Model
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: The Engineering Team
+    email: engineering@garnet.ai
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /temp-category:
+    post:
+      operationId: temp-code
+      description: This is just to let openapi-codegen generate the Code model.
+      responses:
+        default:
+          description: The Category model.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Code"
+components:
+  schemas:
+    Code:
+      type: integer
+      format: uint64
+      # The naming convention is composed by a prefix using abbreviations of the following type components:
+      # <collector><ecosystem>[<ecosystem_action>,...]
+      # The prefix is followed by a progressive number.
+      # The number of digits (always with zero left-padding) of such a number depends on the range we wanna reserve.
+      # For example for the type "urn:scheduler:falco!npm,install.json" the prefix is FNI,
+      # followed by 3 digits because we wanna reserve 999 possible progressive numbers.
+      #
+      # Pay attention to:
+      # 1) do not change (their are meant to be constant) the underlying value of any code when adding new ones
+      # 2) add new code constants into their range
+      # 3) reserve space for new future code constants
+      # 4) remember the 2 following lists are meant to be parallel lists (eg., 0 is the value for UNK code, 1011 is the value for TSN01)
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 1001
+        - 1011
+        - 1021
+        - 1022
+        - 1023
+        - 1024
+      x-enumNames:
+        - "UNK"
+        - "FNI001"
+        - "FNI002"
+        - "FNI003"
+        - "DDN01"
+        - "TSN01"
+        - "MDN01" # Empty description
+        - "MDN02" # Zero version
+        - "MDN03" # Prerelease version
+        - "MDN04" # Maintainers email
+
