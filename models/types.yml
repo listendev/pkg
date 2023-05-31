@@ -63,6 +63,9 @@ components:
           x-oapi-codegen-extra-tags:
             validate: mandatory,is_verdictcode
             human: the code identifying the verdict type
+        expires_at:
+          type: string
+          format: date-time # RFC 3339 NANO
       example:
         message: "npm install spawned a process"
         severity: "medium"
