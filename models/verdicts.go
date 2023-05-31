@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/garnet-org/pkg/models/category"
 	"github.com/garnet-org/pkg/validate"
@@ -14,6 +15,19 @@ const (
 	NPMPackageNameMetadataKey    = "npm_package_name"
 	NPMPackageVersionMetadataKey = "npm_package_version"
 )
+
+func (o *Verdict) ExpiresIn(duration time.Duration) {
+	t := time.Now().Add(duration)
+	o.ExpiresAt = &t
+}
+
+func (o *Verdict) HasExpired() bool {
+	if o.ExpiresAt == nil {
+		return false
+	}
+
+	return time.Now().After(*o.ExpiresAt)
+}
 
 func (o *Verdict) Validate() error {
 	errors := validate.Validate(o)

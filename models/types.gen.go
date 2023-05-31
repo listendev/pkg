@@ -4,6 +4,8 @@
 package models
 
 import (
+	"time"
+
 	externalRef0 "github.com/garnet-org/pkg/models/category"
 	externalRef1 "github.com/garnet-org/pkg/models/severity"
 	"github.com/garnet-org/pkg/verdictcode"
@@ -20,6 +22,7 @@ type Problem struct {
 type Verdict struct {
 	Categories []externalRef0.Category `json:"categories"`
 	Code       verdictcode.Code        `human:"the code identifying the verdict type" json:"code" validate:"mandatory,is_verdictcode"`
+	ExpiresAt  *time.Time              `json:"expires_at,omitempty"`
 	Message    string                  `human:"the verdict message" json:"message" validate:"mandatory"`
 	Metadata   map[string]interface{}  `json:"metadata"`
 	Severity   externalRef1.Severity   `human:"the verdict severity" json:"severity" validate:"mandatory,severity"`
