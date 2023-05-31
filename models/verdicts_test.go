@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/MakeNowJust/heredoc"
 	"github.com/garnet-org/pkg/models/category"
@@ -38,6 +39,18 @@ func TestVerdictValidation(t *testing.T) {
 	assert.Nil(t, e)
 }
 
+func TestExpiration(t *testing.T) {
+	d := time.Microsecond * 20
+	v := &Verdict{}
+	v.ExpiresIn(d)
+
+	assert.False(t, v.HasExpired())
+
+	time.Sleep(d)
+
+	assert.True(t, v.HasExpired())
+}
+
 func TestVerdictMarshalOk(t *testing.T) {
 	v := Verdict{
 		Message: "@vue/devtools 6.5.0 1 B",
@@ -55,23 +68,25 @@ func TestVerdictMarshalOk(t *testing.T) {
 		Categories: []category.Category{category.Network, category.Process},
 		Code:       verdictcode.FNI001,
 	}
+	v.ExpiresIn(time.Second * 5)
 
-	want := heredoc.Doc(`{
-        "message": "@vue/devtools 6.5.0 1 B",
-        "severity": "medium",
-        "categories": ["network", "process"],
-        "metadata": {
-            "npm_package_name": "electron",
-            "npm_package_version": "21.4.2",
-            "commandline": "sh -c node install.js",
-            "parent_name": "node",
-            "executable_path": "/bin/sh",
-            "server_ip": "",
-            "server_port": 0,
-            "file_descriptor": ""
-        },
-		"code": "FNI001"
-    }`)
+	want := heredoc.Docf(`{
+		"message": "@vue/devtools 6.5.0 1 B",
+		"severity": "medium",
+		"categories": ["network", "process"],
+		"metadata": {
+			"npm_package_name": "electron",
+			"npm_package_version": "21.4.2",
+			"commandline": "sh -c node install.js",
+			"parent_name": "node",
+			"executable_path": "/bin/sh",
+			"server_ip": "",
+			"server_port": 0,
+			"file_descriptor": ""
+		},
+		"code": "FNI001",
+		"expires_at": %q
+	}`, v.ExpiresAt.Format(time.RFC3339Nano))
 
 	got, err := json.Marshal(v)
 	assert.Nil(t, err)
@@ -97,21 +112,21 @@ func TestVerdictWithoutCategoriesMarshal(t *testing.T) {
 	}
 
 	want := heredoc.Doc(`{
-        "message": "@vue/devtools 6.5.0 1 B",
-        "severity": "medium",
-        "categories": [],
-        "metadata": {
-            "npm_package_name": "electron",
-            "npm_package_version": "21.4.2",
-            "commandline": "sh -c node install.js",
-            "parent_name": "node",
-            "executable_path": "/bin/sh",
-            "server_ip": "",
-            "server_port": 0,
-            "file_descriptor": ""
-        },
+		"message": "@vue/devtools 6.5.0 1 B",
+		"severity": "medium",
+		"categories": [],
+		"metadata": {
+			"npm_package_name": "electron",
+			"npm_package_version": "21.4.2",
+			"commandline": "sh -c node install.js",
+			"parent_name": "node",
+			"executable_path": "/bin/sh",
+			"server_ip": "",
+			"server_port": 0,
+			"file_descriptor": ""
+		},
 		"code": "FNI001"
-    }`)
+	}`)
 
 	got, err := json.Marshal(v)
 	assert.Nil(t, err)
@@ -137,21 +152,21 @@ func TestVerdictUnmarshalOk(t *testing.T) {
 		Code:       verdictcode.FNI003,
 	}
 	input := heredoc.Doc(`{
-        "message": "@vue/devtools 6.5.0 1 B",
-        "severity": "medium",
-        "categories": ["NETWORK", "process"],
-        "metadata": {
-            "npm_package_name": "electron",
-            "npm_package_version": "21.4.2",
-            "commandline": "sh -c node install.js",
-            "parent_name": "node",
-            "executable_path": "/bin/sh",
-            "server_ip": "",
-            "server_port": 0,
-            "file_descriptor": ""
-        },
+		"message": "@vue/devtools 6.5.0 1 B",
+		"severity": "medium",
+		"categories": ["NETWORK", "process"],
+		"metadata": {
+			"npm_package_name": "electron",
+			"npm_package_version": "21.4.2",
+			"commandline": "sh -c node install.js",
+			"parent_name": "node",
+			"executable_path": "/bin/sh",
+			"server_ip": "",
+			"server_port": 0,
+			"file_descriptor": ""
+		},
 		"code": "FNI003"
-    }`)
+	}`)
 
 	var v Verdict
 	err := json.Unmarshal([]byte(input), &v)
@@ -161,9 +176,9 @@ func TestVerdictUnmarshalOk(t *testing.T) {
 
 func TestVerdictUnmarshalErrorSeverity(t *testing.T) {
 	input := heredoc.Doc(`{
-        "message": "some message",
-        "severity": "NONE"
-    }`)
+		"message": "some message",
+		"severity": "NONE"
+	}`)
 
 	var v Verdict
 	err := json.Unmarshal([]byte(input), &v)
