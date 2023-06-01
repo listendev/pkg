@@ -74,3 +74,25 @@ func TestUnmarshal(t *testing.T) {
 		assert.Error(t, e2)
 	}
 }
+
+func TestRetrievingTheType(t *testing.T) {
+	t1, e1 := FNI001.Type(false)
+	assert.Nil(t, e1)
+	assert.NotNil(t, t1)
+	assert.Equal(t, analysisrequest.NPMInstallWhileFalco, t1)
+
+	t2, e2 := STN004.Type(false)
+	assert.Nil(t, e2)
+	assert.NotNil(t, t2)
+	assert.Equal(t, analysisrequest.NPMStaticAnalysisEvalBase64, t2)
+
+	t3, e3 := MDN03.Type(false)
+	assert.Nil(t, e3)
+	assert.NotNil(t, t3)
+	assert.Equal(t, analysisrequest.NPMMetadataVersion, t3)
+
+	t4, e4 := MDN02.Type(false)
+	assert.Nil(t, e4)
+	assert.NotNil(t, t4)
+	assert.Equal(t, analysisrequest.NPMMetadataVersion, t4)
+}

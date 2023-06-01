@@ -76,3 +76,19 @@ func (c *Code) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+func (c Code) Type(deprecatedToo bool) (analysisrequest.Type, error) {
+	for t, codemap := range mapping {
+		for k, v := range codemap {
+			// Skip deprecated
+			if deprecatedToo && !v {
+				continue
+			}
+			if k == c {
+				return t, nil
+			}
+		}
+	}
+
+	return analysisrequest.Nop, fmt.Errorf("not found")
+}
