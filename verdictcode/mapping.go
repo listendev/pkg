@@ -19,8 +19,12 @@ var mapping = map[analysisrequest.Type]map[Code]bool{
 	},
 	analysisrequest.NPMMetadataEmptyDescription: map[Code]bool{
 		MDN01: true,
+	},
+	analysisrequest.NPMMetadataVersion: map[Code]bool{
 		MDN02: true,
 		MDN03: true,
+	},
+	analysisrequest.NPMMetadataMaintainersEmailCheck: map[Code]bool{
 		MDN04: true,
 	},
 }
