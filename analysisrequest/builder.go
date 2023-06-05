@@ -128,7 +128,7 @@ func (b *builder) FromJSON(body []byte) (AnalysisRequest, error) {
 	case NPMStaticAnalysisEnvExfiltration:
 		fallthrough
 
-	case NPMStaticAnalysisProcessExecution:
+	case NPMStaticAnalysisDetachedProcessExecution:
 		fallthrough
 
 	case NPMStaticAnalysisEvalBase64:

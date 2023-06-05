@@ -30,7 +30,7 @@ var mapping = map[analysisrequest.Type]map[Code]bool{
 	analysisrequest.NPMStaticAnalysisEnvExfiltration: map[Code]bool{
 		STN001: true,
 	},
-	analysisrequest.NPMStaticAnalysisProcessExecution: map[Code]bool{
+	analysisrequest.NPMStaticAnalysisDetachedProcessExecution: map[Code]bool{
 		STN002: true,
 	},
 	analysisrequest.NPMStaticAnalysisShadyLinks: map[Code]bool{

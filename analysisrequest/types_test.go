@@ -215,14 +215,14 @@ func TestTypes(t *testing.T) {
 			},
 		},
 		{
-			input: NPMStaticAnalysisProcessExecution,
+			input: NPMStaticAnalysisDetachedProcessExecution,
 			want: want{
-				urn:  "urn:hoarding:static,process_exec!npm.json",
-				json: []byte(`"urn:hoarding:static,process_exec!npm.json"`),
+				urn:  "urn:hoarding:static,detached_process_exec!npm.json",
+				json: []byte(`"urn:hoarding:static,detached_process_exec!npm.json"`),
 				TypeComponents: TypeComponents{
 					Framework:       Hoarding,
 					Collector:       StaticAnalysisCollector,
-					CollectorAction: "process_exec",
+					CollectorAction: "detached_process_exec",
 					Ecosystem:       NPMEcosystem,
 					EcosystemAction: "",
 					Format:          "json",
