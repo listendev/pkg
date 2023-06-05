@@ -33,6 +33,16 @@ const (
 	NPMEcosystem Ecosystem = "npm"
 )
 
+func GetEcosystemFrom(input string) (Ecosystem, error) {
+	x := strings.ToLower(input)
+	switch x {
+	case "npm":
+		return NPMEcosystem, nil
+	default:
+		return "", fmt.Errorf("couldn't find an ecosystem matching the input string %q", input)
+	}
+}
+
 type TypeComponents struct {
 	Framework       Framework
 	Collector       Collector
@@ -73,11 +83,11 @@ func (c TypeComponents) HasEcosystem() bool {
 	return c.Ecosystem != ""
 }
 
-func (c TypeComponents) HasEcosystemActions() bool {
+func (c TypeComponents) HasEcosystemAction() bool {
 	return len(c.EcosystemAction) > 0
 }
 
-func (c TypeComponents) HasCollectorActions() bool {
+func (c TypeComponents) HasCollectorAction() bool {
 	return len(c.CollectorAction) > 0
 }
 
@@ -90,14 +100,14 @@ func (c TypeComponents) ToURN() *urn.URN {
 		ID: string(c.Framework),
 		SS: string(c.Collector),
 	}
-	if c.HasCollectorActions() {
+	if c.HasCollectorAction() {
 		u.SS += "," + c.CollectorAction
 	}
 	if c.Parent == nil {
 		if c.HasEcosystem() {
 			u.SS += "!" + string(c.Ecosystem)
 		}
-		if c.HasEcosystemActions() {
+		if c.HasEcosystemAction() {
 			u.SS += "," + c.EcosystemAction
 		}
 		if c.HasFormat() {
