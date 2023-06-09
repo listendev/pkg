@@ -39,6 +39,7 @@ func init() {
 	Singleton.RegisterAlias("severity", "eq_ignore_case=low|eq_ignore_case=medium|eq_ignore_case=high")
 	Singleton.RegisterAlias("amqp", "startswith=amqp://|startswith=amqps://")
 	Singleton.RegisterAlias("store", "startswith=file:///|startswith=s3://")
+	Singleton.RegisterAlias("shasum", "len=40")
 	if err := Singleton.RegisterValidation("is_analysisrequest_type", func(fl validator.FieldLevel) bool {
 		f := fl.Field()
 
@@ -128,6 +129,21 @@ func init() {
 		},
 		func(ut ut.Translator, fe validator.FieldError) string {
 			t, _ := ut.T("store", fe.Field())
+
+			return t
+		},
+	); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterTranslation(
+		"shasum",
+		Translator,
+		func(ut ut.Translator) error {
+			return ut.Add("shasum", "{0} must be a valid SHA1 (40 characters long)", true)
+		},
+		func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("shasum", fe.Field())
 
 			return t
 		},
