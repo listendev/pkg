@@ -65,6 +65,9 @@ func init() {
 	}); err != nil {
 		panic(err)
 	}
+	if err := Singleton.RegisterValidation("npm_package_name", isNpmPackageName); err != nil {
+		panic(err)
+	}
 
 	eng := en.New()
 	Translator, _ = (ut.New(eng, eng)).GetTranslator("en")
@@ -155,6 +158,21 @@ func init() {
 		},
 		func(ut ut.Translator, fe validator.FieldError) string {
 			t, _ := ut.T("is_verdictcode", fe.Field())
+
+			return t
+		},
+	); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterTranslation(
+		"npm_package_name",
+		Translator,
+		func(ut ut.Translator) error {
+			return ut.Add("npm_package_name", "{0} is not a valid npm package name", true)
+		},
+		func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("npm_package_name", fe.Field())
 
 			return t
 		},
