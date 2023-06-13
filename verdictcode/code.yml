@@ -54,6 +54,9 @@ components:
         - 1103
         - 1104
         - 1105
+        - 1106
+        - 1107
+        - 1108
       x-enumNames:
         - "UNK"
         - "FNI001"
@@ -70,4 +73,7 @@ components:
         - "STN003" # Shady links
         - "STN004" # Javascript eval base64
         - "STN005" # install script in package.json
+        - "STN006" # npm git dependency
+        - "STN007" # npm http dependency
+        - "STN008" # npm github dependency
 
