@@ -42,4 +42,9 @@ var mapping = map[analysisrequest.Type]map[Code]bool{
 	analysisrequest.NPMStaticAnalysisInstallScript: map[Code]bool{
 		STN005: true,
 	},
+	analysisrequest.NPMStaticNonRegistryDependency: map[Code]bool{
+		STN006: true,
+		STN007: true,
+		STN008: true,
+	},
 }

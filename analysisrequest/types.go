@@ -30,6 +30,7 @@ const (
 	NPMStaticAnalysisShadyLinks
 	NPMStaticAnalysisEvalBase64
 	NPMStaticAnalysisInstallScript
+	NPMStaticNonRegistryDependency
 
 	_maxType
 )
@@ -108,6 +109,7 @@ var typeURNs = map[Type]string{
 	NPMStaticAnalysisShadyLinks:               createType(Hoarding, StaticAnalysisCollector, "shady_links", NPMEcosystem, "", "json"),
 	NPMStaticAnalysisEvalBase64:               createType(Hoarding, StaticAnalysisCollector, "base64_eval", NPMEcosystem, "", "json"),
 	NPMStaticAnalysisInstallScript:            createType(Hoarding, StaticAnalysisCollector, "install_script", NPMEcosystem, "", "json"),
+	NPMStaticNonRegistryDependency:            createType(Hoarding, StaticAnalysisCollector, "non_registry_dependency", NPMEcosystem, "", "json"),
 }
 
 func Types() []Type {

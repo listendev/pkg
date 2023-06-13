@@ -22,6 +22,7 @@ func TestGetResultFilesByEcosystem(t *testing.T) {
 		NPMStaticAnalysisDetachedProcessExecution: "static(detached_process_exec).json",
 		NPMStaticAnalysisShadyLinks:               "static(shady_links).json",
 		NPMStaticAnalysisInstallScript:            "static(install_script).json",
+		NPMStaticNonRegistryDependency:            "static(non_registry_dependency).json",
 	}
 	got := GetResultFilesByEcosystem(NPMEcosystem)
 
@@ -36,16 +37,17 @@ func TestGetTypeFromResultFile(t *testing.T) {
 	wnt := map[string]Type{
 		"falco[install].json": NPMInstallWhileFalco,
 		// "falco[test].json":    NPMTestWhileFalco,
-		"depsdev.json":                       NPMDepsDev,
-		"typosquat.json":                     NPMTyposquat,
-		"metadata(empty_descr).json":         NPMMetadataEmptyDescription,
-		"metadata(version).json":             NPMMetadataVersion,
-		"metadata(email_check).json":         NPMMetadataMaintainersEmailCheck,
-		"static(exfiltrate_env).json":        NPMStaticAnalysisEnvExfiltration,
-		"static(shady_links).json":           NPMStaticAnalysisShadyLinks,
-		"static(detached_process_exec).json": NPMStaticAnalysisDetachedProcessExecution,
-		"static(base64_eval).json":           NPMStaticAnalysisEvalBase64,
-		"static(install_script).json":        NPMStaticAnalysisInstallScript,
+		"depsdev.json":                         NPMDepsDev,
+		"typosquat.json":                       NPMTyposquat,
+		"metadata(empty_descr).json":           NPMMetadataEmptyDescription,
+		"metadata(version).json":               NPMMetadataVersion,
+		"metadata(email_check).json":           NPMMetadataMaintainersEmailCheck,
+		"static(exfiltrate_env).json":          NPMStaticAnalysisEnvExfiltration,
+		"static(shady_links).json":             NPMStaticAnalysisShadyLinks,
+		"static(detached_process_exec).json":   NPMStaticAnalysisDetachedProcessExecution,
+		"static(base64_eval).json":             NPMStaticAnalysisEvalBase64,
+		"static(install_script).json":          NPMStaticAnalysisInstallScript,
+		"static(non_registry_dependency).json": NPMStaticNonRegistryDependency,
 	}
 	for f, typ := range wnt {
 		got, err := GetTypeFromResultFile(NPMEcosystem, f)

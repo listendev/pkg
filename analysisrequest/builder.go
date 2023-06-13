@@ -140,6 +140,9 @@ func (b *builder) FromJSON(body []byte) (AnalysisRequest, error) {
 	case NPMStaticAnalysisInstallScript:
 		fallthrough
 
+	case NPMStaticNonRegistryDependency:
+		fallthrough
+
 	case NPMInstallWhileFalco:
 		var arn NPM
 		if err := json.Unmarshal(body, &arn); err != nil {

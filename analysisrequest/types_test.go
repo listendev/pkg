@@ -274,6 +274,21 @@ func TestTypes(t *testing.T) {
 				},
 			},
 		},
+		{
+			input: NPMStaticNonRegistryDependency,
+			want: want{
+				urn:  "urn:hoarding:static,non_registry_dependency!npm.json",
+				json: []byte(`"urn:hoarding:static,non_registry_dependency!npm.json"`),
+				TypeComponents: TypeComponents{
+					Framework:       Hoarding,
+					Collector:       StaticAnalysisCollector,
+					CollectorAction: "non_registry_dependency",
+					Ecosystem:       NPMEcosystem,
+					EcosystemAction: "",
+					Format:          "json",
+				},
+			},
+		},
 	}
 
 	for _, tc := range cases {
@@ -304,5 +319,5 @@ func TestTypes(t *testing.T) {
 func TestLastType(t *testing.T) {
 	got := LastType()
 
-	assert.Equal(t, NPMStaticAnalysisInstallScript, got)
+	assert.Equal(t, NPMStaticNonRegistryDependency, got)
 }
