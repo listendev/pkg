@@ -57,6 +57,7 @@ components:
         - 1106
         - 1107
         - 1108
+        - 1109
       x-enumNames:
         - "UNK"
         - "FNI001"
@@ -76,4 +77,5 @@ components:
         - "STN006" # npm git dependency
         - "STN007" # npm http dependency
         - "STN008" # npm github dependency
+        - "STN009" # npm github gist dependency
 
