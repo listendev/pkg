@@ -53,6 +53,9 @@ type TypeComponents struct {
 	Parent          *TypeComponents
 }
 
+// ResultFile returns the filename of the result file for the current Components.
+//
+// Note it tries to always use characters safe for S3 keys (see https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html).
 func (c TypeComponents) ResultFile() string {
 	if c.Parent != nil {
 		return c.Parent.ResultFile()
@@ -67,7 +70,7 @@ func (c TypeComponents) ResultFile() string {
 	}
 
 	if len(c.EcosystemAction) > 0 {
-		suffix += fmt.Sprintf("[%s]", c.EcosystemAction)
+		suffix += fmt.Sprintf("!%s!", c.EcosystemAction)
 	}
 
 	if c.Format != "" {

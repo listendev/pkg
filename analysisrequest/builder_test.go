@@ -195,7 +195,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				Priority:    5,
 				Body:        []byte(`{"type":"urn:scheduler:falco!npm,install.json","snowflake_id":"1524854487523524608","name":"chalk","version":"5.1.2","shasum":"d957f370038b75ac572471e83be4c5ca9f8e8c45","priority":5,"force":true}`),
 			},
-			wantS3Key: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/falco[install].json",
+			wantS3Key: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/falco!install!.json",
 			mockRegistryClient: func() *mockNpmregistryClient {
 				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
 				if err != nil {
@@ -225,7 +225,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				ContentType: "application/json",
 				Body:        []byte(`{"type": "urn:scheduler:falco!npm,install.json", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "force": false}`),
 			},
-			wantS3Key: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/falco[install].json",
+			wantS3Key: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/falco!install!.json",
 			mockRegistryClient: func() *mockNpmregistryClient {
 				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
 				if err != nil {
@@ -255,7 +255,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				ContentType: "application/json",
 				Body:        []byte(`{"type": "urn:scheduler:falco!npm,install.json", "snowflake_id": "1524854487523524608", "name": "chalk","version": "5.2.0", "shasum": "249623b7d66869c673699fb66d65723e54dfcfb3", "force": false}`),
 			},
-			wantS3Key: "npm/chalk/5.2.0/249623b7d66869c673699fb66d65723e54dfcfb3/falco[install].json",
+			wantS3Key: "npm/chalk/5.2.0/249623b7d66869c673699fb66d65723e54dfcfb3/falco!install!.json",
 			mockRegistryClient: func() *mockNpmregistryClient {
 				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_520.json")
 				if err != nil {
@@ -285,7 +285,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				ContentType: "application/json",
 				Body:        []byte(`{"type": "urn:scheduler:falco!npm,install.json+urn:hoarding:gpt4,context", "snowflake_id": "1524854487523524608", "name": "chalk","version": "5.2.0", "shasum": "249623b7d66869c673699fb66d65723e54dfcfb3", "force": false}`),
 			},
-			wantS3Key: "npm/chalk/5.2.0/249623b7d66869c673699fb66d65723e54dfcfb3/falco[install].json",
+			wantS3Key: "npm/chalk/5.2.0/249623b7d66869c673699fb66d65723e54dfcfb3/falco!install!.json",
 			mockRegistryClient: func() *mockNpmregistryClient {
 				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_520.json")
 				if err != nil {
@@ -325,7 +325,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				ContentType: "application/json",
 				Body:        []byte(`{"type": "urn:scheduler:falco!npm,install.json", "snowflake_id": "1524854487523524608", "name": "chalk","version": "5.2.0", "shasum": "249623b7d66869c673699fb66d65723e54dfcfb3", "force": false}`),
 			},
-			wantS3Key:          "npm/chalk/5.2.0/249623b7d66869c673699fb66d65723e54dfcfb3/falco[install].json",
+			wantS3Key:          "npm/chalk/5.2.0/249623b7d66869c673699fb66d65723e54dfcfb3/falco!install!.json",
 			mockRegistryClient: nil,
 			wantErr:            true,
 		},

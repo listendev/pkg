@@ -10,7 +10,7 @@ import (
 
 func TestGetResultFilesByEcosystem(t *testing.T) {
 	wnt := map[Type]string{
-		NPMInstallWhileFalco: "falco[install].json",
+		NPMInstallWhileFalco: "falco!install!.json",
 		// NPMTestWhileFalco:    "falco[test].json",
 		NPMDepsDev:                                "depsdev.json",
 		NPMTyposquat:                              "typosquat.json",
@@ -35,7 +35,7 @@ func TestGetResultFilesByEcosystem(t *testing.T) {
 
 func TestGetTypeFromResultFile(t *testing.T) {
 	wnt := map[string]Type{
-		"falco[install].json": NPMInstallWhileFalco,
+		"falco!install!.json": NPMInstallWhileFalco,
 		// "falco[test].json":    NPMTestWhileFalco,
 		"depsdev.json":                         NPMDepsDev,
 		"typosquat.json":                       NPMTyposquat,
