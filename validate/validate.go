@@ -3,8 +3,11 @@ package validate
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/garnet-org/pkg/analysisrequest"
+	"github.com/garnet-org/pkg/models/category"
+	"github.com/garnet-org/pkg/models/severity"
 	"github.com/garnet-org/pkg/verdictcode"
 	en "github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
@@ -36,10 +39,39 @@ func init() {
 	})
 
 	Singleton.RegisterAlias("mandatory", "required")
-	Singleton.RegisterAlias("severity", "eq_ignore_case=low|eq_ignore_case=medium|eq_ignore_case=high")
 	Singleton.RegisterAlias("amqp", "startswith=amqp://|startswith=amqps://")
 	Singleton.RegisterAlias("store", "startswith=file:///|startswith=s3://")
 	Singleton.RegisterAlias("shasum", "len=40")
+	Singleton.RegisterAlias("npmorg", "startswith=@")
+
+	if err := Singleton.RegisterValidation("is_severity", func(fl validator.FieldLevel) bool {
+		f := fl.Field()
+
+		if f.Kind() == reflect.String {
+			_, err := severity.New(f.String())
+
+			return err == nil
+		}
+
+		panic(fmt.Sprintf("bad field type: %T", f.Interface()))
+	}); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterValidation("is_category", func(fl validator.FieldLevel) bool {
+		f := fl.Field()
+
+		if f.Kind() == reflect.Uint64 {
+			_, err := category.FromUint64(f.Uint())
+
+			return err == nil
+		}
+
+		panic(fmt.Sprintf("bad field type: %T", f.Interface()))
+	}); err != nil {
+		panic(err)
+	}
+
 	if err := Singleton.RegisterValidation("is_analysisrequest_type", func(fl validator.FieldLevel) bool {
 		f := fl.Field()
 
@@ -53,6 +85,21 @@ func init() {
 	}); err != nil {
 		panic(err)
 	}
+
+	if err := Singleton.RegisterValidation("is_resultsfile", func(fl validator.FieldLevel) bool {
+		f := fl.Field()
+
+		if f.Kind() == reflect.String {
+			_, err := analysisrequest.GetTypeFromResultFile(f.String())
+
+			return err == nil
+		}
+
+		panic(fmt.Sprintf("bad field type: %T", f.Interface()))
+	}); err != nil {
+		panic(err)
+	}
+
 	if err := Singleton.RegisterValidation("is_verdictcode", func(fl validator.FieldLevel) bool {
 		f := fl.Field()
 
@@ -66,6 +113,7 @@ func init() {
 	}); err != nil {
 		panic(err)
 	}
+
 	if err := Singleton.RegisterValidation("npm_package_name", isNpmPackageName); err != nil {
 		panic(err)
 	}
@@ -92,13 +140,29 @@ func init() {
 	}
 
 	if err := Singleton.RegisterTranslation(
-		"severity",
+		"is_severity",
 		Translator,
 		func(ut ut.Translator) error {
-			return ut.Add("severity", "{0} must be low, medium, or high", true)
+			return ut.Add("is_severity", "{0} must be low, medium, or high", true)
 		},
 		func(ut ut.Translator, fe validator.FieldError) string {
-			t, _ := ut.T("severity", fe.Field())
+			t, _ := ut.T("is_severity", fe.Field())
+
+			return t
+		},
+	); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterTranslation(
+		"isdefault|is_severity",
+		Translator,
+
+		func(ut ut.Translator) error {
+			return ut.Add("isdefault|is_severity", "{0} must be low, medium, or high", true)
+		},
+		func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("isdefault|is_severity", fe.Field())
 
 			return t
 		},
@@ -152,6 +216,67 @@ func init() {
 	}
 
 	if err := Singleton.RegisterTranslation(
+		"npmorg",
+		Translator,
+		func(ut ut.Translator) error {
+			return ut.Add("npmorg", "{0} must be a valid NPM organization (starting with @)", true)
+		},
+		func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("npmorg", fe.Field())
+
+			return t
+		},
+	); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterTranslation(
+		"semver",
+		Translator,
+		func(ut ut.Translator) error {
+			return ut.Add("semver", "{0} must be a valid semantic version (https://semver.org)", true)
+		},
+		func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("semver", fe.Field())
+
+			return t
+		},
+	); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterTranslation(
+		"is_resultsfile",
+		Translator,
+		func(ut ut.Translator) error {
+			return ut.Add("is_resultsfile", "{0} must be a valid results file", true)
+		},
+		func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("is_resultsfile", fe.Field())
+
+			return t
+		},
+	); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterTranslation(
+		"is_category",
+		Translator,
+		func(ut ut.Translator) error {
+			return ut.Add("is_category", "{0} is not a valid verdict category", false)
+		},
+		func(ut ut.Translator, fe validator.FieldError) string {
+			// FIXME: handle cardinals translation
+			t, _ := ut.T("is_category", fe.Field())
+
+			return t
+		},
+	); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterTranslation(
 		"is_analysisrequest_type",
 		Translator,
 		func(ut ut.Translator) error {
@@ -182,6 +307,21 @@ func init() {
 	}
 
 	if err := Singleton.RegisterTranslation(
+		"isdefault|is_verdictcode",
+		Translator,
+		func(ut ut.Translator) error {
+			return ut.Add("isdefault|is_verdictcode", "{0} is not a valid verdict code", true)
+		},
+		func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("isdefault|is_verdictcode", fe.Field())
+
+			return t
+		},
+	); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterTranslation(
 		"npm_package_name",
 		Translator,
 		func(ut ut.Translator) error {
@@ -189,6 +329,21 @@ func init() {
 		},
 		func(ut ut.Translator, fe validator.FieldError) string {
 			t, _ := ut.T("npm_package_name", fe.Field())
+
+			return t
+		},
+	); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterTranslation(
+		"required_with",
+		Translator,
+		func(ut ut.Translator) error {
+			return ut.Add("required_with", "{0} is required when the {1} field has a value", true)
+		},
+		func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("required_with", fe.Field(), strings.ToLower(fe.Param()))
 
 			return t
 		},
