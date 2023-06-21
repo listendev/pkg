@@ -27,22 +27,6 @@ const (
 	StaticAnalysisCollector Collector = "static"
 )
 
-type Ecosystem string
-
-const (
-	NPMEcosystem Ecosystem = "npm"
-)
-
-func GetEcosystemFrom(input string) (Ecosystem, error) {
-	x := strings.ToLower(input)
-	switch x {
-	case "npm":
-		return NPMEcosystem, nil
-	default:
-		return "", fmt.Errorf("couldn't find an ecosystem matching the input string %q", input)
-	}
-}
-
 type TypeComponents struct {
 	Framework       Framework
 	Collector       Collector
