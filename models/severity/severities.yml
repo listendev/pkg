@@ -30,5 +30,6 @@ components:
         - "medium"
         - "high"
       x-oapi-codegen-extra-tags:
-        validate: mandatory,severity
-        human: the verdict severity
+            validate: required_with=Message,isdefault|is_severity
+            human: the verdict severity
+            json: "severity,omitempty"
