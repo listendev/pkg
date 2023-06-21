@@ -37,39 +37,86 @@ components:
     Verdict:
       type: object
       required:
-        - message
-        - severity
-        - metadata
-        - categories
-        - code
+        - pkg
+        - version
+        - shasum
+        - file
+        - org # Just to avoid the pointer
+        - message # Just to avoid the pointer
+        - code # Just to avoid the pointer
+        - severity # Just to avoid the pointer
+        - categories # Just to avoid the pointer
+        - metadata # Just to avoid the pointer
       properties:
-        message:
+        org:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: omitempty,npmorg
+            human: the NPM organization name
+            json: "org,omitempty"
+        pkg:
           type: string
           x-oapi-codegen-extra-tags:
             validate: mandatory
+            human: the NPM package name
+        version:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: mandatory,semver
+            human: the NPM package version
+        shasum:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: mandatory,shasum
+            human: the NPM package shasum
+        file:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: mandatory,is_resultsfile
+            human: the result file identifying the analysis type
+        message:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: omitempty,gt=1
             human: the verdict message
+            json: "message,omitempty"
         severity:
           $ref: './severity/severities.yml#/components/schemas/Severity'
         metadata:
           type: object
+          x-oapi-codegen-extra-tags:
+            json: "metadata,omitempty"
         categories:
           type: array
           items:
             $ref: './category/categories.yml#/components/schemas/Category'
-        code:
-          x-go-type-import:
-            path: github.com/garnet-org/pkg/verdictcode
-          x-go-type: verdictcode.Code
           x-oapi-codegen-extra-tags:
-            validate: mandatory,is_verdictcode
-            human: the code identifying the verdict type
+            validate: required_with=Message,dive,is_category
+            human: one or more verdict category
+            json: "categories,omitempty"
+        code:
+          $ref: '../verdictcode/code.yml#/components/schemas/Code'
         expires_at:
           type: string
           format: date-time # RFC 3339 NANO
+          x-oapi-codegen-extra-tags:
+            json: "expires_at,omitempty"
+        created_at:
+          type: string
+          format: date-time # RFC 3339 NANO
+          x-oapi-codegen-extra-tags:
+            validate: mandatory
+            human: the moment the verdict was created
       example:
+        org: "@garnet-org"
+        pkg: "test"
+        shasum: aaaaaaaaaa1aaaaaaaaaa1aaaaaaaaaa12345678
+        version: "0.0.1"
+        analysis_type: "falco!install!.json"
         message: "npm install spawned a process"
         severity: "medium"
         category: ["filesystem", "process"]
+        code: "FNI001"
         metadata:
           commandline: "sh -c node-gyp-build"
           executable_path: "/bin/sh"

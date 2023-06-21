@@ -8,7 +8,7 @@ import (
 
 	externalRef0 "github.com/garnet-org/pkg/models/category"
 	externalRef1 "github.com/garnet-org/pkg/models/severity"
-	"github.com/garnet-org/pkg/verdictcode"
+	externalRef2 "github.com/garnet-org/pkg/verdictcode"
 )
 
 // Problem defines model for Problem.
@@ -20,10 +20,16 @@ type Problem struct {
 
 // Verdict defines model for Verdict.
 type Verdict struct {
-	Categories []externalRef0.Category `json:"categories"`
-	Code       verdictcode.Code        `human:"the code identifying the verdict type" json:"code" validate:"mandatory,is_verdictcode"`
+	Categories []externalRef0.Category `human:"one or more verdict category" json:"categories,omitempty" validate:"required_with=Message,dive,is_category"`
+	Code       externalRef2.Code       `human:"the code identifying the verdict type" json:"code,omitempty" validate:"required_with=Message,isdefault|is_verdictcode"`
+	CreatedAt  *time.Time              `human:"the moment the verdict was created" json:"created_at,omitempty" validate:"mandatory"`
 	ExpiresAt  *time.Time              `json:"expires_at,omitempty"`
-	Message    string                  `human:"the verdict message" json:"message" validate:"mandatory"`
-	Metadata   map[string]interface{}  `json:"metadata"`
-	Severity   externalRef1.Severity   `human:"the verdict severity" json:"severity" validate:"mandatory,severity"`
+	File       string                  `human:"the result file identifying the analysis type" json:"file" validate:"mandatory,is_resultsfile"`
+	Message    string                  `human:"the verdict message" json:"message,omitempty" validate:"omitempty,gt=1"`
+	Metadata   map[string]interface{}  `json:"metadata,omitempty"`
+	Org        string                  `human:"the NPM organization name" json:"org,omitempty" validate:"omitempty,npmorg"`
+	Pkg        string                  `human:"the NPM package name" json:"pkg" validate:"mandatory"`
+	Severity   externalRef1.Severity   `human:"the verdict severity" json:"severity,omitempty" validate:"required_with=Message,isdefault|is_severity"`
+	Shasum     string                  `human:"the NPM package shasum" json:"shasum" validate:"mandatory,shasum"`
+	Version    string                  `human:"the NPM package version" json:"version" validate:"mandatory,semver"`
 }
