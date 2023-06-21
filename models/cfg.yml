@@ -3,5 +3,6 @@ output: types.gen.go
 import-mapping:
   './category/categories.yml': github.com/garnet-org/pkg/models/category
   './severity/severities.yml': github.com/garnet-org/pkg/models/severity
+  '../verdictcode/code.yml': github.com/garnet-org/pkg/verdictcode
 generate:
   models: true
