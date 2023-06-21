@@ -47,7 +47,7 @@ func GetResultFilesByEcosystem(eco Ecosystem) map[Type]string {
 	return res
 }
 
-func GetTypeFromResultFile(eco Ecosystem, filename string) (Type, error) {
+func GetTypeForEcosystemFromResultFile(eco Ecosystem, filename string) (Type, error) {
 	all := GetResultFilesByEcosystem(eco)
 	for t, f := range all {
 		if f == filename {
@@ -55,5 +55,16 @@ func GetTypeFromResultFile(eco Ecosystem, filename string) (Type, error) {
 		}
 	}
 
-	return Nop, fmt.Errorf("couldn't find type for filename %q", filename)
+	return Nop, fmt.Errorf("couldn't find any type for ecosystem %q matching the results file %q", eco, filename)
+}
+
+func GetTypeFromResultFile(filename string) (Type, error) {
+	for _, e := range allEcosystems {
+		t, err := GetTypeForEcosystemFromResultFile(e, filename)
+		if err == nil {
+			return t, nil
+		}
+	}
+
+	return Nop, fmt.Errorf("couldn't find any type in any ecosystem matching the results file %q", filename)
 }
