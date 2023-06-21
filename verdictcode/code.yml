@@ -24,8 +24,6 @@ paths:
 components:
   schemas:
     Code:
-      type: integer
-      format: uint64
       # The naming convention is composed by a prefix using abbreviations of the following type components:
       # <collector><ecosystem>[<ecosystem_action>,...]
       # The prefix is followed by a progressive number.
@@ -38,6 +36,8 @@ components:
       # 2) add new code constants into their range
       # 3) reserve space for new future code constants
       # 4) remember the 2 following lists are meant to be parallel lists (eg., 0 is the value for UNK code, 1011 is the value for TSN01)
+      type: integer
+      format: uint64
       enum:
         - 0
         - 1
@@ -78,4 +78,8 @@ components:
         - "STN007" # npm http dependency
         - "STN008" # npm github dependency
         - "STN009" # npm github gist dependency
+      x-oapi-codegen-extra-tags:
+          validate: required_with=Message,isdefault|is_verdictcode
+          human: the code identifying the verdict type
+          json: "code,omitempty"
 

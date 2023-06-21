@@ -6,43 +6,43 @@ import (
 
 // mapping maps the codes to the analysis request type that can generate them.
 var mapping = map[analysisrequest.Type]map[Code]bool{
-	analysisrequest.NPMInstallWhileFalco: map[Code]bool{
+	analysisrequest.NPMInstallWhileFalco: {
 		FNI001: true,
 		FNI002: true,
 		FNI003: true,
 	},
-	analysisrequest.NPMDepsDev: map[Code]bool{
+	analysisrequest.NPMDepsDev: {
 		DDN01: true,
 	},
-	analysisrequest.NPMTyposquat: map[Code]bool{
+	analysisrequest.NPMTyposquat: {
 		TSN01: true,
 	},
-	analysisrequest.NPMMetadataEmptyDescription: map[Code]bool{
+	analysisrequest.NPMMetadataEmptyDescription: {
 		MDN01: true,
 	},
-	analysisrequest.NPMMetadataVersion: map[Code]bool{
+	analysisrequest.NPMMetadataVersion: {
 		MDN02: true,
 		MDN03: true,
 	},
-	analysisrequest.NPMMetadataMaintainersEmailCheck: map[Code]bool{
+	analysisrequest.NPMMetadataMaintainersEmailCheck: {
 		MDN04: true,
 	},
-	analysisrequest.NPMStaticAnalysisEnvExfiltration: map[Code]bool{
+	analysisrequest.NPMStaticAnalysisEnvExfiltration: {
 		STN001: true,
 	},
-	analysisrequest.NPMStaticAnalysisDetachedProcessExecution: map[Code]bool{
+	analysisrequest.NPMStaticAnalysisDetachedProcessExecution: {
 		STN002: true,
 	},
-	analysisrequest.NPMStaticAnalysisShadyLinks: map[Code]bool{
+	analysisrequest.NPMStaticAnalysisShadyLinks: {
 		STN003: true,
 	},
-	analysisrequest.NPMStaticAnalysisEvalBase64: map[Code]bool{
+	analysisrequest.NPMStaticAnalysisEvalBase64: {
 		STN004: true,
 	},
-	analysisrequest.NPMStaticAnalysisInstallScript: map[Code]bool{
+	analysisrequest.NPMStaticAnalysisInstallScript: {
 		STN005: true,
 	},
-	analysisrequest.NPMStaticNonRegistryDependency: map[Code]bool{
+	analysisrequest.NPMStaticNonRegistryDependency: {
 		STN006: true,
 		STN007: true,
 		STN008: true,
