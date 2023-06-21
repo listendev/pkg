@@ -7,14 +7,35 @@ import (
 	"io"
 	"time"
 
+	"github.com/garnet-org/pkg/analysisrequest"
 	"github.com/garnet-org/pkg/models/category"
 	"github.com/garnet-org/pkg/validate"
+	"github.com/garnet-org/pkg/verdictcode"
+	"golang.org/x/exp/maps"
 )
 
 const (
 	NPMPackageNameMetadataKey    = "npm_package_name"
 	NPMPackageVersionMetadataKey = "npm_package_version"
 )
+
+func NewEmptyVerdict(org, pkg, version, shasum, file string) (*Verdict, error) {
+	now := time.Now()
+	v := Verdict{
+		Org:       org,
+		Pkg:       pkg,
+		Version:   version,
+		Shasum:    shasum,
+		File:      file,
+		CreatedAt: &now,
+	}
+	err := v.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	return &v, nil
+}
 
 func (o *Verdict) ExpiresIn(duration time.Duration) {
 	t := time.Now().Add(duration)
@@ -30,8 +51,27 @@ func (o *Verdict) HasExpired() bool {
 }
 
 func (o *Verdict) Validate() error {
-	errors := validate.Validate(o)
-	if errors != nil {
+	all := map[string]error{}
+	if err := validate.Singleton.Struct(o); err != nil {
+		for _, e := range err.(validate.ValidationErrors) {
+			all[e.StructField()] = fmt.Errorf(e.Translate(validate.Translator))
+		}
+	}
+	// When there aren't already errors on the File field and on the Code field...
+	_, fileError := all["File"]
+	_, codeError := all["Code"]
+	if !fileError && !codeError && o.Code != verdictcode.UNK {
+		// We assume o.File has been already validated, thus we don't check for the error
+		ft, _ := analysisrequest.GetTypeFromResultFile(o.File)
+		ct, err := o.Code.Type(false)
+		// We assum o.Code has been already validated, thus we expect its Type() method to never error
+		if err == nil && ft != ct {
+			all["Code"] = fmt.Errorf("verdict code is not coherent with the results file and its associated analysis type")
+		}
+	}
+	// TODO: use npm_package_name validator on org + pkg
+	errors := maps.Values(all)
+	if len(errors) > 0 {
 		ret := "validation error"
 		if len(errors) > 1 {
 			ret += "s"
