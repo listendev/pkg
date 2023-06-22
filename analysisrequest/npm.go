@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/garnet-org/pkg/ecosystem"
 	"github.com/garnet-org/pkg/npm"
 	"github.com/garnet-org/pkg/observability/tracer"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -56,7 +57,7 @@ func NewNPM(request Type, snowflake string, priority uint8, force bool, name, ve
 	if !tc.HasEcosystem() {
 		return nil, fmt.Errorf("couldn't instantiate an analysis request for NPM from a type without ecosystem at all")
 	}
-	if tc.Ecosystem == NPMEcosystem {
+	if tc.Ecosystem == ecosystem.Npm {
 		return &NPM{
 			base: base{
 				RequestType: request,
@@ -218,7 +219,7 @@ func (arn NPM) Switch(t Type) (AnalysisRequest, error) {
 	if !c.HasEcosystem() {
 		return nil, fmt.Errorf("couldn't switch the current NPM analysis request to an analysis request with a type without ecosystem")
 	}
-	if c.Ecosystem != NPMEcosystem {
+	if c.Ecosystem != ecosystem.Npm {
 		return nil, fmt.Errorf("couldn't switch the current NPM analysis request to a non NPM one")
 	}
 	arn.RequestType = t

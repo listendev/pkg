@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/garnet-org/pkg/ecosystem"
 	"github.com/leodido/go-urn"
 	"golang.org/x/exp/maps"
 )
@@ -56,7 +57,7 @@ func init() {
 	}
 }
 
-func createType(f Framework, c Collector, cAction string, e Ecosystem, eAction string, format string) string {
+func createType(f Framework, c Collector, cAction string, e ecosystem.Ecosystem, eAction string, format string) string {
 	u := urn.URN{}
 	if len(f) == 0 || len(c) == 0 {
 		panic("Missing mandatory framework and collector names")
@@ -66,8 +67,8 @@ func createType(f Framework, c Collector, cAction string, e Ecosystem, eAction s
 	if len(cAction) > 0 {
 		u.SS += fmt.Sprintf(",%s", cAction)
 	}
-	if len(e) > 0 {
-		u.SS += fmt.Sprintf("!%s", e)
+	if e != 0 {
+		u.SS += fmt.Sprintf("!%s", e.Case())
 		if len(eAction) > 0 {
 			u.SS += fmt.Sprintf(",%s", eAction)
 		}
@@ -94,22 +95,22 @@ func createType(f Framework, c Collector, cAction string, e Ecosystem, eAction s
 //
 // Notice only the framework part is case-insensitive.
 var typeURNs = map[Type]string{
-	Nop:                  createType(None, NoCollector, "", "", "", ""),
-	NPMInstallWhileFalco: createType(Scheduler, FalcoCollector, "", NPMEcosystem, "install", "json"),
-	NPMDepsDev:           createType(Hoarding, DepsDevCollector, "", NPMEcosystem, "", "json"),
+	Nop:                  createType(None, NoCollector, "", ecosystem.None, "", ""),
+	NPMInstallWhileFalco: createType(Scheduler, FalcoCollector, "", ecosystem.Npm, "install", "json"),
+	NPMDepsDev:           createType(Hoarding, DepsDevCollector, "", ecosystem.Npm, "", "json"),
 	// NPMGPT4InstallWhileFalco represents analysis requests to enrich the NPMInstallWhileFalco results
 	NPMGPT4InstallWhileFalco: "urn:scheduler:falco!npm,install.json+urn:hoarding:gpt4,context",
 	// NPMTestWhileFalco:     "urn:scheduler:falco!npm,test.json",
-	NPMTyposquat:                              createType(Hoarding, TyposquatCollector, "", NPMEcosystem, "", "json"),
-	NPMMetadataEmptyDescription:               createType(Hoarding, MetadataCollector, "empty_descr", NPMEcosystem, "", "json"),
-	NPMMetadataVersion:                        createType(Hoarding, MetadataCollector, "version", NPMEcosystem, "", "json"),
-	NPMMetadataMaintainersEmailCheck:          createType(Hoarding, MetadataCollector, "email_check", NPMEcosystem, "", "json"),
-	NPMStaticAnalysisEnvExfiltration:          createType(Hoarding, StaticAnalysisCollector, "exfiltrate_env", NPMEcosystem, "", "json"),
-	NPMStaticAnalysisDetachedProcessExecution: createType(Hoarding, StaticAnalysisCollector, "detached_process_exec", NPMEcosystem, "", "json"),
-	NPMStaticAnalysisShadyLinks:               createType(Hoarding, StaticAnalysisCollector, "shady_links", NPMEcosystem, "", "json"),
-	NPMStaticAnalysisEvalBase64:               createType(Hoarding, StaticAnalysisCollector, "base64_eval", NPMEcosystem, "", "json"),
-	NPMStaticAnalysisInstallScript:            createType(Hoarding, StaticAnalysisCollector, "install_script", NPMEcosystem, "", "json"),
-	NPMStaticNonRegistryDependency:            createType(Hoarding, StaticAnalysisCollector, "non_registry_dependency", NPMEcosystem, "", "json"),
+	NPMTyposquat:                              createType(Hoarding, TyposquatCollector, "", ecosystem.Npm, "", "json"),
+	NPMMetadataEmptyDescription:               createType(Hoarding, MetadataCollector, "empty_descr", ecosystem.Npm, "", "json"),
+	NPMMetadataVersion:                        createType(Hoarding, MetadataCollector, "version", ecosystem.Npm, "", "json"),
+	NPMMetadataMaintainersEmailCheck:          createType(Hoarding, MetadataCollector, "email_check", ecosystem.Npm, "", "json"),
+	NPMStaticAnalysisEnvExfiltration:          createType(Hoarding, StaticAnalysisCollector, "exfiltrate_env", ecosystem.Npm, "", "json"),
+	NPMStaticAnalysisDetachedProcessExecution: createType(Hoarding, StaticAnalysisCollector, "detached_process_exec", ecosystem.Npm, "", "json"),
+	NPMStaticAnalysisShadyLinks:               createType(Hoarding, StaticAnalysisCollector, "shady_links", ecosystem.Npm, "", "json"),
+	NPMStaticAnalysisEvalBase64:               createType(Hoarding, StaticAnalysisCollector, "base64_eval", ecosystem.Npm, "", "json"),
+	NPMStaticAnalysisInstallScript:            createType(Hoarding, StaticAnalysisCollector, "install_script", ecosystem.Npm, "", "json"),
+	NPMStaticNonRegistryDependency:            createType(Hoarding, StaticAnalysisCollector, "non_registry_dependency", ecosystem.Npm, "", "json"),
 }
 
 func Types() []Type {
@@ -141,7 +142,7 @@ func (t Type) ToURN() *urn.URN {
 }
 
 func (t Type) HasEcosystem() bool {
-	return t.Components().Ecosystem != ""
+	return t.Components().HasEcosystem()
 }
 
 func (t Type) String() string {
@@ -231,21 +232,24 @@ func componentsFromString(n *urn.URN) TypeComponents {
 	}
 
 	// <ecosystem>[,<action>]{0,}
-	ecosystem := ""
+	eco := ""
 	eAction := ""
 	if len(remainings) > 1 {
 		rest := strings.Split(remainings[1], ",")
-		ecosystem = rest[0]
+		eco = rest[0]
 		if len(rest) > 1 {
 			eAction = rest[1]
 		}
 	}
 
+	// FIXME: assuming the eco string is always a valid ecosystem
+	eee, _ := ecosystem.FromString(eco)
+
 	tc := TypeComponents{
 		Framework:       Framework(n.ID),
 		Collector:       Collector(collector),
 		CollectorAction: cAction,
-		Ecosystem:       Ecosystem(ecosystem),
+		Ecosystem:       eee,
 		EcosystemAction: eAction,
 		Format:          format,
 	}

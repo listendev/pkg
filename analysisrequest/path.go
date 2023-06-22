@@ -3,6 +3,8 @@ package analysisrequest
 import (
 	"fmt"
 	"path"
+
+	"github.com/garnet-org/pkg/ecosystem"
 )
 
 type ResultUploadPath []string
@@ -16,17 +18,17 @@ func ComposeResultUploadPath(a AnalysisRequest) ResultUploadPath {
 	c := t.Components()
 	filename := c.ResultFile()
 
-	if c.Ecosystem == NPMEcosystem {
+	if c.Ecosystem == ecosystem.Npm {
 		arn := a.(*NPM)
 
-		return ResultUploadPath{string(c.Ecosystem), arn.Name, arn.Version, arn.Shasum, filename}
+		return ResultUploadPath{c.Ecosystem.Case(), arn.Name, arn.Version, arn.Shasum, filename}
 	}
 
 	// Assuming there are no types - other than Nop - without ecosystem
 	return ResultUploadPath{"nop", a.ID(), filename}
 }
 
-func GetResultFilesByEcosystem(eco Ecosystem) map[Type]string {
+func GetResultFilesByEcosystem(eco ecosystem.Ecosystem) map[Type]string {
 	tmp := map[string]Type{}
 	for t := range typeURNs {
 		c := t.Components()
@@ -47,7 +49,7 @@ func GetResultFilesByEcosystem(eco Ecosystem) map[Type]string {
 	return res
 }
 
-func GetTypeForEcosystemFromResultFile(eco Ecosystem, filename string) (Type, error) {
+func GetTypeForEcosystemFromResultFile(eco ecosystem.Ecosystem, filename string) (Type, error) {
 	all := GetResultFilesByEcosystem(eco)
 	for t, f := range all {
 		if f == filename {
@@ -55,11 +57,11 @@ func GetTypeForEcosystemFromResultFile(eco Ecosystem, filename string) (Type, er
 		}
 	}
 
-	return Nop, fmt.Errorf("couldn't find any type for ecosystem %q matching the results file %q", eco, filename)
+	return Nop, fmt.Errorf("couldn't find any type for ecosystem %q matching the results file %q", eco.Case(), filename)
 }
 
 func GetTypeFromResultFile(filename string) (Type, error) {
-	for _, e := range allEcosystems {
+	for _, e := range ecosystem.All() {
 		t, err := GetTypeForEcosystemFromResultFile(e, filename)
 		if err == nil {
 			return t, nil

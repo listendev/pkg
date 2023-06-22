@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/garnet-org/pkg/ecosystem"
 	"github.com/leodido/go-urn"
 )
 
@@ -31,7 +32,7 @@ type TypeComponents struct {
 	Framework       Framework
 	Collector       Collector
 	CollectorAction string
-	Ecosystem       Ecosystem
+	Ecosystem       ecosystem.Ecosystem
 	EcosystemAction string
 	Format          string
 	Parent          *TypeComponents
@@ -67,7 +68,9 @@ func (c TypeComponents) ResultFile() string {
 }
 
 func (c TypeComponents) HasEcosystem() bool {
-	return c.Ecosystem != ""
+	_, err := ecosystem.FromUint64(uint64(c.Ecosystem))
+
+	return err == nil
 }
 
 func (c TypeComponents) HasEcosystemAction() bool {
@@ -92,7 +95,7 @@ func (c TypeComponents) ToURN() *urn.URN {
 	}
 	if c.Parent == nil {
 		if c.HasEcosystem() {
-			u.SS += "!" + string(c.Ecosystem)
+			u.SS += "!" + c.Ecosystem.Case()
 		}
 		if c.HasEcosystemAction() {
 			u.SS += "," + c.EcosystemAction
