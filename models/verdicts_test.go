@@ -383,7 +383,9 @@ func TestBuffer(t *testing.T) {
 
 func TestFromBuffer(t *testing.T) {
 	now := time.Now()
-	data := Verdicts{
+	noResults, _ := NewEmptyVerdict(ecosystem.Npm, "", "test1", "0.0.2-alpha.1", "aaaaa12321321cssasaaaaaa12321321cssasa22", "typosquat.json")
+
+	want := Verdicts{
 		Verdict{
 			CreatedAt: &now,
 			Ecosystem: ecosystem.Npm,
@@ -402,16 +404,14 @@ func TestFromBuffer(t *testing.T) {
 				"server_port":                float64(0),
 				"file_descriptor":            "",
 			},
-			Severity:   "MEDIUM", // I'm testing it also work with upper case severity
+			Severity:   severity.Medium,
 			Categories: []category.Category{category.AdjacentNetwork, category.CIS},
 			Code:       verdictcode.FNI002,
 		},
+		*noResults,
 	}
 
-	want := data
-	want[0].Severity = severity.Medium
-
-	reader, err := data.Buffer()
+	reader, err := want.Buffer()
 	if !assert.Nil(t, err) {
 		t.Fatalf("Buffer(): got error %q:", err)
 	}
