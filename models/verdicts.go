@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/garnet-org/pkg/analysisrequest"
+	"github.com/garnet-org/pkg/ecosystem"
 	"github.com/garnet-org/pkg/models/category"
 	"github.com/garnet-org/pkg/validate"
 	"github.com/garnet-org/pkg/verdictcode"
@@ -19,9 +20,10 @@ const (
 	NPMPackageVersionMetadataKey = "npm_package_version"
 )
 
-func NewEmptyVerdict(org, pkg, version, shasum, file string) (*Verdict, error) {
+func NewEmptyVerdict(eco ecosystem.Ecosystem, org, pkg, version, shasum, file string) (*Verdict, error) {
 	now := time.Now()
 	v := Verdict{
+		Ecosystem: eco,
 		Org:       org,
 		Pkg:       pkg,
 		Version:   version,
