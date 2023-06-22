@@ -5,6 +5,7 @@ package ecosystem
 
 // Defines values for Ecosystem.
 const (
+	None Ecosystem = 0
 	Npm  Ecosystem = 1
 	Pypi Ecosystem = 2
 )

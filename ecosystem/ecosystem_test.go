@@ -19,6 +19,9 @@ func TestFromUint64(t *testing.T) {
 		assert.Nil(t, e)
 		assert.Equal(t, c, r)
 	}
+
+	_, e := FromUint64(0)
+	assert.Error(t, e)
 }
 
 func TestFromString(t *testing.T) {
@@ -35,6 +38,9 @@ func TestFromString(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, b, upper)
 	}
+
+	_, e := FromString("none")
+	assert.Error(t, e)
 }
 
 func TestMarshal(t *testing.T) {
@@ -45,8 +51,11 @@ func TestMarshal(t *testing.T) {
 		assert.Equal(t, fmt.Sprintf("%q", c.Case()), string(r))
 	}
 
-	_, err := json.Marshal(Ecosystem(math.MaxUint64))
-	assert.Error(t, err)
+	_, err1 := json.Marshal(Ecosystem(math.MaxUint64))
+	assert.Error(t, err1)
+
+	_, err2 := json.Marshal(None)
+	assert.Error(t, err2)
 }
 
 func TestUnmarshal(t *testing.T) {
@@ -63,4 +72,7 @@ func TestUnmarshal(t *testing.T) {
 			assert.Equal(t, x, v2)
 		}
 	}
+
+	var e Ecosystem
+	assert.Error(t, json.Unmarshal([]byte(fmt.Sprintf("%q", "none")), &e))
 }

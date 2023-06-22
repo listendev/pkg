@@ -8,18 +8,18 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
+	_ = x[None-0]
 	_ = x[Npm-1]
 	_ = x[Pypi-2]
 }
 
-const _Ecosystem_name = "NpmPypi"
+const _Ecosystem_name = "NoneNpmPypi"
 
-var _Ecosystem_index = [...]uint8{0, 3, 7}
+var _Ecosystem_index = [...]uint8{0, 4, 7, 11}
 
 func (i Ecosystem) String() string {
-	i -= 1
 	if i >= Ecosystem(len(_Ecosystem_index)-1) {
-		return "Ecosystem(" + strconv.FormatInt(int64(i+1), 10) + ")"
+		return "Ecosystem(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
 	return _Ecosystem_name[_Ecosystem_index[i]:_Ecosystem_index[i+1]]
 }

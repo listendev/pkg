@@ -9,10 +9,12 @@ import (
 var all = []Ecosystem{}
 
 func init() {
-	for i := range _Ecosystem_index {
-		if i == len(_Ecosystem_index)-1 {
+	index := _Ecosystem_index[1:] // NOTE: None (the default value, 0) is not a valid ecosystem
+	for i := range index {
+		if i == len(index)-1 {
 			break
 		}
+
 		all = append(all, Ecosystem(i+1))
 	}
 }
@@ -37,7 +39,7 @@ func FromUint64(input uint64) (Ecosystem, error) {
 		}
 	}
 
-	return 0, fmt.Errorf("couldn't find an ecosystem matching input (%d)", input)
+	return 0, fmt.Errorf("couldn't find a valid ecosystem matching input (%d)", input)
 }
 
 func FromString(input string) (Ecosystem, error) {
@@ -47,7 +49,7 @@ func FromString(input string) (Ecosystem, error) {
 		}
 	}
 
-	return 0, fmt.Errorf("couldn't find an ecosystem matching input %q", input)
+	return 0, fmt.Errorf("couldn't find a valid ecosystem matching input %q", input)
 }
 
 func (e Ecosystem) Case() string {

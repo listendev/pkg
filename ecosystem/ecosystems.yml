@@ -26,14 +26,14 @@ components:
     Ecosystem:
       type: integer
       format: uint64
-      # Do not use 0
       enum:
+        - 0
         - 1
         - 2
       x-enumNames:
+        - "none"
         - "npm"
         - "pypi"
-      # TODO:
       x-oapi-codegen-extra-tags:
         validate: is_ecosystem
         human: the ecosystem the target package belongs to
