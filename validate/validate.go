@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/garnet-org/pkg/analysisrequest"
+	"github.com/garnet-org/pkg/ecosystem"
 	"github.com/garnet-org/pkg/models/category"
 	"github.com/garnet-org/pkg/models/severity"
 	"github.com/garnet-org/pkg/verdictcode"
@@ -63,6 +64,20 @@ func init() {
 
 		if f.Kind() == reflect.Uint64 {
 			_, err := category.FromUint64(f.Uint())
+
+			return err == nil
+		}
+
+		panic(fmt.Sprintf("bad field type: %T", f.Interface()))
+	}); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterValidation("is_ecosystem", func(fl validator.FieldLevel) bool {
+		f := fl.Field()
+
+		if f.Kind() == reflect.Uint64 {
+			_, err := ecosystem.FromUint64(f.Uint())
 
 			return err == nil
 		}
@@ -147,6 +162,21 @@ func init() {
 		},
 		func(ut ut.Translator, fe validator.FieldError) string {
 			t, _ := ut.T("is_severity", fe.Field())
+
+			return t
+		},
+	); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterTranslation(
+		"is_ecosystem",
+		Translator,
+		func(ut ut.Translator) error {
+			return ut.Add("is_ecosystem", fmt.Sprintf("{0} must be on of [%s]", strings.Join(ecosystem.Ecosystems(), ", ")), true)
+		},
+		func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("is_ecosystem", fe.Field())
 
 			return t
 		},
