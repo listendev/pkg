@@ -1,0 +1,40 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: Ecosystem Model
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: The Engineering Team
+    email: engineering@garnet.ai
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /temp-ecosystem:
+    post:
+      operationId: temp-ecosystem
+      description: This is just to let openapi-codegen generate the Ecosystem model.
+      responses:
+        default:
+          description: The Ecosystem model.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ecosystem"
+components:
+  schemas:
+    Ecosystem:
+      type: integer
+      format: uint64
+      # Do not use 0
+      enum:
+        - 1
+        - 2
+      x-enumNames:
+        - "npm"
+        - "pypi"
+      # TODO:
+      x-oapi-codegen-extra-tags:
+        validate: is_ecosystem
+        human: the ecosystem the target package belongs to
+        json: "ecosystem"
