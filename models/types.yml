@@ -41,6 +41,7 @@ components:
         - version
         - shasum
         - file
+        - ecosystem
         - org # Just to avoid the pointer
         - message # Just to avoid the pointer
         - code # Just to avoid the pointer
@@ -107,6 +108,8 @@ components:
           x-oapi-codegen-extra-tags:
             validate: mandatory
             human: the moment the verdict was created
+        ecosystem:
+          $ref: '../ecosystem/ecosystems.yml#/components/schemas/Ecosystem'
       example:
         org: "@garnet-org"
         pkg: "test"
