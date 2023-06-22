@@ -15,6 +15,7 @@ import (
 	"github.com/garnet-org/pkg/models/severity"
 	"github.com/garnet-org/pkg/verdictcode"
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -160,7 +161,7 @@ func TestExpiration(t *testing.T) {
 	assert.True(t, v.HasExpired())
 }
 
-func TestVerdictMarshalOk(t *testing.T) {
+func TestMarshalOkVerdict(t *testing.T) {
 	now := time.Now()
 	v := Verdict{
 		CreatedAt: &now,
@@ -236,7 +237,31 @@ func TestMarshalEmptyVerdict(t *testing.T) {
 	}
 }
 
-func TestVerdictUnmarshalOk(t *testing.T) {
+func TestUnmarshalEmptyVerdict(t *testing.T) {
+	want, e := NewEmptyVerdict(ecosystem.Npm, "", "test1", "0.0.2-alpha.1", "aaaaa12321321cssasaaaaaa12321321cssasa22", "typosquat.json")
+	assert.Nil(t, e)
+	assert.NotNil(t, want)
+
+	input := heredoc.Docf(`{
+		"ecosystem": "npm",
+		"shasum": "aaaaa12321321cssasaaaaaa12321321cssasa22",
+		"pkg": "test1",
+		"version": "0.0.2-alpha.1",
+		"file": "typosquat.json",
+		"created_at": %q
+	}`, want.CreatedAt.Format(time.RFC3339Nano))
+
+	var v Verdict
+	err := json.Unmarshal([]byte(input), &v)
+	if assert.Nil(t, err) {
+		opt := cmpopts.IgnoreFields(Verdict{}, "CreatedAt")
+		if !cmp.Equal(v, *want, opt) {
+			t.Fatalf("values are not the same:\n%s", cmp.Diff(v, *want))
+		}
+	}
+}
+
+func TestUnmarshalOkVerdict(t *testing.T) {
 	now := time.Now()
 	want := Verdict{
 		Ecosystem: ecosystem.Npm,
@@ -261,7 +286,7 @@ func TestVerdictUnmarshalOk(t *testing.T) {
 		Code:       verdictcode.FNI003,
 	}
 	input := heredoc.Docf(`{
-		"ecoSystem": "npm",
+		"ecosystem": "npm",
 		"shasum": "0123456789012345678901234567890123456789",
 		"pkg": "test",
 		"version": "0.0.1",
@@ -292,7 +317,7 @@ func TestVerdictUnmarshalOk(t *testing.T) {
 	}
 }
 
-func TestVerdictUnmarshalErrorSeverity(t *testing.T) {
+func TestUnmarshalErrorSeverityVerdict(t *testing.T) {
 	// Notice we don't need a valid verdict here because severity has its own custom unmarshaller that runs before the verdict's one
 	input := heredoc.Doc(`{
 		"message": "some message",
