@@ -3,6 +3,7 @@ package analysisrequest
 import (
 	"testing"
 
+	"github.com/garnet-org/pkg/ecosystem"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/stretchr/testify/assert"
@@ -24,7 +25,7 @@ func TestGetResultFilesByEcosystem(t *testing.T) {
 		NPMStaticAnalysisInstallScript:            "static(install_script).json",
 		NPMStaticNonRegistryDependency:            "static(non_registry_dependency).json",
 	}
-	got := GetResultFilesByEcosystem(NPMEcosystem)
+	got := GetResultFilesByEcosystem(ecosystem.Npm)
 
 	less := func(a, b string) bool { return a < b }
 	if equal := cmp.Equal(wnt, got, cmpopts.SortMaps(less)); !equal {
@@ -50,14 +51,14 @@ func TestGetTypeForEcosystemFromResultFile(t *testing.T) {
 		"static(non_registry_dependency).json": NPMStaticNonRegistryDependency,
 	}
 	for f, typ := range wnt {
-		got, err := GetTypeForEcosystemFromResultFile(NPMEcosystem, f)
+		got, err := GetTypeForEcosystemFromResultFile(ecosystem.Npm, f)
 
 		if assert.Nil(t, err) {
 			assert.Equal(t, typ, got)
 		}
 	}
 
-	_, err := GetTypeForEcosystemFromResultFile(NPMEcosystem, "unknown.json")
+	_, err := GetTypeForEcosystemFromResultFile(ecosystem.Npm, "unknown.json")
 	if assert.Error(t, err) {
 		assert.Equal(t, `couldn't find any type for ecosystem "npm" matching the results file "unknown.json"`, err.Error())
 	}

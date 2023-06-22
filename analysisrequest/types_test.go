@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/garnet-org/pkg/ecosystem"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -66,14 +67,14 @@ func TestTypes(t *testing.T) {
 					Framework:       Hoarding,
 					Collector:       GPT4Collector,
 					CollectorAction: "context",
-					Ecosystem:       NPMEcosystem, // From parent
-					EcosystemAction: "install",    // From parent
-					Format:          "json",       // From parent
+					Ecosystem:       ecosystem.Npm, // From parent
+					EcosystemAction: "install",     // From parent
+					Format:          "json",        // From parent
 					Parent: &TypeComponents{
 						Framework:       Scheduler,
 						Collector:       FalcoCollector,
 						CollectorAction: "",
-						Ecosystem:       NPMEcosystem,
+						Ecosystem:       ecosystem.Npm,
 						EcosystemAction: "install",
 						Format:          "json",
 					},
@@ -103,7 +104,7 @@ func TestTypes(t *testing.T) {
 					Framework:       Scheduler,
 					Collector:       FalcoCollector,
 					CollectorAction: "",
-					Ecosystem:       NPMEcosystem,
+					Ecosystem:       ecosystem.Npm,
 					EcosystemAction: "install",
 					Format:          "json",
 				},
@@ -118,7 +119,7 @@ func TestTypes(t *testing.T) {
 		// 			Framework:        Scheduler,
 		// 			Collector:        "falco",
 		// 			CollectorAction: "",
-		// 			Ecosystem:        NPMEcosystem,
+		// 			Ecosystem:        ecosystem.Npm,
 		// 			EcosystemAction: []string{"test"},
 		// 			Format:           "json",
 		// 		},
@@ -133,7 +134,7 @@ func TestTypes(t *testing.T) {
 					Framework:       Hoarding,
 					Collector:       DepsDevCollector,
 					CollectorAction: "",
-					Ecosystem:       NPMEcosystem,
+					Ecosystem:       ecosystem.Npm,
 					EcosystemAction: "",
 					Format:          "json",
 				},
@@ -148,7 +149,7 @@ func TestTypes(t *testing.T) {
 					Framework:       Hoarding,
 					Collector:       TyposquatCollector,
 					CollectorAction: "",
-					Ecosystem:       NPMEcosystem,
+					Ecosystem:       ecosystem.Npm,
 					EcosystemAction: "",
 					Format:          "json",
 				},
@@ -163,7 +164,7 @@ func TestTypes(t *testing.T) {
 					Framework:       Hoarding,
 					Collector:       MetadataCollector,
 					CollectorAction: "empty_descr",
-					Ecosystem:       NPMEcosystem,
+					Ecosystem:       ecosystem.Npm,
 					EcosystemAction: "",
 					Format:          "json",
 				},
@@ -178,7 +179,7 @@ func TestTypes(t *testing.T) {
 					Framework:       Hoarding,
 					Collector:       MetadataCollector,
 					CollectorAction: "email_check",
-					Ecosystem:       NPMEcosystem,
+					Ecosystem:       ecosystem.Npm,
 					EcosystemAction: "",
 					Format:          "json",
 				},
@@ -193,7 +194,7 @@ func TestTypes(t *testing.T) {
 					Framework:       Hoarding,
 					Collector:       MetadataCollector,
 					CollectorAction: "version",
-					Ecosystem:       NPMEcosystem,
+					Ecosystem:       ecosystem.Npm,
 					EcosystemAction: "",
 					Format:          "json",
 				},
@@ -208,7 +209,7 @@ func TestTypes(t *testing.T) {
 					Framework:       Hoarding,
 					Collector:       StaticAnalysisCollector,
 					CollectorAction: "exfiltrate_env",
-					Ecosystem:       NPMEcosystem,
+					Ecosystem:       ecosystem.Npm,
 					EcosystemAction: "",
 					Format:          "json",
 				},
@@ -223,7 +224,7 @@ func TestTypes(t *testing.T) {
 					Framework:       Hoarding,
 					Collector:       StaticAnalysisCollector,
 					CollectorAction: "detached_process_exec",
-					Ecosystem:       NPMEcosystem,
+					Ecosystem:       ecosystem.Npm,
 					EcosystemAction: "",
 					Format:          "json",
 				},
@@ -238,7 +239,7 @@ func TestTypes(t *testing.T) {
 					Framework:       Hoarding,
 					Collector:       StaticAnalysisCollector,
 					CollectorAction: "base64_eval",
-					Ecosystem:       NPMEcosystem,
+					Ecosystem:       ecosystem.Npm,
 					EcosystemAction: "",
 					Format:          "json",
 				},
@@ -253,7 +254,7 @@ func TestTypes(t *testing.T) {
 					Framework:       Hoarding,
 					Collector:       StaticAnalysisCollector,
 					CollectorAction: "shady_links",
-					Ecosystem:       NPMEcosystem,
+					Ecosystem:       ecosystem.Npm,
 					EcosystemAction: "",
 					Format:          "json",
 				},
@@ -268,7 +269,7 @@ func TestTypes(t *testing.T) {
 					Framework:       Hoarding,
 					Collector:       StaticAnalysisCollector,
 					CollectorAction: "install_script",
-					Ecosystem:       NPMEcosystem,
+					Ecosystem:       ecosystem.Npm,
 					EcosystemAction: "",
 					Format:          "json",
 				},
@@ -283,7 +284,7 @@ func TestTypes(t *testing.T) {
 					Framework:       Hoarding,
 					Collector:       StaticAnalysisCollector,
 					CollectorAction: "non_registry_dependency",
-					Ecosystem:       NPMEcosystem,
+					Ecosystem:       ecosystem.Npm,
 					EcosystemAction: "",
 					Format:          "json",
 				},
