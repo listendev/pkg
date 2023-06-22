@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/MakeNowJust/heredoc"
+	"github.com/garnet-org/pkg/ecosystem"
 	"github.com/garnet-org/pkg/models/category"
 	"github.com/garnet-org/pkg/models/severity"
 	"github.com/garnet-org/pkg/verdictcode"
@@ -53,6 +54,14 @@ func TestVerdictValidation(t *testing.T) {
 		assert.True(t, strings.Contains(e.Error(), "40 characters long"))
 	}
 	v.Shasum = "aaaaaaaaaa1aaaaaaaaaa1aaaaaaaaaa12345678"
+
+	v.Ecosystem = 0
+	e = v.Validate()
+	if assert.Error(t, e) {
+		assert.True(t, strings.HasPrefix(e.Error(), "validation errors:"))
+		assert.True(t, strings.Contains(e.Error(), "must be on of [npm"))
+	}
+	v.Ecosystem = ecosystem.Npm
 
 	v.CreatedAt = &time.Time{}
 
@@ -155,6 +164,7 @@ func TestVerdictMarshalOk(t *testing.T) {
 	now := time.Now()
 	v := Verdict{
 		CreatedAt: &now,
+		Ecosystem: ecosystem.Npm,
 		Pkg:       "test",
 		Version:   "0.0.1",
 		Shasum:    "0123456789012345678901234567890123456789",
@@ -178,6 +188,7 @@ func TestVerdictMarshalOk(t *testing.T) {
 
 	want := heredoc.Docf(`{
 		"shasum": "0123456789012345678901234567890123456789",
+		"ecosystem": "npm",
 		"pkg": "test",
 		"version": "0.0.1",
 		"file": "falco!install!.json",
@@ -206,12 +217,13 @@ func TestVerdictMarshalOk(t *testing.T) {
 }
 
 func TestMarshalEmptyVerdict(t *testing.T) {
-	v, e := NewEmptyVerdict("", "test", "0.0.1", "0123456789012345678901234567890123456789", "falco!install!.json")
+	v, e := NewEmptyVerdict(ecosystem.Npm, "", "test", "0.0.1", "0123456789012345678901234567890123456789", "falco!install!.json")
 	assert.Nil(t, e)
 	assert.NotNil(t, v)
 
 	want := heredoc.Docf(`{
 		"shasum": "0123456789012345678901234567890123456789",
+		"ecosystem": "npm",
 		"pkg": "test",
 		"version": "0.0.1",
 		"file": "falco!install!.json",
@@ -227,6 +239,7 @@ func TestMarshalEmptyVerdict(t *testing.T) {
 func TestVerdictUnmarshalOk(t *testing.T) {
 	now := time.Now()
 	want := Verdict{
+		Ecosystem: ecosystem.Npm,
 		CreatedAt: &now,
 		Pkg:       "test",
 		Version:   "0.0.1",
@@ -248,6 +261,7 @@ func TestVerdictUnmarshalOk(t *testing.T) {
 		Code:       verdictcode.FNI003,
 	}
 	input := heredoc.Docf(`{
+		"ecoSystem": "npm",
 		"shasum": "0123456789012345678901234567890123456789",
 		"pkg": "test",
 		"version": "0.0.1",
@@ -305,6 +319,7 @@ func TestBufferEmptyVerdicts(t *testing.T) {
 func TestBuffer(t *testing.T) {
 	now := time.Now()
 	vvvvv := Verdict{
+		Ecosystem: ecosystem.Npm,
 		CreatedAt: &now,
 		Pkg:       "test",
 		Version:   "0.0.1",
@@ -326,7 +341,7 @@ func TestBuffer(t *testing.T) {
 		Code:       verdictcode.FNI001,
 	}
 	vvvvv.ExpiresIn(time.Second * 5)
-	empty, _ := NewEmptyVerdict("", "testone", "0.0.2", "a123456789012345678901234567890123456789", "typosquat.json")
+	empty, _ := NewEmptyVerdict(ecosystem.Npm, "", "testone", "0.0.2", "a123456789012345678901234567890123456789", "typosquat.json")
 	data := Verdicts{
 		*empty,
 		vvvvv,
@@ -346,6 +361,7 @@ func TestFromBuffer(t *testing.T) {
 	data := Verdicts{
 		Verdict{
 			CreatedAt: &now,
+			Ecosystem: ecosystem.Npm,
 			Pkg:       "test",
 			Version:   "0.0.1",
 			Shasum:    "0123456789012345678901234567890123456789",
