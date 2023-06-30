@@ -201,6 +201,21 @@ func TestTypes(t *testing.T) {
 			},
 		},
 		{
+			input: NPMMetadataMismatches,
+			want: want{
+				urn:  "urn:hoarding:metadata,mismatches!npm.json",
+				json: []byte(`"urn:hoarding:metadata,mismatches!npm.json"`),
+				TypeComponents: TypeComponents{
+					Framework:       Hoarding,
+					Collector:       MetadataCollector,
+					CollectorAction: "mismatches",
+					Ecosystem:       ecosystem.Npm,
+					EcosystemAction: "",
+					Format:          "json",
+				},
+			},
+		},
+		{
 			input: NPMStaticAnalysisEnvExfiltration,
 			want: want{
 				urn:  "urn:hoarding:static,exfiltrate_env!npm.json",
