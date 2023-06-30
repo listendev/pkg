@@ -16,6 +16,10 @@ func _() {
 	_ = x[MDN02-1022]
 	_ = x[MDN03-1023]
 	_ = x[MDN04-1024]
+	_ = x[MDN05-1025]
+	_ = x[MDN06-1026]
+	_ = x[MDN07-1027]
+	_ = x[MDN08-1028]
 	_ = x[STN001-1101]
 	_ = x[STN002-1102]
 	_ = x[STN003-1103]
@@ -33,13 +37,13 @@ const (
 	_Code_name_0 = "UNKFNI001FNI002FNI003"
 	_Code_name_1 = "DDN01"
 	_Code_name_2 = "TSN01"
-	_Code_name_3 = "MDN01MDN02MDN03MDN04"
+	_Code_name_3 = "MDN01MDN02MDN03MDN04MDN05MDN06MDN07MDN08"
 	_Code_name_4 = "STN001STN002STN003STN004STN005STN006STN007STN008STN009"
 )
 
 var (
 	_Code_index_0 = [...]uint8{0, 3, 9, 15, 21}
-	_Code_index_3 = [...]uint8{0, 5, 10, 15, 20}
+	_Code_index_3 = [...]uint8{0, 5, 10, 15, 20, 25, 30, 35, 40}
 	_Code_index_4 = [...]uint8{0, 6, 12, 18, 24, 30, 36, 42, 48, 54}
 )
 
@@ -51,7 +55,7 @@ func (i Code) String() string {
 		return _Code_name_1
 	case i == 1011:
 		return _Code_name_2
-	case 1021 <= i && i <= 1024:
+	case 1021 <= i && i <= 1028:
 		i -= 1021
 		return _Code_name_3[_Code_index_3[i]:_Code_index_3[i+1]]
 	case 1101 <= i && i <= 1109:

@@ -39,25 +39,29 @@ components:
       type: integer
       format: uint64
       enum:
-        - 0
-        - 1
-        - 2
-        - 3
-        - 1001
-        - 1011
-        - 1021
-        - 1022
-        - 1023
-        - 1024
-        - 1101
-        - 1102
-        - 1103
-        - 1104
-        - 1105
-        - 1106
-        - 1107
-        - 1108
-        - 1109
+        - 0 # UNK
+        - 1 # FNI001
+        - 2 # FNI002
+        - 3 # FNI003
+        - 1001 # DDN01
+        - 1011 # TSN01
+        - 1021 # MDN01
+        - 1022 # MDN02
+        - 1023 # MDN03
+        - 1024 # MDN04
+        - 1025 # MDN05
+        - 1026 # MDN06
+        - 1027 # MDN07
+        - 1028 # MDN08
+        - 1101 # STN001
+        - 1102 # STN002
+        - 1103 # STN003
+        - 1104 # STN004
+        - 1105 # STN005
+        - 1106 # STN006
+        - 1107 # STN007
+        - 1108 # STN008
+        - 1109 # STN009
       x-enumNames:
         - "UNK"
         - "FNI001"
@@ -69,6 +73,10 @@ components:
         - "MDN02" # Zero version
         - "MDN03" # Prerelease version
         - "MDN04" # Maintainers email
+        - "MDN05" # Mismatch between the NPM registry package name vs the tarball's package.json name
+        - "MDN06" # Mismatch between the NPM registry package scripts vs the tarball's package.json scripts
+        - "MDN07" # Mismatch between the NPM registry package dependencies vs the tarball's package.json dependencies
+        - "MDN08" # Mismatch between the NPM registry package devDependencies vs the tarball's package.json devDependencies
         - "STN001" # Javascript env exfiltration
         - "STN002" # Javascript child process exec
         - "STN003" # Shady links

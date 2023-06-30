@@ -27,6 +27,12 @@ var mapping = map[analysisrequest.Type]map[Code]bool{
 	analysisrequest.NPMMetadataMaintainersEmailCheck: {
 		MDN04: true,
 	},
+	analysisrequest.NPMMetadataMismatches: {
+		MDN05: true,
+		MDN06: true,
+		MDN07: true,
+		MDN08: true,
+	},
 	analysisrequest.NPMStaticAnalysisEnvExfiltration: {
 		STN001: true,
 	},
