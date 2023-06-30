@@ -25,8 +25,9 @@ const (
 	NPMMetadataEmptyDescription
 	NPMMetadataVersion
 	NPMMetadataMaintainersEmailCheck
+	NPMMetadataMismatches
 
-	NPMStaticAnalysisEnvExfiltration Type = iota + 10 // 18 // Do not forget to specify the type Type when using iota to reserve space for previous types
+	NPMStaticAnalysisEnvExfiltration Type = iota + 9 // 18 // Do not forget to specify the type Type when using iota to reserve space for previous types
 	NPMStaticAnalysisDetachedProcessExecution
 	NPMStaticAnalysisShadyLinks
 	NPMStaticAnalysisEvalBase64
@@ -105,6 +106,7 @@ var typeURNs = map[Type]string{
 	NPMMetadataEmptyDescription:               createType(Hoarding, MetadataCollector, "empty_descr", ecosystem.Npm, "", "json"),
 	NPMMetadataVersion:                        createType(Hoarding, MetadataCollector, "version", ecosystem.Npm, "", "json"),
 	NPMMetadataMaintainersEmailCheck:          createType(Hoarding, MetadataCollector, "email_check", ecosystem.Npm, "", "json"),
+	NPMMetadataMismatches:                     createType(Hoarding, MetadataCollector, "mismatches", ecosystem.Npm, "", "json"),
 	NPMStaticAnalysisEnvExfiltration:          createType(Hoarding, StaticAnalysisCollector, "exfiltrate_env", ecosystem.Npm, "", "json"),
 	NPMStaticAnalysisDetachedProcessExecution: createType(Hoarding, StaticAnalysisCollector, "detached_process_exec", ecosystem.Npm, "", "json"),
 	NPMStaticAnalysisShadyLinks:               createType(Hoarding, StaticAnalysisCollector, "shady_links", ecosystem.Npm, "", "json"),

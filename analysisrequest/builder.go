@@ -125,6 +125,9 @@ func (b *builder) FromJSON(body []byte) (AnalysisRequest, error) {
 	case NPMMetadataVersion:
 		fallthrough
 
+	case NPMMetadataMismatches:
+		fallthrough
+
 	case NPMStaticAnalysisEnvExfiltration:
 		fallthrough
 
