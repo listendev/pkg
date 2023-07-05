@@ -343,7 +343,7 @@ func TestBufferEmptyVerdicts(t *testing.T) {
 
 func TestBuffer(t *testing.T) {
 	now := time.Now()
-	vvvvv := Verdict{
+	vvvv1 := Verdict{
 		Ecosystem: ecosystem.Npm,
 		CreatedAt: &now,
 		Pkg:       "test",
@@ -365,19 +365,33 @@ func TestBuffer(t *testing.T) {
 		Categories: []category.Category{category.Network, category.Process},
 		Code:       verdictcode.FNI001,
 	}
-	vvvvv.ExpiresIn(time.Second * 5)
+	vvvv1.ExpiresIn(time.Second * 5)
+	vvvv2 := Verdict{
+		CreatedAt:  &now,
+		Ecosystem:  ecosystem.Npm,
+		Pkg:        "darcyclarke-manifest-pkg",
+		Severity:   severity.Medium,
+		Shasum:     "429eced1773fbc9ceea5cebda8338c0aaa21eeec",
+		Version:    "2.1.15",
+		File:       "metadata(mismatches).json",
+		Message:    "This package has inconsistent name in the tarball's package.json",
+		Code:       verdictcode.MDN05,
+		Categories: []category.Category{category.Metadata},
+	}
 	empty, _ := NewEmptyVerdict(ecosystem.Npm, "", "testone", "0.0.2", "a123456789012345678901234567890123456789", "typosquat.json")
 	data := Verdicts{
 		*empty,
-		vvvvv,
+		vvvv1,
+		vvvv2,
 	}
 
 	reader, err := data.Buffer()
 	if assert.Nil(t, err) {
 		emptyJSON, _ := json.Marshal(empty)
-		vvvvvJSON, _ := json.Marshal(vvvvv)
+		vvvv1JSON, _ := json.Marshal(vvvv1)
+		vvvv2JSON, _ := json.Marshal(vvvv2)
 		got, _ := io.ReadAll(reader)
-		assert.JSONEq(t, fmt.Sprintf("[%s,%s]", emptyJSON, vvvvvJSON), string(got))
+		assert.JSONEq(t, fmt.Sprintf("[%s,%s,%s]", emptyJSON, vvvv1JSON, vvvv2JSON), string(got))
 	}
 }
 
@@ -386,6 +400,18 @@ func TestFromBuffer(t *testing.T) {
 	noResults, _ := NewEmptyVerdict(ecosystem.Npm, "", "test1", "0.0.2-alpha.1", "aaaaa12321321cssasaaaaaa12321321cssasa22", "typosquat.json")
 
 	want := Verdicts{
+		Verdict{
+			CreatedAt:  &now,
+			Ecosystem:  ecosystem.Npm,
+			Pkg:        "darcyclarke-manifest-pkg",
+			Severity:   severity.Medium,
+			Shasum:     "429eced1773fbc9ceea5cebda8338c0aaa21eeec",
+			Version:    "2.1.15",
+			File:       "metadata(mismatches).json",
+			Message:    "This package has inconsistent name in the tarball's package.json",
+			Code:       verdictcode.MDN05,
+			Categories: []category.Category{category.Metadata},
+		},
 		Verdict{
 			CreatedAt: &now,
 			Ecosystem: ecosystem.Npm,

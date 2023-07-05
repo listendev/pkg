@@ -95,4 +95,9 @@ func TestRetrievingTheType(t *testing.T) {
 	assert.Nil(t, e4)
 	assert.NotNil(t, t4)
 	assert.Equal(t, analysisrequest.NPMMetadataVersion, t4)
+
+	t5, e5 := MDN06.Type(false)
+	assert.Nil(t, e5)
+	assert.NotNil(t, t5)
+	assert.Equal(t, analysisrequest.NPMMetadataMismatches, t5)
 }
