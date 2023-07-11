@@ -1,30 +1,48 @@
-name: golangci-lint
+name: linting
+
 on:
   push:
-    tags:
-      - v*
-    branches:
-      - main
+    paths:
+      - "**.go"
+      - go.mod
+      - go.sum
+    branches: ["main"]
   pull_request:
+    paths:
+      - "**.go"
+      - go.mod
+      - go.sum
+    branches: ["main"]
+
 permissions:
   contents: read
   # Optional: allow read access to pull request. Use with `only-new-issues` option.
   # pull-requests: read
+
 jobs:
-  golangci:
+  lint:
     name: lint
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: [ '1.19', '1.20' ]
+        go: [ '1.20' ]
     steps:
-      - uses: actions/setup-go@v3
+      - name: Set up go
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go }}
-      - uses: actions/checkout@v3
-      - name: golangci-lint
+
+      - name: Checkout the source code
+        uses: actions/checkout@v3
+
+      - name: Verify the dependencies
+        run: |
+          go mod verify
+          go mod download
+
+      - name: Lint
         uses: golangci/golangci-lint-action@v3
         with:
           version: latest
-          only-new-issues: true
+          args: --timeout 15m0s --verbose --out-${IGNORE_FUTURE_WARNINGS}format tab
 
