@@ -39,13 +39,14 @@ func newMockNpmregistryClient(listFilePath, versionFilePath string) (*mockNpmreg
 	if err != nil {
 		return nil, err
 	}
+
 	return &mockNpmregistryClient{
 		listContent:    plist,
 		versionContent: pversion,
 	}, nil
 }
 
-func (r *mockNpmregistryClient) GetPackageList(ctx context.Context, name string) (*npm.PackageList, error) {
+func (r *mockNpmregistryClient) GetPackageList(_ context.Context, name string) (*npm.PackageList, error) {
 	var packageList npm.PackageList
 	err := json.Unmarshal(r.listContent, &packageList)
 	if err != nil {
@@ -58,7 +59,7 @@ func (r *mockNpmregistryClient) GetPackageList(ctx context.Context, name string)
 	return &packageList, nil
 }
 
-func (r *mockNpmregistryClient) GetPackageVersion(ctx context.Context, name, version string) (*npm.PackageVersion, error) {
+func (r *mockNpmregistryClient) GetPackageVersion(_ context.Context, name, _ string) (*npm.PackageVersion, error) {
 	var packageVersion npm.PackageVersion
 	err := json.Unmarshal(r.versionContent, &packageVersion)
 	if err != nil {
@@ -135,6 +136,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
+
 				return mockClient
 			}(),
 			wantErr: false,
@@ -168,6 +170,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
+
 				return mockClient
 			}(),
 			wantErr: false,
@@ -201,6 +204,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
+
 				return mockClient
 			}(),
 			wantErr: false,
@@ -231,6 +235,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
+
 				return mockClient
 			}(),
 			wantErr: false,
@@ -261,6 +266,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
+
 				return mockClient
 			}(),
 			wantErr: false,
@@ -291,6 +297,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
+
 				return mockClient
 			}(),
 			wantErr: false,
@@ -427,6 +434,7 @@ func TestAnalysisRequestFromFile(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
+
 				return mockClient
 			}(),
 		},
@@ -464,6 +472,7 @@ func TestAnalysisRequestFromFile(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
+
 				return mockClient
 			}(),
 		},

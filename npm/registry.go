@@ -14,22 +14,22 @@ import (
 
 const defaultRegistryBaseURL = "https://registry.npmjs.org"
 
-type RegistryClient interface {
+type Registry interface {
 	GetPackageList(ctx context.Context, name string) (*PackageList, error)
 	GetPackageVersion(ctx context.Context, name, version string) (*PackageVersion, error)
 }
 
-type NPMRegistryClient struct {
+type RegistryClient struct {
 	client  *http.Client
 	baseURL *url.URL
 }
 
-type NPMRegistryClientConfig struct {
+type RegistryClientConfig struct {
 	Timeout time.Duration
 	BaseURL string
 }
 
-func NewNPMRegistryClient(config NPMRegistryClientConfig) (RegistryClient, error) {
+func NewRegistryClient(config RegistryClientConfig) (Registry, error) {
 	timeout := time.Second * 10
 	if config.Timeout != 0 {
 		timeout = config.Timeout
@@ -45,14 +45,14 @@ func NewNPMRegistryClient(config NPMRegistryClientConfig) (RegistryClient, error
 		return nil, err
 	}
 
-	return &NPMRegistryClient{
+	return &RegistryClient{
 		client:  c,
 		baseURL: url,
 	}, nil
 }
 
-func (c *NPMRegistryClient) GetPackageList(parent context.Context, name string) (*PackageList, error) {
-	ctx, span := tracer.FromContext(parent).Start(parent, "NPMRegistryClient.GetPackageList")
+func (c *RegistryClient) GetPackageList(parent context.Context, name string) (*PackageList, error) {
+	ctx, span := tracer.FromContext(parent).Start(parent, "RegistryClient.GetPackageList")
 	defer span.End()
 	endpoint := c.baseURL.ResolveReference(&url.URL{Path: name})
 
@@ -80,8 +80,8 @@ func (c *NPMRegistryClient) GetPackageList(parent context.Context, name string) 
 	return &packageList, nil
 }
 
-func (c *NPMRegistryClient) GetPackageVersion(parent context.Context, name, version string) (*PackageVersion, error) {
-	ctx, span := tracer.FromContext(parent).Start(parent, "NPMRegistryClient.GetPackageVersion")
+func (c *RegistryClient) GetPackageVersion(parent context.Context, name, version string) (*PackageVersion, error) {
+	ctx, span := tracer.FromContext(parent).Start(parent, "RegistryClient.GetPackageVersion")
 	defer span.End()
 	endpoint := c.baseURL.ResolveReference(&url.URL{Path: path.Join(name, version)})
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint.String(), nil)
@@ -109,14 +109,16 @@ func (c *NPMRegistryClient) GetPackageVersion(parent context.Context, name, vers
 
 type NoOpRegistryClient struct{}
 
-func NewNoOpRegistryClient() RegistryClient {
+func NewNoOpRegistryClient() Registry {
 	return &NoOpRegistryClient{}
 }
 
-func (c *NoOpRegistryClient) GetPackageList(ctx context.Context, name string) (*PackageList, error) {
+func (c *NoOpRegistryClient) GetPackageList(_ context.Context, _ string) (*PackageList, error) {
+	//nolint:nilnil // this is a mock
 	return nil, nil
 }
 
-func (c *NoOpRegistryClient) GetPackageVersion(ctx context.Context, name, version string) (*PackageVersion, error) {
+func (c *NoOpRegistryClient) GetPackageVersion(_ context.Context, _, _ string) (*PackageVersion, error) {
+	//nolint:nilnil // this is a mock
 	return nil, nil
 }
