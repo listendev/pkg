@@ -6,10 +6,8 @@ This package allows to get some information about a npm package from the npm reg
 ## Installation
 
 ```
-go env -w GOPRIVATE=github.com/garnet-org/*
-go get github.com/garnet-org/pkg/npm
+go get github.com/listendev/pkg/npm
 ```
-
 
 ## Usage
 

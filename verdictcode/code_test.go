@@ -6,7 +6,7 @@ import (
 	"math"
 	"testing"
 
-	"github.com/garnet-org/pkg/analysisrequest"
+	"github.com/listendev/pkg/analysisrequest"
 	"github.com/stretchr/testify/assert"
 )
 

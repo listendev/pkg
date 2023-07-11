@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/garnet-org/pkg/ecosystem"
 	"github.com/leodido/go-urn"
+	"github.com/listendev/pkg/ecosystem"
 )
 
 type Framework string

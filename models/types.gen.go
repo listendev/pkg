@@ -6,10 +6,10 @@ package models
 import (
 	"time"
 
-	externalRef0 "github.com/garnet-org/pkg/ecosystem"
-	externalRef1 "github.com/garnet-org/pkg/models/category"
-	externalRef2 "github.com/garnet-org/pkg/models/severity"
-	externalRef3 "github.com/garnet-org/pkg/verdictcode"
+	externalRef0 "github.com/listendev/pkg/ecosystem"
+	externalRef1 "github.com/listendev/pkg/models/category"
+	externalRef2 "github.com/listendev/pkg/models/severity"
+	externalRef3 "github.com/listendev/pkg/verdictcode"
 )
 
 // Problem defines model for Problem.

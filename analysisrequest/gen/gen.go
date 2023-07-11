@@ -5,8 +5,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/garnet-org/pkg/analysisrequest"
-	"github.com/garnet-org/pkg/rand"
+	"github.com/listendev/pkg/analysisrequest"
+	"github.com/listendev/pkg/rand"
 )
 
 var (

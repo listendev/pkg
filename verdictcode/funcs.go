@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/garnet-org/pkg/analysisrequest"
+	"github.com/listendev/pkg/analysisrequest"
 	"golang.org/x/exp/maps"
 )
 

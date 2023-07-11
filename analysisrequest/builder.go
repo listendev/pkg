@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"reflect"
 
-	"github.com/garnet-org/pkg/npm"
-	"github.com/garnet-org/pkg/observability/tracer"
+	"github.com/listendev/pkg/npm"
+	"github.com/listendev/pkg/observability/tracer"
 )
 
 var (

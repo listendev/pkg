@@ -5,8 +5,7 @@ This package provides a way to create the request to analyze a package.
 ## Installation
 
 ```
-go env -w GOPRIVATE=github.com/garnet-org/*
-go get github.com/garnet-org/pkg/analysisrequest
+go get github.com/listendev/pkg/analysisrequest
 ```
 
 ## Usage
@@ -18,9 +17,9 @@ package main
 
 import (
 	"github.com/davecgh/go-spew/spew"
-	"github.com/garnet-org/pkg/analysisrequest"
-	"github.com/garnet-org/pkg/npm"
-	"github.com/garnet-org/pkg/observability"
+	"github.com/listendev/pkg/analysisrequest"
+	"github.com/listendev/pkg/npm"
+	"github.com/listendev/pkg/observability"
 )
 
 func main() {

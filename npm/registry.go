@@ -9,7 +9,7 @@ import (
 	"path"
 	"time"
 
-	"github.com/garnet-org/pkg/observability/tracer"
+	"github.com/listendev/pkg/observability/tracer"
 )
 
 const defaultRegistryBaseURL = "https://registry.npmjs.org"

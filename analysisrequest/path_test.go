@@ -3,9 +3,9 @@ package analysisrequest
 import (
 	"testing"
 
-	"github.com/garnet-org/pkg/ecosystem"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/listendev/pkg/ecosystem"
 	"github.com/stretchr/testify/assert"
 )
 

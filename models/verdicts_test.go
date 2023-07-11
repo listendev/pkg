@@ -10,12 +10,12 @@ import (
 	"time"
 
 	"github.com/MakeNowJust/heredoc"
-	"github.com/garnet-org/pkg/ecosystem"
-	"github.com/garnet-org/pkg/models/category"
-	"github.com/garnet-org/pkg/models/severity"
-	"github.com/garnet-org/pkg/verdictcode"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/listendev/pkg/ecosystem"
+	"github.com/listendev/pkg/models/category"
+	"github.com/listendev/pkg/models/severity"
+	"github.com/listendev/pkg/verdictcode"
 	"github.com/stretchr/testify/assert"
 )
 

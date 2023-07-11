@@ -5,15 +5,15 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/garnet-org/pkg/analysisrequest"
-	"github.com/garnet-org/pkg/ecosystem"
-	"github.com/garnet-org/pkg/models/category"
-	"github.com/garnet-org/pkg/models/severity"
-	"github.com/garnet-org/pkg/verdictcode"
 	en "github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	en_translations "github.com/go-playground/validator/v10/translations/en"
+	"github.com/listendev/pkg/analysisrequest"
+	"github.com/listendev/pkg/ecosystem"
+	"github.com/listendev/pkg/models/category"
+	"github.com/listendev/pkg/models/severity"
+	"github.com/listendev/pkg/verdictcode"
 )
 
 type ValidationErrors = validator.ValidationErrors

@@ -7,7 +7,7 @@ import (
 	"path"
 	"testing"
 
-	"github.com/garnet-org/pkg/observability"
+	"github.com/listendev/pkg/observability"
 )
 
 func TestNPMRegistryClient_GetPackageVersion(t *testing.T) {

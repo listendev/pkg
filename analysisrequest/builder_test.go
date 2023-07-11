@@ -9,9 +9,9 @@ import (
 	"path"
 	"testing"
 
-	"github.com/garnet-org/pkg/npm"
-	"github.com/garnet-org/pkg/observability"
 	"github.com/hgsgtk/jsoncmp"
+	"github.com/listendev/pkg/npm"
+	"github.com/listendev/pkg/observability"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/stretchr/testify/assert"
 )

@@ -1,7 +1,7 @@
 package verdictcode
 
 import (
-	"github.com/garnet-org/pkg/analysisrequest"
+	"github.com/listendev/pkg/analysisrequest"
 )
 
 // mapping maps the codes to the analysis request type that can generate them.

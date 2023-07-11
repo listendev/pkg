@@ -3,9 +3,9 @@ package observability
 import (
 	"context"
 
-	"github.com/garnet-org/pkg/observability/logger"
-	"github.com/garnet-org/pkg/observability/threadid"
-	"github.com/garnet-org/pkg/observability/tracer"
+	"github.com/listendev/pkg/observability/logger"
+	"github.com/listendev/pkg/observability/threadid"
+	"github.com/listendev/pkg/observability/tracer"
 	"go.uber.org/zap"
 )
 

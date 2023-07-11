@@ -1,9 +1,9 @@
 package: models
 output: types.gen.go
 import-mapping:
-  './category/categories.yml': github.com/garnet-org/pkg/models/category
-  './severity/severities.yml': github.com/garnet-org/pkg/models/severity
-  '../verdictcode/code.yml': github.com/garnet-org/pkg/verdictcode
-  '../ecosystem/ecosystems.yml': github.com/garnet-org/pkg/ecosystem
+  "./category/categories.yml": github.com/listendev/pkg/models/category
+  "./severity/severities.yml": github.com/listendev/pkg/models/severity
+  "../verdictcode/code.yml": github.com/listendev/pkg/verdictcode
+  "../ecosystem/ecosystems.yml": github.com/listendev/pkg/ecosystem
 generate:
   models: true

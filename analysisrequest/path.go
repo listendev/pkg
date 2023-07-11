@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"path"
 
-	"github.com/garnet-org/pkg/ecosystem"
+	"github.com/listendev/pkg/ecosystem"
 )
 
 type ResultUploadPath []string

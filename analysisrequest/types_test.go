@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/garnet-org/pkg/ecosystem"
+	"github.com/listendev/pkg/ecosystem"
 	"github.com/stretchr/testify/assert"
 )
 

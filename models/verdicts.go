@@ -7,11 +7,11 @@ import (
 	"io"
 	"time"
 
-	"github.com/garnet-org/pkg/analysisrequest"
-	"github.com/garnet-org/pkg/ecosystem"
-	"github.com/garnet-org/pkg/models/category"
-	"github.com/garnet-org/pkg/validate"
-	"github.com/garnet-org/pkg/verdictcode"
+	"github.com/listendev/pkg/analysisrequest"
+	"github.com/listendev/pkg/ecosystem"
+	"github.com/listendev/pkg/models/category"
+	"github.com/listendev/pkg/validate"
+	"github.com/listendev/pkg/verdictcode"
 	"golang.org/x/exp/maps"
 )
 

@@ -6,9 +6,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/garnet-org/pkg/ecosystem"
-	"github.com/garnet-org/pkg/npm"
-	"github.com/garnet-org/pkg/observability/tracer"
+	"github.com/listendev/pkg/ecosystem"
+	"github.com/listendev/pkg/npm"
+	"github.com/listendev/pkg/observability/tracer"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
