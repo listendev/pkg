@@ -10,7 +10,7 @@ import (
 	"github.com/listendev/pkg/observability"
 )
 
-func TestNPMRegistryClient_GetPackageVersion(t *testing.T) {
+func TestRegistryClient_GetPackageVersion(t *testing.T) {
 	tests := []struct {
 		name        string
 		testFile    string
@@ -50,7 +50,7 @@ func TestNPMRegistryClient_GetPackageVersion(t *testing.T) {
 			defer ts.Close()
 
 			// Create a new client using the mock server as the base URL
-			client, err := NewNPMRegistryClient(NPMRegistryClientConfig{
+			client, err := NewRegistryClient(RegistryClientConfig{
 				BaseURL: ts.URL,
 			})
 			if err != nil {
@@ -76,7 +76,7 @@ func TestNPMRegistryClient_GetPackageVersion(t *testing.T) {
 	}
 }
 
-func TestNPMRegistryClient_GetPackageList(t *testing.T) {
+func TestRegistryClient_GetPackageList(t *testing.T) {
 	tests := []struct {
 		name                  string
 		testFile              string
@@ -126,7 +126,7 @@ func TestNPMRegistryClient_GetPackageList(t *testing.T) {
 			}))
 			defer ts.Close()
 
-			client, err := NewNPMRegistryClient(NPMRegistryClientConfig{
+			client, err := NewRegistryClient(RegistryClientConfig{
 				BaseURL: ts.URL,
 			})
 			if err != nil {

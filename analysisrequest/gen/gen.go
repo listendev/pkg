@@ -54,7 +54,6 @@ func New() analysisrequest.AnalysisRequest {
 		ret, _ := analysisrequest.NewNPM(analysisrequest.NPMDepsDev, snowflakeID, priority, force, name, vers, shasum)
 
 		return ret
-
 	}
 
 	return analysisrequest.NewNOP(snowflakeID, priority, force)

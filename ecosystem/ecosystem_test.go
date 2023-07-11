@@ -30,7 +30,7 @@ func TestFromString(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, c, a)
 
-		b, err := FromString(string(c.Case()))
+		b, err := FromString(c.Case())
 		assert.Nil(t, err)
 		assert.Equal(t, b, a)
 

@@ -19,9 +19,10 @@ var (
 
 type builder struct {
 	ctx                       context.Context
-	npmRegistryRegistryClient npm.RegistryClient // FIXME: make this come from context too?
+	npmRegistryRegistryClient npm.Registry // FIXME: make this come from context too?
 }
 
+//nolint:revive // we are doing this on purpose (for now)
 func NewBuilder(ctx context.Context) (*builder, error) {
 	t := tracer.FromContext(ctx)
 	if t == nil {
@@ -34,13 +35,13 @@ func NewBuilder(ctx context.Context) (*builder, error) {
 	}, nil
 }
 
-func (a *builder) WithNPMRegistryClient(npmRegistry npm.RegistryClient) {
+func (b *builder) WithNPMRegistryClient(npmRegistry npm.Registry) {
 	if npmRegistry == nil || reflect.ValueOf(npmRegistry).IsNil() {
-		a.npmRegistryRegistryClient = npm.NewNoOpRegistryClient()
+		b.npmRegistryRegistryClient = npm.NewNoOpRegistryClient()
 
 		return
 	}
-	a.npmRegistryRegistryClient = npmRegistry
+	b.npmRegistryRegistryClient = npmRegistry
 }
 
 func (b *builder) FromFile(path string) ([]AnalysisRequest, error) {
@@ -64,28 +65,27 @@ func (b *builder) FromFile(path string) ([]AnalysisRequest, error) {
 		// Try list of elements
 		results := []AnalysisRequest{}
 		for _, msg := range contents {
-			res, err := b.FromJSON(msg)
-			if err != nil {
-				return nil, err
+			res, errJSON := b.FromJSON(msg)
+			if errJSON != nil {
+				return nil, errJSON
 			}
 			results = append(results, res)
 		}
 
 		return results, nil
-	} else {
-		// Try single element
-		content := json.RawMessage{}
-		if err := json.Unmarshal(data, &content); err != nil {
-			return nil, err
-		}
-
-		res, err := b.FromJSON(content)
-		if err != nil {
-			return nil, err
-		}
-
-		return []AnalysisRequest{res}, nil
 	}
+	// Try single element
+	content := json.RawMessage{}
+	if errJSON := json.Unmarshal(data, &content); errJSON != nil {
+		return nil, errJSON
+	}
+
+	res, err := b.FromJSON(content)
+	if err != nil {
+		return nil, err
+	}
+
+	return []AnalysisRequest{res}, nil
 }
 
 func (b *builder) FromJSON(body []byte) (AnalysisRequest, error) {
@@ -161,7 +161,6 @@ func (b *builder) FromJSON(body []byte) (AnalysisRequest, error) {
 	// NOP
 	case Nop:
 		return &NOP{arb}, nil
-
 	}
 
 	return nil, errBuilderInvalidAnalysisRequest
@@ -170,10 +169,11 @@ func (b *builder) FromJSON(body []byte) (AnalysisRequest, error) {
 type noOpBuilder struct {
 }
 
+//nolint:revive // we are doing this on purpose (for now)
 func NewNoOpBuilder() *noOpBuilder {
 	return &noOpBuilder{}
 }
 
-func (b *noOpBuilder) FromJSON(body []byte) (AnalysisRequest, error) {
+func (b *noOpBuilder) FromJSON(_ []byte) (AnalysisRequest, error) {
 	return &NOP{}, nil
 }

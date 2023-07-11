@@ -41,6 +41,7 @@ func New(level zapcore.Level, json bool, options ...zap.Option) (*zap.Logger, er
 			ErrorOutputPaths: []string{"stderr"},
 		}
 	}
+
 	return cfg.Build(options...)
 }
 
@@ -55,9 +56,10 @@ func convertIDToDatadogFormat(id string) string {
 	if err != nil {
 		return ""
 	}
-	return strconv.FormatUint(intValue, 10)
 
+	return strconv.FormatUint(intValue, 10)
 }
+
 func FromContext(ctx context.Context) *zap.Logger {
 	childLogger, _ := ctx.Value(CtxKey{}).(*zap.Logger)
 
@@ -78,5 +80,6 @@ func FromContext(ctx context.Context) *zap.Logger {
 			zap.String("dd.span_id", convertIDToDatadogFormat(spanID.String())),
 		)
 	}
+
 	return childLogger
 }

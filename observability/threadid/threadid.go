@@ -10,6 +10,7 @@ func FromContext(ctx context.Context) ThreadID {
 	if !ok {
 		return 0
 	}
+
 	return id
 }
 

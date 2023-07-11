@@ -13,12 +13,8 @@ const (
 )
 
 var (
-	src = rand.NewSource(time.Now().UnixNano())
+	src = rand.New(rand.NewSource(time.Now().UnixNano()))
 )
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
 
 // Range generates a random number between min and max.
 func Range(min, max int) int {

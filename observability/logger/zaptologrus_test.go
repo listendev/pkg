@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"io/ioutil"
+	"io"
 	"testing"
 	"time"
 
@@ -177,7 +177,7 @@ func TestLogrusZapHook(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.logrusLogger.SetOutput(ioutil.Discard)
+			tt.logrusLogger.SetOutput(io.Discard)
 
 			core, recorded := observer.New(zapcore.InfoLevel)
 			logger := zap.New(core)
@@ -195,13 +195,13 @@ func TestLogrusZapHook(t *testing.T) {
 					e.Time = fixedTime
 					out = append(out, e)
 				}
+
 				return out
 			})
 
 			if !cmp.Equal(tt.expected, recorded.All(), trans) {
 				t.Errorf("expected log entries and recorded entries do not match: %s", cmp.Diff(tt.expected, recorded.All(), trans))
 			}
-
 		})
 	}
 }
