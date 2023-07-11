@@ -31,7 +31,7 @@ func (e NPMFillError) Error() string {
 
 var (
 	ErrMalfunctioningNPMRegistryClient = errors.New("malfunctioning (no-op or similar) NPM registry client")
-	// NPMFillError instances
+	// NPMFillError instances.
 	ErrCouldNotRetrieveLastVersionTagFromNPM        = NPMFillError{errors.New("could not retrieve last npm version tag")}
 	ErrCouldNotRetrieveLastVersionFromNPM           = NPMFillError{errors.New("could not retrieve last npm version")}
 	ErrCouldNotRetrieveLastShasumFromNPM            = NPMFillError{errors.New("could not retrieve last npm version shasum")}
@@ -89,11 +89,7 @@ func (arn *NPM) UnmarshalJSON(data []byte) error {
 	}
 	arn.npmPackage = npmResult
 
-	if err := arn.Validate(); err != nil {
-		return err
-	}
-
-	return nil
+	return arn.Validate()
 }
 
 func (arn NPM) Validate() error {
@@ -142,7 +138,7 @@ func (arn NPM) Delivery() (*amqp.Delivery, error) {
 	return ret, nil
 }
 
-func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.RegistryClient) error {
+func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.Registry) error {
 	// Assuming the context contains a tracer...
 	ctx, span := tracer.FromContext(parent).Start(parent, "analysisrequest[npm].fillMissingData")
 	defer span.End()

@@ -20,7 +20,7 @@ const (
 	NPMInstallWhileDynamicInstrumentation
 	NPMDepsDev
 	NPMGPT4InstallWhileDynamicInstrumentation
-	// NPMTestWhileDynamicInstrumentation
+	// NPMTestWhileDynamicInstrumentation.
 	NPMTyposquat
 	NPMMetadataEmptyDescription
 	NPMMetadataVersion
@@ -214,7 +214,7 @@ func (t Type) Components() TypeComponents {
 
 // componentsFromString parses the SS part of the custom URN format we use.
 //
-// The format of the SS part is: <collector[,<action>{0,}]>[!<ecosystem>[,<action>]{0,}][.<format>]
+// The format of the SS part is: <collector[,<action>{0,}]>[!<ecosystem>[,<action>]{0,}][.<format>].
 func componentsFromString(n *urn.URN) TypeComponents {
 	// .<format>
 	firstSplit := strings.Split(n.SS, ".")

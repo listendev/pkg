@@ -100,11 +100,7 @@ func (o *Verdict) UnmarshalJSON(data []byte) error {
 	}
 	*o = Verdict(res)
 
-	if err := o.Validate(); err != nil {
-		return err
-	}
-
-	return nil
+	return o.Validate()
 }
 
 func (o Verdict) MarshalJSON() ([]byte, error) {
@@ -146,6 +142,6 @@ func (v *Verdicts) Buffer() (io.Reader, error) {
 	if err != nil {
 		return nil, err
 	}
-	res := bytes.NewReader(buf)
-	return res, nil
+
+	return bytes.NewReader(buf), nil
 }

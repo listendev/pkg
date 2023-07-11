@@ -23,11 +23,12 @@ var _ trace.Tracer = NoOpTracer{}
 
 // Start carries forward a non-recording Span, if one is present in the context, otherwise it
 // creates a no-op Span.
-func (t NoOpTracer) Start(ctx context.Context, name string, _ ...trace.SpanStartOption) (context.Context, trace.Span) {
+func (t NoOpTracer) Start(ctx context.Context, _ string, _ ...trace.SpanStartOption) (context.Context, trace.Span) {
 	span := trace.SpanFromContext(ctx)
 	if span == nil {
 		span = NoOpSpan{}
 	}
+
 	return trace.ContextWithSpan(ctx, span), span
 }
 

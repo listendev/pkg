@@ -44,7 +44,7 @@ func FromUint64(input uint64) (Ecosystem, error) {
 
 func FromString(input string) (Ecosystem, error) {
 	for _, c := range all {
-		if c.String() == input || string(c.Case()) == input || strings.EqualFold(c.String(), input) {
+		if c.String() == input || c.Case() == input || strings.EqualFold(c.String(), input) {
 			return c, nil
 		}
 	}

@@ -30,11 +30,7 @@ func (arb *base) UnmarshalJSON(data []byte) error {
 	}
 	*arb = base(res)
 
-	if err := arb.Validate(); err != nil {
-		return err
-	}
-
-	return nil
+	return arb.Validate()
 }
 
 func (arb base) Validate() error {

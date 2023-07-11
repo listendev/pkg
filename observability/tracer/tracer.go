@@ -30,6 +30,7 @@ func ExporterBuilder(ctx context.Context, addr string, filePath string) (sdktrac
 
 		return NewStdoutExporter(f)
 	}
+
 	return NewGRPCExporter(ctx, addr)
 }
 
@@ -84,6 +85,7 @@ type ctxKey struct{}
 
 func FromContext(ctx context.Context) trace.Tracer {
 	t, _ := ctx.Value(ctxKey{}).(trace.Tracer)
+
 	return t
 }
 

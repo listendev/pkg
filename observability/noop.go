@@ -12,6 +12,7 @@ import (
 func NewNopContext() context.Context {
 	traceCtx := tracer.NewContext(context.Background(), tracer.NoOpTracer{})
 	logCtx := logger.NewContext(traceCtx, zap.NewNop())
-	threadIdCtx := threadid.NewContext(logCtx, threadid.ThreadID(0))
-	return threadIdCtx
+	threadIDCtx := threadid.NewContext(logCtx, threadid.ThreadID(0))
+
+	return threadIDCtx
 }
