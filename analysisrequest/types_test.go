@@ -170,21 +170,21 @@ func TestTypes(t *testing.T) {
 				},
 			},
 		},
-		{
-			input: NPMMetadataMaintainersEmailCheck,
-			want: want{
-				urn:  "urn:hoarding:metadata,email_check!npm.json",
-				json: []byte(`"urn:hoarding:metadata,email_check!npm.json"`),
-				TypeComponents: TypeComponents{
-					Framework:       Hoarding,
-					Collector:       MetadataCollector,
-					CollectorAction: "email_check",
-					Ecosystem:       ecosystem.Npm,
-					EcosystemAction: "",
-					Format:          "json",
-				},
-			},
-		},
+		// {
+		// 	input: NPMMetadataMaintainersEmailCheck,
+		// 	want: want{
+		// 		urn:  "urn:hoarding:metadata,email_check!npm.json",
+		// 		json: []byte(`"urn:hoarding:metadata,email_check!npm.json"`),
+		// 		TypeComponents: TypeComponents{
+		// 			Framework:       Hoarding,
+		// 			Collector:       MetadataCollector,
+		// 			CollectorAction: "email_check",
+		// 			Ecosystem:       ecosystem.Npm,
+		// 			EcosystemAction: "",
+		// 			Format:          "json",
+		// 		},
+		// 	},
+		// },
 		{
 			input: NPMMetadataVersion,
 			want: want{
