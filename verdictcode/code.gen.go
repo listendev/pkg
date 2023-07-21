@@ -9,6 +9,11 @@ const (
 	FNI001 Code = 1
 	FNI002 Code = 2
 	FNI003 Code = 3
+	FNI004 Code = 4
+	FNI005 Code = 5
+	FNI006 Code = 6
+	FNI007 Code = 7
+	FNI008 Code = 8
 	MDN01  Code = 1021
 	MDN02  Code = 1022
 	MDN03  Code = 1023

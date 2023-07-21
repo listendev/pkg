@@ -12,6 +12,11 @@ func _() {
 	_ = x[FNI001-1]
 	_ = x[FNI002-2]
 	_ = x[FNI003-3]
+	_ = x[FNI004-4]
+	_ = x[FNI005-5]
+	_ = x[FNI006-6]
+	_ = x[FNI007-7]
+	_ = x[FNI008-8]
 	_ = x[MDN01-1021]
 	_ = x[MDN02-1022]
 	_ = x[MDN03-1023]
@@ -34,7 +39,7 @@ func _() {
 }
 
 const (
-	_Code_name_0 = "UNKFNI001FNI002FNI003"
+	_Code_name_0 = "UNKFNI001FNI002FNI003FNI004FNI005FNI006FNI007FNI008"
 	_Code_name_1 = "DDN01"
 	_Code_name_2 = "TSN01"
 	_Code_name_3 = "MDN01MDN02MDN03MDN04MDN05MDN06MDN07MDN08"
@@ -42,14 +47,14 @@ const (
 )
 
 var (
-	_Code_index_0 = [...]uint8{0, 3, 9, 15, 21}
+	_Code_index_0 = [...]uint8{0, 3, 9, 15, 21, 27, 33, 39, 45, 51}
 	_Code_index_3 = [...]uint8{0, 5, 10, 15, 20, 25, 30, 35, 40}
 	_Code_index_4 = [...]uint8{0, 6, 12, 18, 24, 30, 36, 42, 48, 54}
 )
 
 func (i Code) String() string {
 	switch {
-	case i <= 3:
+	case i <= 8:
 		return _Code_name_0[_Code_index_0[i]:_Code_index_0[i+1]]
 	case i == 1001:
 		return _Code_name_1
