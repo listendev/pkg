@@ -43,6 +43,11 @@ components:
         - 1 # FNI001
         - 2 # FNI002
         - 3 # FNI003
+        - 4 # FNI004
+        - 5 # FNI005
+        - 6 # FNI006
+        - 7 # FNI007
+        - 8 # FNI008
         - 1001 # DDN01
         - 1011 # TSN01
         - 1021 # MDN01
@@ -64,9 +69,14 @@ components:
         - 1109 # STN009
       x-enumNames:
         - "UNK"
-        - "FNI001"
-        - "FNI002"
-        - "FNI003"
+        - "FNI001" # npm install spawn a child process
+        - "FNI002" # npm install contact cloud metadata service
+        - "FNI003" # npm install unexpected outbound connection
+        - "FNI004" # npm install unexpected file write
+        - "FNI005" # npm install unexpected file read
+        - "FNI006" # npm install open credentials file
+        - "FNI007" # npm install file write in path
+        - "FNI008" # npm install link sensitive files
         - "DDN01"
         - "TSN01"
         - "MDN01" # Empty description
