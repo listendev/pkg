@@ -72,6 +72,19 @@ func (r *mockNpmregistryClient) GetPackageVersion(_ context.Context, name, _ str
 	return &packageVersion, nil
 }
 
+func (r *mockNpmregistryClient) GetPackageLatestVersion(_ context.Context, name string) (*npm.PackageVersion, error) {
+	var packageVersion npm.PackageVersion
+	err := json.Unmarshal(r.versionContent, &packageVersion)
+	if err != nil {
+		return nil, err
+	}
+	if packageVersion.Name != name {
+		return nil, fmt.Errorf("GetPackageVersion: name mismatch")
+	}
+
+	return &packageVersion, nil
+}
+
 func TestAnalysisRequestFromJSON(t *testing.T) {
 	type args struct {
 		body []byte

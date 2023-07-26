@@ -144,61 +144,40 @@ func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.Regis
 	defer span.End()
 
 	if len(arn.Version) == 0 {
-		packageList, err := registryClient.GetPackageList(ctx, arn.Name)
+		pv, err := registryClient.GetPackageLatestVersion(ctx, arn.Name)
 		if err != nil {
 			return err
 		}
-		if packageList == nil {
+		if pv == nil {
 			return ErrMalfunctioningNPMRegistryClient
 		}
-		latestVersionTag := packageList.DistTags.Latest
-		if len(latestVersionTag) == 0 {
-			return ErrCouldNotRetrieveLastVersionTagFromNPM
-		}
-		if latestVersion, ok := packageList.Versions[latestVersionTag]; ok {
-			arn.Version = latestVersion.Version
-			arn.Shasum = latestVersion.Dist.Shasum
-		}
-		if len(arn.Version) == 0 {
-			return ErrCouldNotRetrieveLastVersionFromNPM
-		}
-		if len(arn.Shasum) == 0 {
-			return ErrCouldNotRetrieveLastShasumFromNPM
-		}
-
+		arn.Version = pv.Version
+		arn.Shasum = pv.Dist.Shasum
 		return nil
 	}
 
 	if len(arn.Version) > 0 && len(arn.Shasum) == 0 {
-		packageList, err := registryClient.GetPackageList(ctx, arn.Name)
+		pv, err := registryClient.GetPackageVersion(ctx, arn.Name, arn.Version)
 		if err != nil {
 			return err
 		}
-		if packageList == nil {
+		if pv == nil {
 			return ErrMalfunctioningNPMRegistryClient
 		}
-		if version, ok := packageList.Versions[arn.Version]; ok {
-			arn.Version = version.Version
-			arn.Shasum = version.Dist.Shasum
-		} else {
-			return ErrGivenVersionNotFoundOnNPM
-		}
-		if len(arn.Shasum) == 0 {
-			return ErrCouldNotRetrieveShasumForGivenVersionFromNPM
-		}
-
+		arn.Version = pv.Version
+		arn.Shasum = pv.Dist.Shasum
 		return nil
 	}
 
 	if len(arn.Version) > 0 && len(arn.Shasum) > 0 {
-		packageVersion, err := registryClient.GetPackageVersion(ctx, arn.Name, arn.Version)
+		pv, err := registryClient.GetPackageVersion(ctx, arn.Name, arn.Version)
 		if err != nil {
 			return ErrGivenVersionNotFoundOnNPM
 		}
-		if packageVersion == nil {
+		if pv == nil {
 			return ErrMalfunctioningNPMRegistryClient
 		}
-		if packageVersion.Dist.Shasum != arn.Shasum {
+		if pv.Dist.Shasum != arn.Shasum {
 			return ErrGivenShasumDoesntMatchGivenVersionOnNPM
 		}
 	}
