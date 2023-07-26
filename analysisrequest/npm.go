@@ -153,6 +153,7 @@ func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.Regis
 		}
 		arn.Version = pv.Version
 		arn.Shasum = pv.Dist.Shasum
+
 		return nil
 	}
 
@@ -166,6 +167,7 @@ func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.Regis
 		}
 		arn.Version = pv.Version
 		arn.Shasum = pv.Dist.Shasum
+
 		return nil
 	}
 
