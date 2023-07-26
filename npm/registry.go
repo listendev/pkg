@@ -17,6 +17,7 @@ const defaultRegistryBaseURL = "https://registry.npmjs.org"
 type Registry interface {
 	GetPackageList(ctx context.Context, name string) (*PackageList, error)
 	GetPackageVersion(ctx context.Context, name, version string) (*PackageVersion, error)
+	GetPackageLatestVersion(ctx context.Context, name string) (*PackageVersion, error)
 }
 
 type RegistryClient struct {
@@ -107,6 +108,33 @@ func (c *RegistryClient) GetPackageVersion(parent context.Context, name, version
 	return &packageVersion, nil
 }
 
+func (c *RegistryClient) GetPackageLatestVersion(parent context.Context, name string) (*PackageVersion, error) {
+	ctx, span := tracer.FromContext(parent).Start(parent, "RegistryClient.GetPackageLatestVersion")
+	defer span.End()
+	endpoint := c.baseURL.ResolveReference(&url.URL{Path: path.Join(name, "latest")})
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	response, err := c.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("response not ok")
+	}
+
+	var packageVersion PackageVersion
+	err = json.NewDecoder(response.Body).Decode(&packageVersion)
+	if err != nil {
+		return nil, err
+	}
+
+	return &packageVersion, nil
+}
+
 type NoOpRegistryClient struct{}
 
 func NewNoOpRegistryClient() Registry {
@@ -119,6 +147,11 @@ func (c *NoOpRegistryClient) GetPackageList(_ context.Context, _ string) (*Packa
 }
 
 func (c *NoOpRegistryClient) GetPackageVersion(_ context.Context, _, _ string) (*PackageVersion, error) {
+	//nolint:nilnil // this is a mock
+	return nil, nil
+}
+
+func (c *NoOpRegistryClient) GetPackageLatestVersion(_ context.Context, _ string) (*PackageVersion, error) {
 	//nolint:nilnil // this is a mock
 	return nil, nil
 }
