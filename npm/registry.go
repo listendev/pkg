@@ -81,6 +81,7 @@ func (c *RegistryClient) GetPackageList(parent context.Context, name string) (*P
 		if response.StatusCode == http.StatusNotFound {
 			return nil, ErrVersionNotFound
 		}
+
 		return nil, ErrServiceUnavail
 	}
 
@@ -111,6 +112,7 @@ func (c *RegistryClient) GetPackageVersion(parent context.Context, name, version
 		if response.StatusCode == http.StatusNotFound {
 			return nil, ErrVersionNotFound
 		}
+
 		return nil, ErrServiceUnavail
 	}
 	var packageVersion PackageVersion
@@ -140,6 +142,7 @@ func (c *RegistryClient) GetPackageLatestVersion(parent context.Context, name st
 		if response.StatusCode == http.StatusNotFound {
 			return nil, ErrLatestVersionNotFound
 		}
+
 		return nil, ErrServiceUnavail
 	}
 
