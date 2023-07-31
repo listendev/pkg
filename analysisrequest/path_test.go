@@ -13,7 +13,7 @@ func TestGetResultFilesByEcosystem(t *testing.T) {
 	wnt := map[Type]string{
 		NPMInstallWhileDynamicInstrumentation: "dynamic!install!.json",
 		// NPMTestWhileDynamicInstrumentation:    "dynamic[test].json",
-		NPMDepsDev:                  "depsdev.json",
+		NPMAdvisory:                 "advisory.json",
 		NPMTyposquat:                "typosquat.json",
 		NPMMetadataEmptyDescription: "metadata(empty_descr).json",
 		NPMMetadataVersion:          "metadata(version).json",
@@ -39,7 +39,7 @@ func TestGetTypeForEcosystemFromResultFile(t *testing.T) {
 	wnt := map[string]Type{
 		"dynamic!install!.json": NPMInstallWhileDynamicInstrumentation,
 		// "dynamic[test].json":    NPMTestWhileDynamicInstrumentation,
-		"depsdev.json":               NPMDepsDev,
+		"advisory.json":              NPMAdvisory,
 		"typosquat.json":             NPMTyposquat,
 		"metadata(empty_descr).json": NPMMetadataEmptyDescription,
 		"metadata(version).json":     NPMMetadataVersion,
@@ -70,7 +70,7 @@ func TestGetTypeFromResultFile(t *testing.T) {
 	wnt := map[string]Type{
 		"dynamic!install!.json": NPMInstallWhileDynamicInstrumentation,
 		// "dynamic[test].json":    NPMTestWhileDynamicInstrumentation,
-		"depsdev.json":               NPMDepsDev,
+		"advisory.json":              NPMAdvisory,
 		"typosquat.json":             NPMTyposquat,
 		"metadata(empty_descr).json": NPMMetadataEmptyDescription,
 		"metadata(version).json":     NPMMetadataVersion,

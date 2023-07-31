@@ -50,7 +50,7 @@ func TestGetBy(t *testing.T) {
 	_, err := GetBy(analysisrequest.Nop)
 	assert.NotNil(t, err)
 
-	codes, err := GetBy(analysisrequest.NPMDepsDev)
+	codes, err := GetBy(analysisrequest.NPMAdvisory)
 	assert.Nil(t, err)
 	assert.NotNil(t, codes)
 }

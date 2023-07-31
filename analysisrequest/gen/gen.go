@@ -50,8 +50,8 @@ func New() analysisrequest.AnalysisRequest {
 
 	// 	return ret
 
-	case analysisrequest.NPMDepsDev:
-		ret, _ := analysisrequest.NewNPM(analysisrequest.NPMDepsDev, snowflakeID, priority, force, name, vers, shasum)
+	case analysisrequest.NPMAdvisory:
+		ret, _ := analysisrequest.NewNPM(analysisrequest.NPMAdvisory, snowflakeID, priority, force, name, vers, shasum)
 
 		return ret
 	}

@@ -11,7 +11,7 @@ var mapping = map[analysisrequest.Type]map[Code]bool{
 		FNI002: true,
 		FNI003: true,
 	},
-	analysisrequest.NPMDepsDev: {
+	analysisrequest.NPMAdvisory: {
 		DDN01: true,
 	},
 	analysisrequest.NPMTyposquat: {
