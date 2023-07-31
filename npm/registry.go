@@ -3,7 +3,7 @@ package npm
 import (
 	"context"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"net/http"
 	"net/url"
 	"path"
@@ -13,6 +13,15 @@ import (
 )
 
 const defaultRegistryBaseURL = "https://registry.npmjs.org"
+
+var (
+	ErrVersionNotFound        = errors.New("version not found")
+	ErrServiceUnavail         = errors.New("service unavailable")
+	ErrLatestVersionNotFound  = errors.New("latest version not found")
+	ErrCouldNotDecodeResponse = errors.New("could not decode registry response")
+	ErrCouldNotDoRequest      = errors.New("could not start request to the registry")
+	ErrCouldNotCreateRequest  = errors.New("could not create request to the registry")
+)
 
 type Registry interface {
 	GetPackageList(ctx context.Context, name string) (*PackageList, error)
@@ -59,23 +68,26 @@ func (c *RegistryClient) GetPackageList(parent context.Context, name string) (*P
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint.String(), nil)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(ErrCouldNotCreateRequest, err)
 	}
 
 	response, err := c.client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(ErrCouldNotDoRequest, err)
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("response not ok")
+		if response.StatusCode == http.StatusNotFound {
+			return nil, ErrVersionNotFound
+		}
+		return nil, ErrServiceUnavail
 	}
 
 	var packageList PackageList
 	err = json.NewDecoder(response.Body).Decode(&packageList)
 	if err != nil {
-		return nil, err
+		return nil, ErrCouldNotDecodeResponse
 	}
 
 	return &packageList, nil
@@ -87,22 +99,24 @@ func (c *RegistryClient) GetPackageVersion(parent context.Context, name, version
 	endpoint := c.baseURL.ResolveReference(&url.URL{Path: path.Join(name, version)})
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint.String(), nil)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(ErrCouldNotCreateRequest, err)
 	}
 	response, err := c.client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(ErrCouldNotDoRequest, err)
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("response not ok")
+		if response.StatusCode == http.StatusNotFound {
+			return nil, ErrVersionNotFound
+		}
+		return nil, ErrServiceUnavail
 	}
-
 	var packageVersion PackageVersion
 	err = json.NewDecoder(response.Body).Decode(&packageVersion)
 	if err != nil {
-		return nil, err
+		return nil, ErrCouldNotDecodeResponse
 	}
 
 	return &packageVersion, nil
@@ -114,22 +128,25 @@ func (c *RegistryClient) GetPackageLatestVersion(parent context.Context, name st
 	endpoint := c.baseURL.ResolveReference(&url.URL{Path: path.Join(name, "latest")})
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint.String(), nil)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(ErrCouldNotCreateRequest, err)
 	}
 	response, err := c.client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(ErrCouldNotDoRequest, err)
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("response not ok")
+		if response.StatusCode == http.StatusNotFound {
+			return nil, ErrLatestVersionNotFound
+		}
+		return nil, ErrServiceUnavail
 	}
 
 	var packageVersion PackageVersion
 	err = json.NewDecoder(response.Body).Decode(&packageVersion)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(ErrCouldNotDecodeResponse, err)
 	}
 
 	return &packageVersion, nil
