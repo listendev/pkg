@@ -18,7 +18,7 @@ func TestParent(t *testing.T) {
 
 	cases := []testCase{
 		{
-			input:   NPMGPT4InstallWhileDynamicInstrumentation,
+			input:   NPMInstallWhileDynamicInstrumentationAIEnriched,
 			want:    NPMInstallWhileDynamicInstrumentation,
 			wantErr: false,
 		},
@@ -36,14 +36,14 @@ func TestParent(t *testing.T) {
 }
 
 func TestEnricherResultFileIsTheParentOne(t *testing.T) {
-	got := NPMGPT4InstallWhileDynamicInstrumentation.Components().ResultFile()
+	got := NPMInstallWhileDynamicInstrumentationAIEnriched.Components().ResultFile()
 	assert.Equal(t, NPMInstallWhileDynamicInstrumentation.Components().ResultFile(), got)
 }
 
 func TestEnrichersEquality(t *testing.T) {
-	tt, err := ToType("urn:scheduler:dynamic!npm,install.json+urn:hoarding:gpt4,context")
+	tt, err := ToType("urn:scheduler:dynamic!npm,install.json+urn:hoarding:ai,context")
 	assert.Nil(t, err)
-	assert.Equal(t, NPMGPT4InstallWhileDynamicInstrumentation, tt)
+	assert.Equal(t, NPMInstallWhileDynamicInstrumentationAIEnriched, tt)
 }
 
 func TestTypes(t *testing.T) {
@@ -59,13 +59,13 @@ func TestTypes(t *testing.T) {
 
 	cases := []testCase{
 		{
-			input: NPMGPT4InstallWhileDynamicInstrumentation,
+			input: NPMInstallWhileDynamicInstrumentationAIEnriched,
 			want: want{
-				urn:  "urn:scheduler:dynamic!npm,install.json+urn:hoarding:gpt4,context",
-				json: []byte(`"urn:scheduler:dynamic!npm,install.json+urn:hoarding:gpt4,context"`),
+				urn:  "urn:scheduler:dynamic!npm,install.json+urn:hoarding:ai,context",
+				json: []byte(`"urn:scheduler:dynamic!npm,install.json+urn:hoarding:ai,context"`),
 				TypeComponents: TypeComponents{
 					Framework:       Hoarding,
-					Collector:       GPT4Collector,
+					Collector:       AICollector,
 					CollectorAction: "context",
 					Ecosystem:       ecosystem.Npm, // From parent
 					EcosystemAction: "install",     // From parent
@@ -126,13 +126,13 @@ func TestTypes(t *testing.T) {
 		// 	},
 		// },
 		{
-			input: NPMDepsDev,
+			input: NPMAdvisory,
 			want: want{
-				urn:  "urn:hoarding:depsdev!npm.json",
-				json: []byte(`"urn:hoarding:depsdev!npm.json"`),
+				urn:  "urn:hoarding:advisory!npm.json",
+				json: []byte(`"urn:hoarding:advisory!npm.json"`),
 				TypeComponents: TypeComponents{
 					Framework:       Hoarding,
-					Collector:       DepsDevCollector,
+					Collector:       AdvisoryCollector,
 					CollectorAction: "",
 					Ecosystem:       ecosystem.Npm,
 					EcosystemAction: "",

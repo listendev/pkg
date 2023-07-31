@@ -18,8 +18,8 @@ type Type int
 const (
 	Nop Type = iota + 1
 	NPMInstallWhileDynamicInstrumentation
-	NPMDepsDev
-	NPMGPT4InstallWhileDynamicInstrumentation
+	NPMAdvisory
+	NPMInstallWhileDynamicInstrumentationAIEnriched
 	// NPMTestWhileDynamicInstrumentation.
 	NPMTyposquat
 	NPMMetadataEmptyDescription
@@ -98,9 +98,9 @@ func createType(f Framework, c Collector, cAction string, e ecosystem.Ecosystem,
 var typeURNs = map[Type]string{
 	Nop:                                   createType(None, NoCollector, "", ecosystem.None, "", ""),
 	NPMInstallWhileDynamicInstrumentation: createType(Scheduler, DynamicInstrumentationCollector, "", ecosystem.Npm, "install", "json"),
-	NPMDepsDev:                            createType(Hoarding, DepsDevCollector, "", ecosystem.Npm, "", "json"),
-	// NPMGPT4InstallWhileDynamicInstrumentation represents analysis requests to enrich the NPMInstallWhileDynamicInstrumentation results
-	NPMGPT4InstallWhileDynamicInstrumentation: "urn:scheduler:dynamic!npm,install.json+urn:hoarding:gpt4,context",
+	NPMAdvisory:                           createType(Hoarding, AdvisoryCollector, "", ecosystem.Npm, "", "json"),
+	// NPMInstallWhileDynamicInstrumentationAIEnriched represents analysis requests to enrich the NPMInstallWhileDynamicInstrumentation results
+	NPMInstallWhileDynamicInstrumentationAIEnriched: "urn:scheduler:dynamic!npm,install.json+urn:hoarding:ai,context",
 	// NPMTestWhileDynamicInstrumentation:     "urn:scheduler:dynamic!npm,test.json",
 	NPMTyposquat:                createType(Hoarding, TyposquatCollector, "", ecosystem.Npm, "", "json"),
 	NPMMetadataEmptyDescription: createType(Hoarding, MetadataCollector, "empty_descr", ecosystem.Npm, "", "json"),

@@ -22,14 +22,14 @@ func TestSwitch(t *testing.T) {
 	assert.True(t, ok)
 	assert.NotNil(t, arn)
 
-	enrichWithGPT, err := arn.Switch(NPMGPT4InstallWhileDynamicInstrumentation)
+	enrichWithAI, err := arn.Switch(NPMInstallWhileDynamicInstrumentationAIEnriched)
 	assert.Nil(t, err)
-	assert.NotNil(t, enrichWithGPT)
-	assert.Equal(t, NPMGPT4InstallWhileDynamicInstrumentation, enrichWithGPT.Type())
-	assert.Equal(t, force, enrichWithGPT.MustProcess())
-	assert.Equal(t, prio, enrichWithGPT.Prio())
+	assert.NotNil(t, enrichWithAI)
+	assert.Equal(t, NPMInstallWhileDynamicInstrumentationAIEnriched, enrichWithAI.Type())
+	assert.Equal(t, force, enrichWithAI.MustProcess())
+	assert.Equal(t, prio, enrichWithAI.Prio())
 
-	_, noEcoErr := enrichWithGPT.(*NPM).Switch(Nop)
+	_, noEcoErr := enrichWithAI.(*NPM).Switch(Nop)
 	if assert.Error(t, noEcoErr) {
 		assert.Equal(t, "couldn't switch the current NPM analysis request to an analysis request with a type without ecosystem", noEcoErr.Error())
 	}

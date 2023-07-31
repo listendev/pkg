@@ -121,13 +121,13 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			wantErr:            false,
 		},
 		{
-			name: "valid full npm deps dev analysis request",
+			name: "valid full npm advisory analysis request",
 			args: args{
-				body: []byte(`{"type": "urn:hoarding:depsdev!npm.json", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "priority": 5, "force": true}`),
+				body: []byte(`{"type": "urn:hoarding:advisory!npm.json", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "priority": 5, "force": true}`),
 			},
 			want: &NPM{
 				base: base{
-					RequestType: NPMDepsDev,
+					RequestType: NPMAdvisory,
 					Snowflake:   "1524854487523524608",
 					Priority:    5,
 					Force:       true,
@@ -141,9 +141,9 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			wantPublishing: &amqp.Publishing{
 				ContentType: "application/json",
 				Priority:    5,
-				Body:        []byte(`{"type":"urn:hoarding:depsdev!npm.json","snowflake_id":"1524854487523524608","name":"chalk","version":"5.1.2","shasum":"d957f370038b75ac572471e83be4c5ca9f8e8c45","priority":5,"force":true}`),
+				Body:        []byte(`{"type":"urn:hoarding:advisory!npm.json","snowflake_id":"1524854487523524608","name":"chalk","version":"5.1.2","shasum":"d957f370038b75ac572471e83be4c5ca9f8e8c45","priority":5,"force":true}`),
 			},
-			wantS3Key: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/depsdev.json",
+			wantS3Key: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/advisory.json",
 			mockRegistryClient: func() *mockNpmregistryClient {
 				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
 				if err != nil {
@@ -285,13 +285,13 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "npm install dynamic instrumentation analysis request enrichment with GPT without version",
+			name: "npm install dynamic instrumentation analysis request enrichment with AI without version",
 			args: args{
-				body: []byte(`{"type": "urn:scheduler:dynamic!npm,install.json+urn:hoarding:gpt4,context", "snowflake_id": "1524854487523524608", "name": "chalk"}`),
+				body: []byte(`{"type": "urn:scheduler:dynamic!npm,install.json+urn:hoarding:ai,context", "snowflake_id": "1524854487523524608", "name": "chalk"}`),
 			},
 			want: &NPM{
 				base: base{
-					RequestType: NPMGPT4InstallWhileDynamicInstrumentation,
+					RequestType: NPMInstallWhileDynamicInstrumentationAIEnriched,
 					Snowflake:   "1524854487523524608",
 				},
 				npmPackage: npmPackage{
@@ -302,7 +302,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			},
 			wantPublishing: &amqp.Publishing{
 				ContentType: "application/json",
-				Body:        []byte(`{"type": "urn:scheduler:dynamic!npm,install.json+urn:hoarding:gpt4,context", "snowflake_id": "1524854487523524608", "name": "chalk","version": "5.2.0", "shasum": "249623b7d66869c673699fb66d65723e54dfcfb3", "force": false}`),
+				Body:        []byte(`{"type": "urn:scheduler:dynamic!npm,install.json+urn:hoarding:ai,context", "snowflake_id": "1524854487523524608", "name": "chalk","version": "5.2.0", "shasum": "249623b7d66869c673699fb66d65723e54dfcfb3", "force": false}`),
 			},
 			wantS3Key: "npm/chalk/5.2.0/249623b7d66869c673699fb66d65723e54dfcfb3/dynamic!install!.json",
 			mockRegistryClient: func() *mockNpmregistryClient {

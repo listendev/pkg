@@ -21,8 +21,8 @@ type Collector string
 const (
 	NoCollector                     Collector = "nop"
 	DynamicInstrumentationCollector Collector = "dynamic"
-	DepsDevCollector                Collector = "depsdev"
-	GPT4Collector                   Collector = "gpt4"
+	AdvisoryCollector               Collector = "advisory"
+	AICollector                     Collector = "ai"
 	TyposquatCollector              Collector = "typosquat"
 	MetadataCollector               Collector = "metadata"
 	StaticAnalysisCollector         Collector = "static"
