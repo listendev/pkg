@@ -179,7 +179,7 @@ func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.Regis
 				return ErrGivenVersionNotFoundOnNPM
 			}
 			// all the other errors are considered as service unavailable or client errors
-			return errors.Join(ErrCouldNotRetrieveShasumForGivenVersionFromNPM, err)
+			return errors.Join(ErrMalfunctioningNPMRegistryClient, err)
 		}
 
 		if pv == nil {
