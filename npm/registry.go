@@ -13,6 +13,7 @@ import (
 )
 
 const defaultRegistryBaseURL = "https://registry.npmjs.org"
+const defaultUserAgent = "listendev/pkg/npm"
 
 var (
 	ErrVersionNotFound        = errors.New("version not found")
@@ -30,19 +31,25 @@ type Registry interface {
 }
 
 type RegistryClient struct {
-	client  *http.Client
-	baseURL *url.URL
+	client    *http.Client
+	baseURL   *url.URL
+	userAgent string
 }
 
 type RegistryClientConfig struct {
-	Timeout time.Duration
-	BaseURL string
+	Timeout   time.Duration
+	BaseURL   string
+	UserAgent string
 }
 
 func NewRegistryClient(config RegistryClientConfig) (Registry, error) {
 	timeout := time.Second * 10
 	if config.Timeout != 0 {
 		timeout = config.Timeout
+	}
+	ua := defaultUserAgent
+	if len(config.UserAgent) > 0 {
+		ua = config.UserAgent
 	}
 	c := &http.Client{Timeout: timeout}
 
@@ -56,8 +63,9 @@ func NewRegistryClient(config RegistryClientConfig) (Registry, error) {
 	}
 
 	return &RegistryClient{
-		client:  c,
-		baseURL: url,
+		client:    c,
+		baseURL:   url,
+		userAgent: ua,
 	}, nil
 }
 
@@ -70,6 +78,7 @@ func (c *RegistryClient) GetPackageList(parent context.Context, name string) (*P
 	if err != nil {
 		return nil, errors.Join(ErrCouldNotCreateRequest, err)
 	}
+	req.Header.Set("User-Agent", c.userAgent)
 
 	response, err := c.client.Do(req)
 	if err != nil {
@@ -102,6 +111,7 @@ func (c *RegistryClient) GetPackageVersion(parent context.Context, name, version
 	if err != nil {
 		return nil, errors.Join(ErrCouldNotCreateRequest, err)
 	}
+	req.Header.Set("User-Agent", c.userAgent)
 	response, err := c.client.Do(req)
 	if err != nil {
 		return nil, errors.Join(ErrCouldNotDoRequest, err)
@@ -132,6 +142,7 @@ func (c *RegistryClient) GetPackageLatestVersion(parent context.Context, name st
 	if err != nil {
 		return nil, errors.Join(ErrCouldNotCreateRequest, err)
 	}
+	req.Header.Set("User-Agent", c.userAgent)
 	response, err := c.client.Do(req)
 	if err != nil {
 		return nil, errors.Join(ErrCouldNotDoRequest, err)
