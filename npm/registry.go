@@ -17,12 +17,20 @@ const defaultUserAgent = "listendev/pkg/npm"
 
 var (
 	ErrVersionNotFound        = errors.New("version not found")
-	ErrServiceUnavail         = errors.New("service unavailable")
 	ErrLatestVersionNotFound  = errors.New("latest version not found")
 	ErrCouldNotDecodeResponse = errors.New("could not decode registry response")
 	ErrCouldNotDoRequest      = errors.New("could not start request to the registry")
 	ErrCouldNotCreateRequest  = errors.New("could not create request to the registry")
 )
+
+type ServiceError struct {
+	StatusCode int
+	Message    string
+}
+
+func (e *ServiceError) Error() string {
+	return e.Message
+}
 
 type Registry interface {
 	GetPackageList(ctx context.Context, name string) (*PackageList, error)
@@ -91,7 +99,10 @@ func (c *RegistryClient) GetPackageList(parent context.Context, name string) (*P
 			return nil, ErrVersionNotFound
 		}
 
-		return nil, ErrServiceUnavail
+		return nil, &ServiceError{
+			StatusCode: response.StatusCode,
+			Message:    response.Status,
+		}
 	}
 
 	var packageList PackageList
@@ -123,7 +134,10 @@ func (c *RegistryClient) GetPackageVersion(parent context.Context, name, version
 			return nil, ErrVersionNotFound
 		}
 
-		return nil, ErrServiceUnavail
+		return nil, &ServiceError{
+			StatusCode: response.StatusCode,
+			Message:    response.Status,
+		}
 	}
 	var packageVersion PackageVersion
 	err = json.NewDecoder(response.Body).Decode(&packageVersion)
@@ -154,7 +168,10 @@ func (c *RegistryClient) GetPackageLatestVersion(parent context.Context, name st
 			return nil, ErrLatestVersionNotFound
 		}
 
-		return nil, ErrServiceUnavail
+		return nil, &ServiceError{
+			StatusCode: response.StatusCode,
+			Message:    response.Status,
+		}
 	}
 
 	var packageVersion PackageVersion
