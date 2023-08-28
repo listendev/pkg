@@ -101,7 +101,7 @@ components:
           type: string
           format: date-time # RFC 3339 NANO
           x-oapi-codegen-extra-tags:
-            json: "expires_at,omitempty"
+            json: "expires_at"
         created_at:
           type: string
           format: date-time # RFC 3339 NANO
