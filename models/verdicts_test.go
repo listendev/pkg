@@ -227,6 +227,7 @@ func TestMarshalEmptyVerdict(t *testing.T) {
 		"ecosystem": "npm",
 		"pkg": "test",
 		"version": "0.0.1",
+		"expires_at": null,
 		"file": "dynamic!install!.json",
 		"created_at": %q
 	}`, v.CreatedAt.Format(time.RFC3339Nano))
