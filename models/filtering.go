@@ -30,7 +30,6 @@ func (v *Verdicts) Filter(c context.Context, jsonpath string) (interface{}, Verd
 		return nil, nil, err
 	}
 
-	// FIXME: eval works on struct, check whether it also works on a structs slice
 	raw, err := eval(c, iface)
 	if err != nil {
 		return nil, nil, err
