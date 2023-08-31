@@ -65,6 +65,7 @@ func TestFilter(t *testing.T) {
 		Categories: []category.Category{category.AdjacentNetwork, category.CIS},
 		Code:       verdictcode.FNI002,
 	}
+
 	v3 := Verdict{
 		CreatedAt: func() *time.Time {
 			t := time.Now().Add(-time.Hour * 72)
@@ -97,6 +98,7 @@ func TestFilter(t *testing.T) {
 			return &t
 		}(),
 	}
+
 	v4 := Verdict{
 		CreatedAt: func() *time.Time {
 			t := time.Now().Add(-time.Hour * 72)
@@ -163,6 +165,24 @@ func TestFilter(t *testing.T) {
 	}
 
 	cases := []testCase{
+		{
+			descr:        "wrong syntax",
+			filter:       `$[]`,
+			wantErr:      true,
+			wantVerdicts: nil,
+		},
+		{
+			descr:        "projection",
+			filter:       `$[*].message`,
+			wantErr:      true, // This also errors out because the output is not a verdicts slice
+			wantVerdicts: nil,
+			wantRaw: []interface{}{
+				"This package has inconsistent name in the tarball's package.json",
+				"@vue/devtools 6.5.0 1 B",
+				"spawn",
+				"some message",
+			},
+		},
 		{
 			descr:        "first verdict only",
 			filter:       `$[0]`,

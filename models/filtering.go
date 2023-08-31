@@ -8,7 +8,7 @@ import (
 
 // Filter applies a JSONPath expression to the receiving Verdicts and returns the result.
 //
-// See the JSONPath documentation for more information about the syntax:
+// See the JSONPath expressions documentation for more information about the syntax:
 // https://goessner.net/articles/JsonPath/index.html#e2.
 //
 // The result is returned as raw (interface{} or interface{} slice) and as a Verdicts instance.
