@@ -18,7 +18,11 @@ import (
 
 func TestFilter(t *testing.T) {
 	v1 := Verdict{
-		CreatedAt:  func() *time.Time { t := time.Now(); return &t }(),
+		CreatedAt: func() *time.Time {
+			t := time.Now()
+
+			return &t
+		}(),
 		Ecosystem:  ecosystem.Npm,
 		Pkg:        "darcyclarke-manifest-pkg",
 		Severity:   severity.High,
@@ -36,7 +40,11 @@ func TestFilter(t *testing.T) {
 	}
 
 	v2 := Verdict{
-		CreatedAt: func() *time.Time { t := time.Now().Add(-time.Hour * 48); return &t }(),
+		CreatedAt: func() *time.Time {
+			t := time.Now().Add(-time.Hour * 48)
+
+			return &t
+		}(),
 		Ecosystem: ecosystem.Npm,
 		Pkg:       "test",
 		Version:   "0.0.1",
@@ -58,7 +66,11 @@ func TestFilter(t *testing.T) {
 		Code:       verdictcode.FNI002,
 	}
 	v3 := Verdict{
-		CreatedAt: func() *time.Time { t := time.Now().Add(-time.Hour * 72); return &t }(),
+		CreatedAt: func() *time.Time {
+			t := time.Now().Add(-time.Hour * 72)
+
+			return &t
+		}(),
 		Ecosystem: ecosystem.Npm,
 		Org:       "@expires",
 		Pkg:       "in",
@@ -79,10 +91,18 @@ func TestFilter(t *testing.T) {
 		Severity:   severity.Medium,
 		Categories: []category.Category{category.Network, category.Process},
 		Code:       verdictcode.FNI001,
-		ExpiresAt:  func() *time.Time { t := time.Now(); return &t }(),
+		ExpiresAt: func() *time.Time {
+			t := time.Now()
+
+			return &t
+		}(),
 	}
 	v4 := Verdict{
-		CreatedAt: func() *time.Time { t := time.Now().Add(-time.Hour * 72); return &t }(),
+		CreatedAt: func() *time.Time {
+			t := time.Now().Add(-time.Hour * 72)
+
+			return &t
+		}(),
 		Ecosystem: ecosystem.Npm,
 		Org:       "@expires",
 		Pkg:       "in",
@@ -103,7 +123,11 @@ func TestFilter(t *testing.T) {
 		Severity:   severity.Low,
 		Categories: []category.Category{category.Network, category.Process},
 		Code:       verdictcode.FNI003,
-		ExpiresAt:  func() *time.Time { t := time.Now().Add(time.Hour * 72); return &t }(),
+		ExpiresAt: func() *time.Time {
+			t := time.Now().Add(time.Hour * 72)
+
+			return &t
+		}(),
 	}
 	v4b, _ := v4.MarshalJSON()
 	var v4raw interface{}
