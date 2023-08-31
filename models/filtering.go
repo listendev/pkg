@@ -21,8 +21,8 @@ func (v *Verdicts) Filter(c context.Context, jsonpath string) (interface{}, Verd
 	}
 
 	var iface interface{}
-	if err := json.NewDecoder(r).Decode(&iface); err != nil {
-		return nil, nil, err
+	if decodeErr := json.NewDecoder(r).Decode(&iface); decodeErr != nil {
+		return nil, nil, decodeErr
 	}
 
 	eval, err := lang.NewEvaluableWithContext(c, jsonpath)
