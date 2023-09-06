@@ -157,19 +157,21 @@ func TestFilter(t *testing.T) {
 	}
 
 	type testCase struct {
-		descr        string
-		filter       string
-		wantErr      bool
-		wantVerdicts Verdicts
-		wantRaw      interface{}
+		descr                string
+		filter               string
+		wantErr              bool
+		wantFilterParsingErr bool
+		wantVerdicts         Verdicts
+		wantRaw              interface{}
 	}
 
 	cases := []testCase{
 		{
-			descr:        "wrong syntax",
-			filter:       `$[]`,
-			wantErr:      true,
-			wantVerdicts: nil,
+			descr:                "wrong syntax",
+			filter:               `$[]`,
+			wantFilterParsingErr: true,
+			wantErr:              true,
+			wantVerdicts:         nil,
 		},
 		{
 			descr:        "projection",
@@ -210,10 +212,11 @@ func TestFilter(t *testing.T) {
 			wantVerdicts: nil,
 		},
 		{
-			descr:        "empty jsonpath expr",
-			filter:       ``,
-			wantErr:      true,
-			wantVerdicts: nil,
+			descr:                "empty jsonpath expr",
+			filter:               ``,
+			wantErr:              true,
+			wantFilterParsingErr: true,
+			wantVerdicts:         nil,
 		},
 		{
 			descr:        "select verdicts with severity gt low",
@@ -308,6 +311,10 @@ func TestFilter(t *testing.T) {
 		if tc.wantErr {
 			assert.Error(t, err)
 			assert.Nil(t, got)
+			if tc.wantFilterParsingErr {
+				target := &FilterParsingError{}
+				assert.ErrorAs(t, err, &target)
+			}
 		} else {
 			assert.Nil(t, err)
 			if !cmp.Equal(got, tc.wantVerdicts) {
