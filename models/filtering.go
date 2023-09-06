@@ -6,6 +6,14 @@ import (
 	"encoding/json"
 )
 
+type FilterParsingError struct {
+	message string
+}
+
+func (e *FilterParsingError) Error() string {
+	return e.message
+}
+
 // Filter applies a JSONPath expression to the receiving Verdicts and returns the result.
 //
 // See the JSONPath expressions documentation for more information about the syntax:
@@ -27,7 +35,9 @@ func (v *Verdicts) Filter(c context.Context, jsonpath string) (interface{}, Verd
 
 	eval, err := lang.NewEvaluableWithContext(c, jsonpath)
 	if err != nil {
-		return nil, nil, err
+		e := &FilterParsingError{message: err.Error()}
+
+		return nil, nil, e
 	}
 
 	raw, err := eval(c, iface)
