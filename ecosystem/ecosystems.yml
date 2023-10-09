@@ -38,3 +38,4 @@ components:
         validate: is_ecosystem
         human: the ecosystem the target package belongs to
         json: "ecosystem"
+        ch: "ecosystem"
