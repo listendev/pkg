@@ -40,8 +40,6 @@ func init() {
 	})
 
 	Singleton.RegisterAlias("mandatory", "required")
-	Singleton.RegisterAlias("amqp", "startswith=amqp://|startswith=amqps://")
-	Singleton.RegisterAlias("store", "startswith=file:///|startswith=s3://")
 	Singleton.RegisterAlias("shasum", "len=40")
 	Singleton.RegisterAlias("npmorg", "startswith=@")
 
@@ -193,36 +191,6 @@ func init() {
 		},
 		func(ut ut.Translator, fe validator.FieldError) string {
 			t, _ := ut.T("isdefault|is_severity", fe.Field())
-
-			return t
-		},
-	); err != nil {
-		panic(err)
-	}
-
-	if err := Singleton.RegisterTranslation(
-		"amqp",
-		Translator,
-		func(ut ut.Translator) error {
-			return ut.Add("amqp", "{0} must start with amqp:// or with amqps://", true)
-		},
-		func(ut ut.Translator, fe validator.FieldError) string {
-			t, _ := ut.T("amqp", fe.Field())
-
-			return t
-		},
-	); err != nil {
-		panic(err)
-	}
-
-	if err := Singleton.RegisterTranslation(
-		"store",
-		Translator,
-		func(ut ut.Translator) error {
-			return ut.Add("store", "{0} must start with s3://... or file:///...", true)
-		},
-		func(ut ut.Translator, fe validator.FieldError) string {
-			t, _ := ut.T("store", fe.Field())
 
 			return t
 		},
