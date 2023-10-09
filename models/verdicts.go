@@ -23,13 +23,14 @@ const (
 func NewEmptyVerdict(eco ecosystem.Ecosystem, org, pkg, version, shasum, file string) (*Verdict, error) {
 	now := time.Now()
 	v := Verdict{
-		Ecosystem: eco,
-		Org:       org,
-		Pkg:       pkg,
-		Version:   version,
-		Shasum:    shasum,
-		File:      file,
-		CreatedAt: &now,
+		Ecosystem:  eco,
+		Org:        org,
+		Pkg:        pkg,
+		Version:    version,
+		Shasum:     shasum,
+		File:       file,
+		CreatedAt:  &now,
+		Categories: []category.Category{}, // Forcing empty slice instead of nil
 	}
 	err := v.Validate()
 	if err != nil {
