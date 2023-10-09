@@ -55,38 +55,45 @@ components:
             validate: omitempty,npmorg
             human: the NPM organization name
             json: "org,omitempty"
+            ch: "org"
         pkg:
           type: string
           x-oapi-codegen-extra-tags:
             validate: mandatory
             human: the NPM package name
+            ch: "pkg"
         version:
           type: string
           x-oapi-codegen-extra-tags:
             validate: mandatory,semver
             human: the NPM package version
+            ch: "version"
         shasum:
           type: string
           x-oapi-codegen-extra-tags:
             validate: mandatory,shasum
             human: the NPM package shasum
+            ch: "shasum"
         file:
           type: string
           x-oapi-codegen-extra-tags:
             validate: mandatory,is_resultsfile
             human: the result file identifying the analysis type
+            ch: "file"
         message:
           type: string
           x-oapi-codegen-extra-tags:
             validate: omitempty,gt=1
             human: the verdict message
             json: "message,omitempty"
+            ch: "message"
         severity:
           $ref: "./severity/severities.yml#/components/schemas/Severity"
         metadata:
           type: object
           x-oapi-codegen-extra-tags:
             json: "metadata,omitempty"
+            ch: "metadata"
         categories:
           type: array
           items:
@@ -95,6 +102,7 @@ components:
             validate: required_with=Message,dive,is_category
             human: one or more verdict category
             json: "categories,omitempty"
+            ch: "categories"
         code:
           $ref: "../verdictcode/code.yml#/components/schemas/Code"
         expires_at:
@@ -102,12 +110,14 @@ components:
           format: date-time # RFC 3339 NANO
           x-oapi-codegen-extra-tags:
             json: "expires_at"
+            ch: "expires_at"
         created_at:
           type: string
           format: date-time # RFC 3339 NANO
           x-oapi-codegen-extra-tags:
             validate: mandatory
             human: the moment the verdict was created
+            ch: "created_at"
         ecosystem:
           $ref: "../ecosystem/ecosystems.yml#/components/schemas/Ecosystem"
       example:

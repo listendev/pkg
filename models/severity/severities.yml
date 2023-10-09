@@ -33,3 +33,4 @@ components:
             validate: required_with=Message,isdefault|is_severity
             human: the verdict severity
             json: "severity,omitempty"
+            ch: "severity"

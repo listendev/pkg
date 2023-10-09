@@ -100,3 +100,4 @@ components:
         validate: required_with=Message,isdefault|is_verdictcode
         human: the code identifying the verdict type
         json: "code,omitempty"
+        ch: "code"
