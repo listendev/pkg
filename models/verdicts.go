@@ -30,7 +30,8 @@ func NewEmptyVerdict(eco ecosystem.Ecosystem, org, pkg, version, shasum, file st
 		Shasum:     shasum,
 		File:       file,
 		CreatedAt:  &now,
-		Categories: []category.Category{}, // Forcing empty slice instead of nil
+		Categories: []category.Category{},    // Forcing empty slice instead of nil
+		Metadata:   map[string]interface{}{}, // Forcing empty map instead of nil
 	}
 	err := v.Validate()
 	if err != nil {
@@ -99,20 +100,30 @@ func (o *Verdict) UnmarshalJSON(data []byte) error {
 	if err := json.Unmarshal(data, &res); err != nil {
 		return err
 	}
+	if res.Categories == nil {
+		res.Categories = []category.Category{}
+	}
+	if res.Metadata == nil {
+		res.Metadata = map[string]interface{}{}
+	}
 	*o = Verdict(res)
 
 	return o.Validate()
 }
 
 func (o Verdict) MarshalJSON() ([]byte, error) {
+	if o.Categories == nil {
+		o.Categories = []category.Category{}
+	}
+	if o.Metadata == nil {
+		o.Metadata = map[string]interface{}{}
+	}
 	err := o.Validate()
 	if err != nil {
 		return nil, err
 	}
+
 	type alias Verdict
-	if o.Categories == nil {
-		o.Categories = []category.Category{}
-	}
 
 	return json.Marshal(&struct {
 		*alias

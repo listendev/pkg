@@ -32,6 +32,7 @@ func TestFilter(t *testing.T) {
 		Message:    "This package has inconsistent name in the tarball's package.json",
 		Code:       verdictcode.MDN05,
 		Categories: []category.Category{category.Metadata},
+		Metadata:   map[string]interface{}{},
 	}
 	v1b, _ := v1.MarshalJSON()
 	var v1raw interface{}

@@ -412,6 +412,7 @@ func TestFromBuffer(t *testing.T) {
 			Message:    "This package has inconsistent name in the tarball's package.json",
 			Code:       verdictcode.MDN05,
 			Categories: []category.Category{category.Metadata},
+			Metadata:   map[string]interface{}{},
 		},
 		Verdict{
 			CreatedAt: &now,
