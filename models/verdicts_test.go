@@ -60,7 +60,7 @@ func TestVerdictValidation(t *testing.T) {
 	e = v.Validate()
 	if assert.Error(t, e) {
 		assert.True(t, strings.HasPrefix(e.Error(), "validation errors:"))
-		assert.True(t, strings.Contains(e.Error(), "must be on of [npm"))
+		assert.True(t, strings.Contains(e.Error(), "must be on of [Npm"))
 	}
 	v.Ecosystem = ecosystem.Npm
 
