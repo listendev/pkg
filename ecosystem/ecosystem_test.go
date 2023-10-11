@@ -10,6 +10,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestEcosystemsFunction(t *testing.T) {
+	assert.Equal(t, []string{Npm.String(), Pypi.String()}, Ecosystems())
+	assert.Equal(t, []string{Npm.Case(), Pypi.Case()}, Ecosystems(ApplyCase))
+	assert.Equal(
+		t,
+		[]string{fmt.Sprintf("'%s'", Npm.Case()), fmt.Sprintf("'%s'", Pypi.Case())},
+		Ecosystems(ApplyCase, SingleQuotes),
+	)
+	assert.Equal(
+		t,
+		[]string{fmt.Sprintf("'%s' = %d", Npm, Npm), fmt.Sprintf("'%s' = %d", Pypi, Pypi)},
+		Ecosystems(SingleQuotes, WithValue),
+	)
+}
+
 func TestFromUint64(t *testing.T) {
 	_, err := FromUint64(math.MaxUint64)
 	assert.Error(t, err)
