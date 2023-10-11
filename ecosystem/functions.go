@@ -23,10 +23,42 @@ func All() []Ecosystem {
 	return all
 }
 
-func Ecosystems() []string {
+type EcosystemsOutputOption uint8
+
+const (
+	ApplyCase EcosystemsOutputOption = iota
+	SingleQuotes
+	WithValue
+)
+
+func Ecosystems(opts ...EcosystemsOutputOption) []string {
+	applyCase := false
+	singleQuotes := false
+	withValue := false
+	for _, o := range opts {
+		switch o {
+		case ApplyCase:
+			applyCase = true
+		case SingleQuotes:
+			singleQuotes = true
+		case WithValue:
+			withValue = true
+		}
+	}
+
 	strs := []string{}
 	for _, c := range all {
-		strs = append(strs, c.Case())
+		s := c.String()
+		if applyCase {
+			s = c.Case()
+		}
+		if singleQuotes {
+			s = fmt.Sprintf("'%s'", s)
+		}
+		if withValue {
+			s = fmt.Sprintf("%s = %d", s, c)
+		}
+		strs = append(strs, s)
 	}
 
 	return strs
