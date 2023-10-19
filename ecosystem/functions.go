@@ -113,4 +113,28 @@ func (e *Ecosystem) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// Scan implements the sql.Scanner interface.
+func (e *Ecosystem) Scan(source any) error {
+	if x, ok := source.(string); ok {
+		eco, err := FromString(x)
+		if err != nil {
+			return err
+		}
+		*e = eco
+
+		return nil
+	}
+	if x, ok := source.(uint64); ok {
+		eco, err := FromUint64(x)
+		if err != nil {
+			return err
+		}
+		*e = eco
+
+		return nil
+	}
+
+	return fmt.Errorf("cannot scan %T into Ecosystem", source)
+}
+
 //go:generate stringer -type=Ecosystem
