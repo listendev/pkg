@@ -73,7 +73,7 @@ func (o *Verdict) Validate() error {
 			all["Code"] = fmt.Errorf("verdict code is not coherent with the results file and its associated analysis type")
 		}
 	}
-	// TODO: use npm_package_name validator on org + pkg
+	// TODO: use npm_package_name validator on org + pkg when ecosystem is NPM
 	errors := maps.Values(all)
 	if len(errors) > 0 {
 		ret := "validation error"
@@ -130,6 +130,19 @@ func (o Verdict) MarshalJSON() ([]byte, error) {
 	}{
 		alias: (*alias)(&o),
 	})
+}
+
+func (o Verdict) Key() (string, error) {
+	if err := o.Validate(); err != nil {
+		return "", err
+	}
+
+	name := o.Pkg
+	if o.Org != "" && o.Ecosystem == ecosystem.Npm {
+		name = fmt.Sprintf("%s/%s", o.Org, o.Pkg)
+	}
+
+	return fmt.Sprintf("%s/%s/%s/%s/%s", o.Ecosystem.Case(), name, o.Version, o.Shasum, o.File), nil
 }
 
 type Verdicts []Verdict
