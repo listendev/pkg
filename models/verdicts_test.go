@@ -145,6 +145,11 @@ func TestVerdictValidation(t *testing.T) {
 	v.Code = verdictcode.FNI003
 	e = v.Validate()
 	assert.Nil(t, e)
+
+	k, ke := v.Key()
+	assert.Nil(t, ke)
+	assert.NotNil(t, k)
+	assert.Equal(t, "npm/test/0.0.1-beta.1+b1234567/aaaaaaaaaa1aaaaaaaaaa1aaaaaaaaaa12345678/dynamic!install!.json", k)
 }
 
 func TestExpiration(t *testing.T) {
@@ -159,6 +164,17 @@ func TestExpiration(t *testing.T) {
 	time.Sleep(d)
 
 	assert.True(t, v.HasExpired())
+}
+
+func TestKey(t *testing.T) {
+	v, e := NewEmptyVerdict(ecosystem.Npm, "@phantom", "synpress", "4.0.0-alpha.19", "879524fd7166d1a8659cd0f5d81800afb268d8c2", "metadata(mismatches).json")
+	assert.Nil(t, e)
+	assert.NotNil(t, v)
+
+	k, ke := v.Key()
+	assert.Nil(t, ke)
+	assert.NotNil(t, k)
+	assert.Equal(t, "npm/@phantom/synpress/4.0.0-alpha.19/879524fd7166d1a8659cd0f5d81800afb268d8c2/metadata(mismatches).json", k)
 }
 
 func TestMarshalOkVerdict(t *testing.T) {
@@ -221,6 +237,10 @@ func TestMarshalEmptyVerdict(t *testing.T) {
 	v, e := NewEmptyVerdict(ecosystem.Npm, "", "test", "0.0.1", "0123456789012345678901234567890123456789", "dynamic!install!.json")
 	assert.Nil(t, e)
 	assert.NotNil(t, v)
+	k, ke := v.Key()
+	assert.Nil(t, ke)
+	assert.NotNil(t, k)
+	assert.Equal(t, "npm/test/0.0.1/0123456789012345678901234567890123456789/dynamic!install!.json", k)
 
 	want := heredoc.Docf(`{
 		"shasum": "0123456789012345678901234567890123456789",
