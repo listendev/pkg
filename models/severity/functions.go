@@ -16,7 +16,22 @@ func (s Severity) String() string {
 		return string(s)
 	}
 
-	return "unknown"
+	return string(Unknown)
+}
+
+// Scan implements the sql.Scanner interface.
+func (s *Severity) Scan(source any) error {
+	if x, ok := source.(string); ok {
+		cat, err := New(x)
+		if cat != Unknown && err != nil {
+			return err
+		}
+		*s = cat
+
+		return nil
+	}
+
+	return fmt.Errorf("cannot scan %T into Category", source)
 }
 
 func New(input string) (Severity, error) {
@@ -31,7 +46,7 @@ func New(input string) (Severity, error) {
 		return High, nil
 	}
 
-	return "unknown", fmt.Errorf("the input %q is not a severity", input)
+	return Unknown, fmt.Errorf("the input %q is not a severity", input)
 }
 
 func (s *Severity) UnmarshalJSON(data []byte) error {
