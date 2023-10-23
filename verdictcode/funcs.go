@@ -8,6 +8,28 @@ import (
 	"golang.org/x/exp/maps"
 )
 
+// Scan implements the sql.Scanner interface.
+func (c *Code) Scan(source any) error {
+	if x, ok := source.(string); ok {
+		cat, err := FromString(x, true) // consider also deprecated values
+		if err != nil {
+			return err
+		}
+		*c = cat
+
+		return nil
+	}
+	if x, ok := source.(uint64); ok {
+		cat, err := FromUint64(x, true) // consider also deprecated values
+		if err != nil {
+			return err
+		}
+		*c = cat
+	}
+
+	return fmt.Errorf("cannot scan %T into Code", source)
+}
+
 // FromUint64 converts the input number to a Code.
 //
 // It returns only Code instanced that are associated to an analysis request type.
