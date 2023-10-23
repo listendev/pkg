@@ -5,9 +5,10 @@ package severity
 
 // Defines values for Severity.
 const (
-	High   Severity = "high"
-	Low    Severity = "low"
-	Medium Severity = "medium"
+	High    Severity = "high"
+	Low     Severity = "low"
+	Medium  Severity = "medium"
+	Unknown Severity = "unknown"
 )
 
 // Severity defines model for Severity.
