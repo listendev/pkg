@@ -44,6 +44,28 @@ func FromString(input string) (Category, error) {
 	return 0, fmt.Errorf("couldn't find a category matching input %q", input)
 }
 
+// Scan implements the sql.Scanner interface.
+func (c *Category) Scan(source any) error {
+	if x, ok := source.(string); ok {
+		cat, err := FromString(x)
+		if err != nil {
+			return err
+		}
+		*c = cat
+
+		return nil
+	}
+	if x, ok := source.(uint64); ok {
+		cat, err := FromUint64(x)
+		if err != nil {
+			return err
+		}
+		*c = cat
+	}
+
+	return fmt.Errorf("cannot scan %T into Category", source)
+}
+
 func (c *Category) UnmarshalJSON(data []byte) error {
 	var str string
 	if err := json.Unmarshal(data, &str); err != nil {
