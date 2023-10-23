@@ -12,7 +12,7 @@ import (
 func (c *Code) Scan(source any) error {
 	if x, ok := source.(string); ok {
 		cat, err := FromString(x, true) // consider also deprecated values
-		if err != nil {
+		if cat != UNK && err != nil {
 			return err
 		}
 		*c = cat
@@ -21,7 +21,7 @@ func (c *Code) Scan(source any) error {
 	}
 	if x, ok := source.(uint64); ok {
 		cat, err := FromUint64(x, true) // consider also deprecated values
-		if err != nil {
+		if cat != UNK && err != nil {
 			return err
 		}
 		*c = cat
