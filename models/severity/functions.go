@@ -16,14 +16,14 @@ func (s Severity) String() string {
 		return string(s)
 	}
 
-	return string(Unknown)
+	return string(Empty)
 }
 
 // Scan implements the sql.Scanner interface.
 func (s *Severity) Scan(source any) error {
 	if x, ok := source.(string); ok {
 		cat, err := New(x)
-		if cat != Unknown && err != nil {
+		if cat != Empty && err != nil {
 			return err
 		}
 		*s = cat
@@ -44,9 +44,11 @@ func New(input string) (Severity, error) {
 		return Medium, nil
 	case High.String():
 		return High, nil
+	case Empty.String():
+		return Empty, nil
 	}
 
-	return Unknown, fmt.Errorf("the input %q is not a severity", input)
+	return Empty, fmt.Errorf("the input %q is not a severity", input)
 }
 
 func (s *Severity) UnmarshalJSON(data []byte) error {
