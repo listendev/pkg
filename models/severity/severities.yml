@@ -26,7 +26,7 @@ components:
     Severity:
       type: string
       enum:
-        - "unknown"
+        - ""
         - "low"
         - "medium"
         - "high"
