@@ -258,6 +258,33 @@ func TestMarshalEmptyVerdict(t *testing.T) {
 	}
 }
 
+func TestMarshalEmptyVerdictWithExplicitUnknownCodeAndSeverity(t *testing.T) {
+	v, e := NewEmptyVerdict(ecosystem.Npm, "", "test", "0.0.1", "0123456789012345678901234567890123456789", "dynamic!install!.json")
+	v.Code = verdictcode.UNK
+	v.Severity = severity.Empty
+	assert.Nil(t, e)
+	assert.NotNil(t, v)
+	k, ke := v.Key()
+	assert.Nil(t, ke)
+	assert.NotNil(t, k)
+	assert.Equal(t, "npm/test/0.0.1/0123456789012345678901234567890123456789/dynamic!install!.json", k)
+
+	want := heredoc.Docf(`{
+		"shasum": "0123456789012345678901234567890123456789",
+		"ecosystem": "npm",
+		"pkg": "test",
+		"version": "0.0.1",
+		"expires_at": null,
+		"file": "dynamic!install!.json",
+		"created_at": %q
+	}`, v.CreatedAt.Format(time.RFC3339Nano))
+
+	got, err := json.Marshal(v)
+	if assert.Nil(t, err, "Marshalling error") {
+		assert.JSONEq(t, want, string(got))
+	}
+}
+
 func TestUnmarshalEmptyVerdict(t *testing.T) {
 	want, e := NewEmptyVerdict(ecosystem.Npm, "", "test1", "0.0.2-alpha.1", "aaaaa12321321cssasaaaaaa12321321cssasa22", "typosquat.json")
 	assert.Nil(t, e)
