@@ -131,8 +131,9 @@ func TestVerdictValidation(t *testing.T) {
 	v.Code = verdictcode.DDN01
 	e = v.Validate()
 	if assert.Error(t, e) {
-		assert.True(t, strings.HasPrefix(e.Error(), "validation error:"))
+		assert.True(t, strings.HasPrefix(e.Error(), "validation errors:"))
 		assert.True(t, strings.Contains(e.Error(), "verdict code is not coherent"))
+		assert.True(t, strings.Contains(e.Error(), "a fingerprint is mandatory because the verdict code is not uniquely identifying it"))
 	}
 
 	v.Code = verdictcode.Code(uint64(math.MaxUint64))
