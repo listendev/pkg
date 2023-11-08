@@ -22,10 +22,12 @@ func TestFromUint64(t *testing.T) {
 	ddn01, err := FromUint64(uint64(DDN01), false)
 	assert.Nil(t, err)
 	assert.Equal(t, DDN01, ddn01)
+	assert.False(t, ddn01.UniquelyIdentifies())
 
 	tsn01, err := FromUint64(uint64(TSN01), false)
 	assert.Nil(t, err)
 	assert.Equal(t, TSN01, tsn01)
+	assert.True(t, tsn01.UniquelyIdentifies())
 }
 
 func TestFromString(t *testing.T) {
@@ -90,6 +92,7 @@ func TestRetrievingTheType(t *testing.T) {
 	assert.Nil(t, e3)
 	assert.NotNil(t, t3)
 	assert.Equal(t, analysisrequest.NPMMetadataVersion, t3)
+	assert.True(t, MDN03.UniquelyIdentifies())
 
 	t4, e4 := MDN02.Type(false)
 	assert.Nil(t, e4)
