@@ -45,6 +45,7 @@ components:
         - org # Just to avoid the pointer
         - message # Just to avoid the pointer
         - code # Just to avoid the pointer
+        - fingerprint # Just to avoid the pointer
         - severity # Just to avoid the pointer
         - categories # Just to avoid the pointer
         - metadata # Just to avoid the pointer
@@ -105,6 +106,12 @@ components:
             ch: "categories"
         code:
           $ref: "../verdictcode/code.yml#/components/schemas/Code"
+        fingerprint:
+          type: string
+          x-oapi-codegen-extra-tags:
+            human: a string uniquely identifying this verdict instance
+            json: "fingerprint,omitempty"
+            ch: "fingerprint"
         expires_at:
           type: string
           format: date-time # RFC 3339 NANO
