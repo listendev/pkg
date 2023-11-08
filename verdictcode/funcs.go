@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/XANi/goneric"
 	"github.com/listendev/pkg/analysisrequest"
 	"golang.org/x/exp/maps"
 )
@@ -113,4 +114,15 @@ func (c Code) Type(deprecatedToo bool) (analysisrequest.Type, error) {
 	}
 
 	return analysisrequest.Nop, fmt.Errorf("not found")
+}
+
+// UniquelyIdentifies tells whether the receving Code uniquely identifies a verdict.
+//
+// A code uniquely identifies a verdict when a collector can only generate one instance of a verdict with such a code
+// for the tuple (ecosystem, package, version, collector itself).
+//
+// This means that when a collector, for the tuple (ecosystem, package, version, collector itself), can generate more instance of verdicts with the same code,
+// than such a code is not uniquely identifying the verdict.
+func (c Code) UniquelyIdentifies() bool {
+	return !goneric.SliceIn(nonUniquelyIdentifying, c)
 }
