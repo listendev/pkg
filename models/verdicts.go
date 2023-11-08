@@ -68,9 +68,14 @@ func (o *Verdict) Validate() error {
 		// We assume o.File has been already validated, thus we don't check for the error
 		ft, _ := analysisrequest.GetTypeFromResultFile(o.File)
 		ct, err := o.Code.Type(false)
-		// We assum o.Code has been already validated, thus we expect its Type() method to never error
-		if err == nil && ft != ct {
-			all["Code"] = fmt.Errorf("verdict code is not coherent with the results file and its associated analysis type")
+		// We assume o.Code has been already validated, thus we expect its Type() method to never error
+		if err == nil {
+			if ft != ct {
+				all["Code"] = fmt.Errorf("verdict code is not coherent with the results file and its associated analysis type")
+			}
+			if !o.Code.UniquelyIdentifies() && o.Fingerprint == "" {
+				all["CodeInstance"] = fmt.Errorf("a fingerprint is mandatory because the verdict code is not uniquely identifying it")
+			}
 		}
 	}
 	// TODO: use npm_package_name validator on org + pkg when ecosystem is NPM
