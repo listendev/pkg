@@ -55,3 +55,20 @@ var mapping = map[analysisrequest.Type]map[Code]bool{
 		STN009: true,
 	},
 }
+
+// nonUniquelyIdentifying contains the codes that are not uniquely identifying verdicts.
+//
+// Meaning, codes that can be present in few verdicts for the same tuple (ecosystem, package, version, collector).
+// TODO: complete this list
+var nonUniquelyIdentifying = []Code{
+	DDN01,
+	STN001,
+	STN002,
+	STN003,
+	STN004,
+	STN005,
+	STN006,
+	STN007,
+	STN008,
+	STN009,
+}
