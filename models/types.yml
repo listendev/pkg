@@ -53,7 +53,7 @@ components:
         org:
           type: string
           x-oapi-codegen-extra-tags:
-            validate: omitempty,npmorg
+            validate: omitempty
             human: the NPM organization name
             json: "org,omitempty"
             ch: "org"
