@@ -9,7 +9,8 @@ import (
 
 type ResultUploadPath []string
 
-func (r ResultUploadPath) ToS3Key() string {
+// Key returns a path-like key.
+func (r ResultUploadPath) Key() string {
 	return path.Join(r...)
 }
 
@@ -60,13 +61,17 @@ func GetTypeForEcosystemFromResultFile(eco ecosystem.Ecosystem, filename string)
 	return Nop, fmt.Errorf("couldn't find any type for ecosystem %q matching the results file %q", eco.Case(), filename)
 }
 
-func GetTypeFromResultFile(filename string) (Type, error) {
+func GetTypesFromResultFile(filename string) ([]Type, error) {
+	res := []Type{}
 	for _, e := range ecosystem.All() {
 		t, err := GetTypeForEcosystemFromResultFile(e, filename)
 		if err == nil {
-			return t, nil
+			res = append(res, t)
 		}
 	}
+	if len(res) > 0 {
+		return res, nil
+	}
 
-	return Nop, fmt.Errorf("couldn't find any type in any ecosystem matching the results file %q", filename)
+	return nil, fmt.Errorf("couldn't find any type in any ecosystem matching the results file %q", filename)
 }
