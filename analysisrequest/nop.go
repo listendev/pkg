@@ -43,20 +43,7 @@ func (a NOP) ResultsPath() ResultUploadPath {
 }
 
 func (a NOP) Publishing() (*amqp.Publishing, error) {
-	body, err := json.Marshal(a)
-	if err != nil {
-		return nil, err
-	}
-
-	ret := &amqp.Publishing{
-		ContentType: "application/json",
-		Body:        body,
-	}
-	if a.Priority > 0 {
-		ret.Priority = a.Priority
-	}
-
-	return ret, nil
+	return ComposeAMQPPublishing(&a)
 }
 
 func (a NOP) Delivery() (*amqp.Delivery, error) {
