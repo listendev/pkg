@@ -335,5 +335,5 @@ func TestTypes(t *testing.T) {
 func TestLastType(t *testing.T) {
 	got := LastType()
 
-	assert.Equal(t, NPMStaticNonRegistryDependency, got)
+	assert.Equal(t, PypiTyposquat, got)
 }
