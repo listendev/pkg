@@ -34,6 +34,8 @@ const (
 	NPMStaticAnalysisInstallScript
 	NPMStaticNonRegistryDependency
 
+	PypiTyposquat Type = iota + 986 // 1001
+
 	_maxType
 )
 
@@ -113,6 +115,8 @@ var typeURNs = map[Type]string{
 	NPMStaticAnalysisEvalBase64:               createType(Hoarding, StaticAnalysisCollector, "base64_eval", ecosystem.Npm, "", "json"),
 	NPMStaticAnalysisInstallScript:            createType(Hoarding, StaticAnalysisCollector, "install_script", ecosystem.Npm, "", "json"),
 	NPMStaticNonRegistryDependency:            createType(Hoarding, StaticAnalysisCollector, "non_registry_dependency", ecosystem.Npm, "", "json"),
+
+	PypiTyposquat: createType(Hoarding, TyposquatCollector, "", ecosystem.Pypi, "", "json"),
 }
 
 func Types() []Type {
