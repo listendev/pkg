@@ -75,9 +75,9 @@ func init() {
 		f := fl.Field()
 
 		if f.Kind() == reflect.Uint64 {
-			_, err := ecosystem.FromUint64(f.Uint())
+			eco, err := ecosystem.FromUint64(f.Uint())
 
-			return err == nil
+			return err == nil && eco != ecosystem.None
 		}
 
 		panic(fmt.Sprintf("bad field type: %T", f.Interface()))
@@ -103,7 +103,7 @@ func init() {
 		f := fl.Field()
 
 		if f.Kind() == reflect.String {
-			_, err := analysisrequest.GetTypeFromResultFile(f.String())
+			_, err := analysisrequest.GetTypesFromResultFile(f.String())
 
 			return err == nil
 		}
@@ -171,7 +171,7 @@ func init() {
 		"is_ecosystem",
 		Translator,
 		func(ut ut.Translator) error {
-			return ut.Add("is_ecosystem", fmt.Sprintf("{0} must be on of [%s]", strings.Join(ecosystem.Ecosystems(), ", ")), true)
+			return ut.Add("is_ecosystem", fmt.Sprintf("{0} must be one of [%s]", strings.Join(ecosystem.Ecosystems(ecosystem.ApplyCase), ", ")), true)
 		},
 		func(ut ut.Translator, fe validator.FieldError) string {
 			t, _ := ut.T("is_ecosystem", fe.Field())
@@ -217,10 +217,14 @@ func init() {
 		"npmorg",
 		Translator,
 		func(ut ut.Translator) error {
-			return ut.Add("npmorg", "{0} must be a valid NPM organization (starting with @)", true)
+			return ut.Add("npmorg", "{0} must start with @", true)
 		},
 		func(ut ut.Translator, fe validator.FieldError) string {
-			t, _ := ut.T("npmorg", fe.Field())
+			f := fe.Field()
+			if f == "" {
+				f = "the NPM organization name"
+			}
+			t, _ := ut.T("npmorg", f)
 
 			return t
 		},
