@@ -94,7 +94,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 		args               args
 		want               AnalysisRequest
 		wantPublishing     *amqp.Publishing
-		wantS3Key          string
+		wantKey            string
 		wantErr            bool
 		mockRegistryClient *mockNpmregistryClient
 	}{
@@ -116,10 +116,44 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				Priority:    4,
 				Body:        []byte(`{"type":"urn:nop:nop","snowflake_id":"1524854487523524609","priority":4,"force":false}`),
 			},
-			wantS3Key:          "nop/1524854487523524609/nop",
+			wantKey:            "nop/1524854487523524609/nop",
 			mockRegistryClient: nil,
 			wantErr:            false,
 		},
+		// FIXME: mock pypi registry response
+		// {
+		// 	name: "valid full pypi typosquat analysis request",
+		// 	args: args{
+		// 		body: []byte(`{"type": "urn:hoarding:typosquat!pypi.json", "snowflake_id": "1652803364692340736", "name": "cctx", "version": "1.0.0", "priority": 5, "force": true}`),
+		// 	},
+		// 	want: &PyPi{
+		// 		base: base{
+		// 			RequestType: NPMTyposquat,
+		// 			Snowflake:   "1652803364692340736",
+		// 			Priority:    5,
+		// 			Force:       true,
+		// 		},
+		// 		pypiPackage: pypiPackage{
+		// 			Name:    "cctx",
+		// 			Version: "1.0.0",
+		// 		},
+		// 	},
+		// 	wantPublishing: &amqp.Publishing{
+		// 		ContentType: "application/json",
+		// 		Priority:    5,
+		// 		Body:        []byte(`{"type":"urn:hoarding:typosquat!pypi.json","snowflake_id":"1652803364692340736","name":"cctx","version":"1.0.0","priority":5,"force":true}`),
+		// 	},
+		// 	wantKey: "pypi/cctx/1.0.0/typosquat.json",
+		// 	mockRegistryClient: func() *mockNpmregistryClient {
+		// 		mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
+		// 		if err != nil {
+		// 			t.Fatal(err)
+		// 		}
+
+		// 		return mockClient
+		// 	}(),
+		// 	wantErr: false,
+		// },
 		{
 			name: "valid full npm advisory analysis request",
 			args: args{
@@ -143,7 +177,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				Priority:    5,
 				Body:        []byte(`{"type":"urn:hoarding:advisory!npm.json","snowflake_id":"1524854487523524608","name":"chalk","version":"5.1.2","shasum":"d957f370038b75ac572471e83be4c5ca9f8e8c45","priority":5,"force":true}`),
 			},
-			wantS3Key: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/advisory.json",
+			wantKey: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/advisory.json",
 			mockRegistryClient: func() *mockNpmregistryClient {
 				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
 				if err != nil {
@@ -177,7 +211,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				Priority:    5,
 				Body:        []byte(`{"type":"urn:hoarding:typosquat!npm.json","snowflake_id":"1652803364692340736","name":"chalk","version":"5.1.2","shasum":"d957f370038b75ac572471e83be4c5ca9f8e8c45","priority":5,"force":true}`),
 			},
-			wantS3Key: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/typosquat.json",
+			wantKey: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/typosquat.json",
 			mockRegistryClient: func() *mockNpmregistryClient {
 				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
 				if err != nil {
@@ -211,7 +245,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				Priority:    5,
 				Body:        []byte(`{"type":"urn:scheduler:dynamic!npm,install.json","snowflake_id":"1524854487523524608","name":"chalk","version":"5.1.2","shasum":"d957f370038b75ac572471e83be4c5ca9f8e8c45","priority":5,"force":true}`),
 			},
-			wantS3Key: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/dynamic!install!.json",
+			wantKey: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/dynamic!install!.json",
 			mockRegistryClient: func() *mockNpmregistryClient {
 				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
 				if err != nil {
@@ -242,7 +276,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				ContentType: "application/json",
 				Body:        []byte(`{"type": "urn:scheduler:dynamic!npm,install.json", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "force": false}`),
 			},
-			wantS3Key: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/dynamic!install!.json",
+			wantKey: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/dynamic!install!.json",
 			mockRegistryClient: func() *mockNpmregistryClient {
 				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
 				if err != nil {
@@ -273,7 +307,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				ContentType: "application/json",
 				Body:        []byte(`{"type": "urn:scheduler:dynamic!npm,install.json", "snowflake_id": "1524854487523524608", "name": "chalk","version": "5.2.0", "shasum": "249623b7d66869c673699fb66d65723e54dfcfb3", "force": false}`),
 			},
-			wantS3Key: "npm/chalk/5.2.0/249623b7d66869c673699fb66d65723e54dfcfb3/dynamic!install!.json",
+			wantKey: "npm/chalk/5.2.0/249623b7d66869c673699fb66d65723e54dfcfb3/dynamic!install!.json",
 			mockRegistryClient: func() *mockNpmregistryClient {
 				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_520.json")
 				if err != nil {
@@ -304,7 +338,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				ContentType: "application/json",
 				Body:        []byte(`{"type": "urn:scheduler:dynamic!npm,install.json+urn:hoarding:ai,context", "snowflake_id": "1524854487523524608", "name": "chalk","version": "5.2.0", "shasum": "249623b7d66869c673699fb66d65723e54dfcfb3", "force": false}`),
 			},
-			wantS3Key: "npm/chalk/5.2.0/249623b7d66869c673699fb66d65723e54dfcfb3/dynamic!install!.json",
+			wantKey: "npm/chalk/5.2.0/249623b7d66869c673699fb66d65723e54dfcfb3/dynamic!install!.json",
 			mockRegistryClient: func() *mockNpmregistryClient {
 				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_520.json")
 				if err != nil {
@@ -322,7 +356,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			},
 			want:           nil,
 			wantPublishing: nil,
-			wantS3Key:      "",
+			wantKey:        "",
 			wantErr:        true,
 		},
 		{
@@ -345,7 +379,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				ContentType: "application/json",
 				Body:        []byte(`{"type": "urn:scheduler:dynamic!npm,install.json", "snowflake_id": "1524854487523524608", "name": "chalk","version": "5.2.0", "shasum": "249623b7d66869c673699fb66d65723e54dfcfb3", "force": false}`),
 			},
-			wantS3Key:          "npm/chalk/5.2.0/249623b7d66869c673699fb66d65723e54dfcfb3/dynamic!install!.json",
+			wantKey:            "npm/chalk/5.2.0/249623b7d66869c673699fb66d65723e54dfcfb3/dynamic!install!.json",
 			mockRegistryClient: nil,
 			wantErr:            true,
 		},
@@ -387,7 +421,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				}
 
 				// Test S3 key
-				assert.Equal(t, tt.wantS3Key, got.ResultsPath().ToS3Key())
+				assert.Equal(t, tt.wantKey, got.ResultsPath().Key())
 			}
 		})
 	}
