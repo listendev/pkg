@@ -30,7 +30,7 @@ type Verdict struct {
 	Fingerprint string                  `ch:"fingerprint" human:"a string uniquely identifying this verdict instance" json:"fingerprint,omitempty"`
 	Message     string                  `ch:"message" human:"the verdict message" json:"message,omitempty" validate:"omitempty,gt=1"`
 	Metadata    map[string]interface{}  `ch:"metadata" json:"metadata,omitempty"`
-	Org         string                  `ch:"org" human:"the NPM organization name" json:"org,omitempty" validate:"omitempty,npmorg"`
+	Org         string                  `ch:"org" human:"the NPM organization name" json:"org,omitempty" validate:"omitempty"`
 	Pkg         string                  `ch:"pkg" human:"the NPM package name" json:"pkg" validate:"mandatory"`
 	Severity    externalRef2.Severity   `ch:"severity" human:"the verdict severity" json:"severity,omitempty" validate:"required_with=Message,isdefault|is_severity"`
 	Shasum      string                  `ch:"shasum" human:"the NPM package shasum" json:"shasum" validate:"mandatory,shasum"`

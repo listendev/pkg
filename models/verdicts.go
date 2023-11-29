@@ -66,7 +66,7 @@ func (o *Verdict) Validate() error {
 	_, codeError := all["Code"]
 	if !fileError && !codeError && o.Code != verdictcode.UNK {
 		// We assume o.File has been already validated, thus we don't check for the error
-		ft, _ := analysisrequest.GetTypeFromResultFile(o.File)
+		ft, _ := analysisrequest.GetTypeForEcosystemFromResultFile(o.Ecosystem, o.File)
 		ct, err := o.Code.Type(false)
 		// We assume o.Code has been already validated, thus we expect its Type() method to never error
 		if err == nil {
@@ -78,7 +78,28 @@ func (o *Verdict) Validate() error {
 			}
 		}
 	}
-	// TODO: use npm_package_name validator on org + pkg when ecosystem is NPM
+	// Other contextual validations
+	switch o.Ecosystem {
+	case ecosystem.Npm:
+		if o.Org != "" {
+			if err := validate.Singleton.Var(o.Org, "npmorg"); err != nil {
+				var orgErr error
+				for _, e := range err.(validate.ValidationErrors) {
+					orgErr = fmt.Errorf(e.Translate(validate.Translator))
+					break
+				}
+				all["Org"] = orgErr
+			}
+			// TODO: use npm_package_name validator on org + pkg when ecosystem is NPM
+		}
+	case ecosystem.Pypi:
+		if o.Org != "" {
+			all["Org"] = fmt.Errorf("org must be empty when ecosystem is PyPi")
+		}
+	default:
+
+	}
+
 	errors := maps.Values(all)
 	if len(errors) > 0 {
 		ret := "validation error"
