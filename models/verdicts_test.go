@@ -26,11 +26,19 @@ func TestVerdictValidation(t *testing.T) {
 		assert.True(t, strings.HasPrefix(e.Error(), "validation errors:"))
 	}
 
+	v.Ecosystem = 0
+	e = v.Validate()
+	if assert.Error(t, e) {
+		assert.True(t, strings.HasPrefix(e.Error(), "validation errors:"))
+		assert.True(t, strings.Contains(e.Error(), "must be one of [npm"))
+	}
+	v.Ecosystem = ecosystem.Npm
+
 	v.Org = "org"
 	e = v.Validate()
 	if assert.Error(t, e) {
 		assert.True(t, strings.HasPrefix(e.Error(), "validation errors:"))
-		assert.True(t, strings.Contains(e.Error(), "valid NPM organization"))
+		assert.True(t, strings.Contains(e.Error(), "the NPM organization name must start with @"))
 	}
 	v.Org = ""
 
@@ -55,14 +63,6 @@ func TestVerdictValidation(t *testing.T) {
 		assert.True(t, strings.Contains(e.Error(), "40 characters long"))
 	}
 	v.Shasum = "aaaaaaaaaa1aaaaaaaaaa1aaaaaaaaaa12345678"
-
-	v.Ecosystem = 0
-	e = v.Validate()
-	if assert.Error(t, e) {
-		assert.True(t, strings.HasPrefix(e.Error(), "validation errors:"))
-		assert.True(t, strings.Contains(e.Error(), "must be on of [Npm"))
-	}
-	v.Ecosystem = ecosystem.Npm
 
 	v.CreatedAt = &time.Time{}
 
