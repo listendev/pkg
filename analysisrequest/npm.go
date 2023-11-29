@@ -106,20 +106,7 @@ func (arn NPM) String() string {
 }
 
 func (arn NPM) Publishing() (*amqp.Publishing, error) {
-	body, err := json.Marshal(arn)
-	if err != nil {
-		return nil, err
-	}
-
-	ret := &amqp.Publishing{
-		ContentType: "application/json",
-		Body:        body,
-	}
-	if arn.Priority > 0 {
-		ret.Priority = arn.Priority
-	}
-
-	return ret, nil
+	return ComposeAMQPPublishing(&arn)
 }
 
 func (arn NPM) Delivery() (*amqp.Delivery, error) {
