@@ -10,6 +10,7 @@ var mapping = map[analysisrequest.Type]map[Code]bool{
 		FNI001: true,
 		FNI002: true,
 		FNI003: true,
+		RUN001: true,
 	},
 	analysisrequest.NPMAdvisory: {
 		DDN01: true,
