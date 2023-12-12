@@ -67,6 +67,7 @@ components:
         - 1107 # STN007
         - 1108 # STN008
         - 1109 # STN009
+        - 1200 # RUN001
       x-enumNames:
         - "UNK"
         - "FNI001" # npm install spawn a child process
@@ -96,6 +97,7 @@ components:
         - "STN007" # npm http dependency
         - "STN008" # npm github dependency
         - "STN009" # npm github gist dependency
+        - "RUN001" # runtime (DNS)
       x-oapi-codegen-extra-tags:
         validate: required_with=Message,isdefault|is_verdictcode
         human: the code identifying the verdict type
