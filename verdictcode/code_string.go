@@ -25,6 +25,7 @@ func _() {
 	_ = x[MDN06-1026]
 	_ = x[MDN07-1027]
 	_ = x[MDN08-1028]
+	_ = x[RUN001-1200]
 	_ = x[STN001-1101]
 	_ = x[STN002-1102]
 	_ = x[STN003-1103]
@@ -44,6 +45,7 @@ const (
 	_Code_name_2 = "TSN01"
 	_Code_name_3 = "MDN01MDN02MDN03MDN04MDN05MDN06MDN07MDN08"
 	_Code_name_4 = "STN001STN002STN003STN004STN005STN006STN007STN008STN009"
+	_Code_name_5 = "RUN001"
 )
 
 var (
@@ -66,6 +68,8 @@ func (i Code) String() string {
 	case 1101 <= i && i <= 1109:
 		i -= 1101
 		return _Code_name_4[_Code_index_4[i]:_Code_index_4[i+1]]
+	case i == 1200:
+		return _Code_name_5
 	default:
 		return "Code(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
