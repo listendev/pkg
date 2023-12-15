@@ -22,3 +22,20 @@ func ComposeAMQPPublishing(a AnalysisRequest) (*amqp.Publishing, error) {
 
 	return ret, nil
 }
+
+func ComposeAMQPDelivery(a AnalysisRequest) (*amqp.Delivery, error) {
+	body, err := json.Marshal(a)
+	if err != nil {
+		return nil, err
+	}
+
+	ret := &amqp.Delivery{
+		ContentType: "application/json",
+		Body:        body,
+	}
+	if a.Prio() > 0 {
+		ret.Priority = a.Prio()
+	}
+
+	return ret, nil
+}
