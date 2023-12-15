@@ -27,3 +27,9 @@ func (arn PyPi) ResultsPath() ResultUploadPath {
 func (arn PyPi) String() string {
 	return arn.Name + "@" + arn.Version + "(" + arn.Type().String() + ")"
 }
+
+func (arn PyPi) Delivery() (*amqp.Delivery, error) {
+	return ComposeAMQPDelivery(&arn)
+}
+
+// FIXME: implement missing methods
