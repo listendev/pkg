@@ -19,10 +19,16 @@ func ComposeResultUploadPath(a AnalysisRequest) ResultUploadPath {
 	c := t.Components()
 	filename := c.ResultFile()
 
-	if c.Ecosystem == ecosystem.Npm {
+	switch c.Ecosystem {
+	case ecosystem.Npm:
 		arn := a.(*NPM)
 
 		return ResultUploadPath{c.Ecosystem.Case(), arn.Name, arn.Version, arn.Shasum, filename}
+
+	case ecosystem.Pypi:
+		arp := a.(*PyPi)
+
+		return ResultUploadPath{c.Ecosystem.Case(), arp.Name, arp.Version, filename} // FIXME: shasum or similar?
 	}
 
 	// Assuming there are no types - other than Nop - without ecosystem
