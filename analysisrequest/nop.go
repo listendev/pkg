@@ -1,8 +1,6 @@
 package analysisrequest
 
 import (
-	"encoding/json"
-
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -47,18 +45,5 @@ func (a NOP) Publishing() (*amqp.Publishing, error) {
 }
 
 func (a NOP) Delivery() (*amqp.Delivery, error) {
-	body, err := json.Marshal(a)
-	if err != nil {
-		return nil, err
-	}
-
-	ret := &amqp.Delivery{
-		ContentType: "application/json",
-		Body:        body,
-	}
-	if a.Priority > 0 {
-		ret.Priority = a.Priority
-	}
-
-	return ret, nil
+	return ComposeAMQPDelivery(&a)
 }

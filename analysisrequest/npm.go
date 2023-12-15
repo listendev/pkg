@@ -110,20 +110,7 @@ func (arn NPM) Publishing() (*amqp.Publishing, error) {
 }
 
 func (arn NPM) Delivery() (*amqp.Delivery, error) {
-	body, err := json.Marshal(arn)
-	if err != nil {
-		return nil, err
-	}
-
-	ret := &amqp.Delivery{
-		ContentType: "application/json",
-		Body:        body,
-	}
-	if arn.Priority > 0 {
-		ret.Priority = arn.Priority
-	}
-
-	return ret, nil
+	return ComposeAMQPDelivery(&arn)
 }
 
 func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.Registry) error {
