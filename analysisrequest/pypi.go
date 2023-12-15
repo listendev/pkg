@@ -1,6 +1,7 @@
 package analysisrequest
 
 import (
+	"encoding/json"
 	"errors"
 
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -51,4 +52,18 @@ func (arp PyPi) Validate() error {
 	return arp.base.Validate()
 }
 
-// FIXME: implement missing methods
+func (arp *PyPi) UnmarshalJSON(data []byte) error {
+	var baseResult base
+	if err := json.Unmarshal(data, &baseResult); err != nil {
+		return err
+	}
+	arp.base = baseResult
+
+	var pypiResult pypiPackage
+	if err := json.Unmarshal(data, &pypiResult); err != nil {
+		return err
+	}
+	arp.pypiPackage = pypiResult
+
+	return arp.Validate()
+}
