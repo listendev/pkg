@@ -18,7 +18,7 @@ var _ Deliverer = (*NPM)(nil)
 var _ Results = (*NPM)(nil)
 
 var (
-	errNPMNameEmpty = errors.New("npm package name is empty")
+	errNPMNameEmpty = errors.New("NPM package name is empty")
 )
 
 type NPMFillError struct {
