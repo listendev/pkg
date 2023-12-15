@@ -1,7 +1,18 @@
 package analysisrequest
 
 import (
+	"errors"
+
 	amqp "github.com/rabbitmq/amqp091-go"
+)
+
+var _ AnalysisRequest = (*PyPi)(nil)
+var _ Publisher = (*PyPi)(nil)
+var _ Deliverer = (*PyPi)(nil)
+var _ Results = (*PyPi)(nil)
+
+var (
+	errPyPiNameEmpty = errors.New("PyPi package name is empty")
 )
 
 type pypiPackage struct {
@@ -16,20 +27,28 @@ type PyPi struct {
 	pypiPackage
 }
 
-func (arn PyPi) Publishing() (*amqp.Publishing, error) {
-	return ComposeAMQPPublishing(&arn)
+func (arp PyPi) Publishing() (*amqp.Publishing, error) {
+	return ComposeAMQPPublishing(&arp)
 }
 
-func (arn PyPi) ResultsPath() ResultUploadPath {
-	return ComposeResultUploadPath(&arn)
+func (arp PyPi) ResultsPath() ResultUploadPath {
+	return ComposeResultUploadPath(&arp)
 }
 
-func (arn PyPi) String() string {
-	return arn.Name + "@" + arn.Version + "(" + arn.Type().String() + ")"
+func (arp PyPi) String() string {
+	return arp.Name + "@" + arp.Version + "(" + arp.Type().String() + ")"
 }
 
-func (arn PyPi) Delivery() (*amqp.Delivery, error) {
-	return ComposeAMQPDelivery(&arn)
+func (arp PyPi) Delivery() (*amqp.Delivery, error) {
+	return ComposeAMQPDelivery(&arp)
+}
+
+func (arp PyPi) Validate() error {
+	if len(arp.Name) == 0 {
+		return errPyPiNameEmpty
+	}
+
+	return arp.base.Validate()
 }
 
 // FIXME: implement missing methods
