@@ -12,6 +12,7 @@ import (
 	"github.com/listendev/pkg/observability"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func getFixture(filepath string) (string, error) {
@@ -29,14 +30,14 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 		body []byte
 	}
 	tests := []struct {
-		name                  string
-		args                  args
-		want                  AnalysisRequest
-		wantPublishing        *amqp.Publishing
-		wantKey               string
-		wantErr               bool
-		mockNPMRegistryClient *mockNpmregistryClient
-		// mockPyPiRegistryClient *mockPyPiRegistryClient // TODO: impl
+		name                   string
+		args                   args
+		want                   AnalysisRequest
+		wantPublishing         *amqp.Publishing
+		wantKey                string
+		wantErr                bool
+		mockNPMRegistryClient  *mockNpmRegistryClient
+		mockPyPiRegistryClient *mockPyPiRegistryClient
 	}{
 		{
 			name: "valid full nop analysis request",
@@ -60,35 +61,138 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			mockNPMRegistryClient: nil,
 			wantErr:               false,
 		},
+		{
+			name: "valid full pypi typosquat analysis request",
+			args: args{
+				body: []byte(`{"type": "urn:hoarding:typosquat!pypi.json", "snowflake_id": "1652803364692340737", "name": "cctx", "version": "1.0.0", "sha256": "1d9ceb0603ed51a4f337cb8d53dd320339fd10814642d074b41a86d00be0bdbd", "blake2b_256": "bdd235ad05b2669c50fc2756e35d0fe462bbd085a5b7afb571f443fd2ceb151e", "priority": 5, "force": true}`),
+			},
+			want: &PyPi{
+				base: base{
+					RequestType: PypiTyposquat,
+					Snowflake:   "1652803364692340737",
+					Priority:    5,
+					Force:       true,
+				},
+				pypiPackage: pypiPackage{
+					Name:       "cctx",
+					Version:    "1.0.0",
+					Sha256:     "1d9ceb0603ed51a4f337cb8d53dd320339fd10814642d074b41a86d00be0bdbd",
+					Blake2b256: "bdd235ad05b2669c50fc2756e35d0fe462bbd085a5b7afb571f443fd2ceb151e",
+				},
+			},
+			wantPublishing: &amqp.Publishing{
+				ContentType: "application/json",
+				Priority:    5,
+				Body:        []byte(`{"type":"urn:hoarding:typosquat!pypi.json","snowflake_id":"1652803364692340737","name":"cctx","version":"1.0.0","priority":5,"force":true,"sha256":"1d9ceb0603ed51a4f337cb8d53dd320339fd10814642d074b41a86d00be0bdbd","blake2b_256":"bdd235ad05b2669c50fc2756e35d0fe462bbd085a5b7afb571f443fd2ceb151e"}`),
+			},
+			wantKey: "pypi/cctx/1.0.0/bdd235ad05b2669c50fc2756e35d0fe462bbd085a5b7afb571f443fd2ceb151e/typosquat.json",
+			wantErr: false,
+		},
+		{
+			name: "pypi typosquat analysis request without blake2b_256 digest",
+			args: args{
+				body: []byte(`{"type": "urn:hoarding:typosquat!pypi.json", "snowflake_id": "1652803364692340737", "name": "cctx", "version": "1.0.0", "sha256": "1d9ceb0603ed51a4f337cb8d53dd320339fd10814642d074b41a86d00be0bdbd", "priority": 5, "force": true}`),
+			},
+			want: &PyPi{
+				base: base{
+					RequestType: PypiTyposquat,
+					Snowflake:   "1652803364692340737",
+					Priority:    5,
+					Force:       true,
+				},
+				pypiPackage: pypiPackage{
+					Name:       "cctx",
+					Version:    "1.0.0",
+					Sha256:     "1d9ceb0603ed51a4f337cb8d53dd320339fd10814642d074b41a86d00be0bdbd",
+					Blake2b256: "bdd235ad05b2669c50fc2756e35d0fe462bbd085a5b7afb571f443fd2ceb151e",
+				},
+			},
+			wantPublishing: &amqp.Publishing{
+				ContentType: "application/json",
+				Priority:    5,
+				Body:        []byte(`{"type":"urn:hoarding:typosquat!pypi.json","snowflake_id":"1652803364692340737","name":"cctx","version":"1.0.0","priority":5,"force":true,"sha256":"1d9ceb0603ed51a4f337cb8d53dd320339fd10814642d074b41a86d00be0bdbd","blake2b_256":"bdd235ad05b2669c50fc2756e35d0fe462bbd085a5b7afb571f443fd2ceb151e"}`),
+			},
+			wantKey: "pypi/cctx/1.0.0/bdd235ad05b2669c50fc2756e35d0fe462bbd085a5b7afb571f443fd2ceb151e/typosquat.json",
+			wantErr: false,
+			mockPyPiRegistryClient: func() *mockPyPiRegistryClient {
+				mockClient, err := newMockPyPiRegistryClient("cctx.json", "cctx_100.json")
+				if err != nil {
+					t.Fatal(err)
+				}
 
-		// FIXME: mock pypi registry response
-		// {
-		// 	name: "valid full pypi typosquat analysis request",
-		// 	args: args{
-		// 		body: []byte(`{"type": "urn:hoarding:typosquat!pypi.json", "snowflake_id": "1652803364692340737", "name": "cctx", "version": "1.0.0", "priority": 5, "force": true}`),
-		// 	},
-		// 	want: &PyPi{
-		// 		base: base{
-		// 			RequestType: PypiTyposquat,
-		// 			Snowflake:   "1652803364692340737",
-		// 			Priority:    5,
-		// 			Force:       true,
-		// 		},
-		// 		pypiPackage: pypiPackage{
-		// 			Name:    "cctx",
-		// 			Version: "1.0.0",
-		// 		},
-		// 	},
-		// 	wantPublishing: &amqp.Publishing{
-		// 		ContentType: "application/json",
-		// 		Priority:    5,
-		// 		Body:        []byte(`{"type":"urn:hoarding:typosquat!pypi.json","snowflake_id":"1652803364692340736","name":"cctx","version":"1.0.0","priority":5,"force":true}`),
-		// 	},
-		// 	wantKey: "pypi/cctx/1.0.0/typosquat.json",
-		// 	// mockNPMRegistryClient: , // TODO: implement
-		// 	wantErr: false,
-		// },
+				return mockClient
+			}(),
+		},
+		{
+			name: "pypi typosquat analysis request without digests",
+			args: args{
+				body: []byte(`{"type": "urn:hoarding:typosquat!pypi.json", "snowflake_id": "1652803364692340737", "name": "boto3", "version": "1.33.8", "priority": 5, "force": true}`),
+			},
+			want: &PyPi{
+				base: base{
+					RequestType: PypiTyposquat,
+					Snowflake:   "1652803364692340737",
+					Priority:    5,
+					Force:       true,
+				},
+				pypiPackage: pypiPackage{
+					Name:       "boto3",
+					Version:    "1.33.8",
+					Sha256:     "d02a084b25aa8d46ef917b128e90877efab1ba45f9d1ba3a11f336930378e350",
+					Blake2b256: "121f1d4c5bbe89542b62ec6a6ba624ef0142e1d0c3267711b4f01f6258399a0a",
+				},
+			},
+			wantPublishing: &amqp.Publishing{
+				ContentType: "application/json",
+				Priority:    5,
+				Body:        []byte(`{"type":"urn:hoarding:typosquat!pypi.json","snowflake_id":"1652803364692340737","name":"boto3","version":"1.33.8","priority":5,"force":true,"sha256":"d02a084b25aa8d46ef917b128e90877efab1ba45f9d1ba3a11f336930378e350","blake2b_256":"121f1d4c5bbe89542b62ec6a6ba624ef0142e1d0c3267711b4f01f6258399a0a"}`),
+			},
+			wantKey: "pypi/boto3/1.33.8/121f1d4c5bbe89542b62ec6a6ba624ef0142e1d0c3267711b4f01f6258399a0a/typosquat.json",
+			wantErr: false,
+			mockPyPiRegistryClient: func() *mockPyPiRegistryClient {
+				mockClient, err := newMockPyPiRegistryClient("boto3.json", "boto3_1338.json")
+				if err != nil {
+					t.Fatal(err)
+				}
 
+				return mockClient
+			}(),
+		},
+		{
+			name: "pypi typosquat analysis request with package name only",
+			args: args{
+				body: []byte(`{"type": "urn:hoarding:typosquat!pypi.json", "snowflake_id": "1652803364692340737", "name": "boto3", "priority": 5, "force": true}`),
+			},
+			want: &PyPi{
+				base: base{
+					RequestType: PypiTyposquat,
+					Snowflake:   "1652803364692340737",
+					Priority:    5,
+					Force:       true,
+				},
+				pypiPackage: pypiPackage{
+					Name:       "boto3",
+					Version:    "1.34.2",
+					Sha256:     "970fd9f9f522eb48f3cd5574e927b369279ebf5bcf0f2fae5ed9cc6306e58558",
+					Blake2b256: "c86666f4e87201f72a79c2bf600f2b7096988572447f4a3dae38e4b4873a346f",
+				},
+			},
+			wantPublishing: &amqp.Publishing{
+				ContentType: "application/json",
+				Priority:    5,
+				Body:        []byte(`{"type":"urn:hoarding:typosquat!pypi.json","snowflake_id":"1652803364692340737","name":"boto3","version":"1.34.2","priority":5,"force":true,"sha256":"970fd9f9f522eb48f3cd5574e927b369279ebf5bcf0f2fae5ed9cc6306e58558","blake2b_256":"c86666f4e87201f72a79c2bf600f2b7096988572447f4a3dae38e4b4873a346f"}`),
+			},
+			wantKey: "pypi/boto3/1.34.2/c86666f4e87201f72a79c2bf600f2b7096988572447f4a3dae38e4b4873a346f/typosquat.json",
+			wantErr: false,
+			mockPyPiRegistryClient: func() *mockPyPiRegistryClient {
+				mockClient, err := newMockPyPiRegistryClient("boto3.json", "boto3_1338.json")
+				if err != nil {
+					t.Fatal(err)
+				}
+
+				return mockClient
+			}(),
+		},
 		{
 			name: "valid full npm advisory analysis request",
 			args: args{
@@ -113,8 +217,8 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				Body:        []byte(`{"type":"urn:hoarding:advisory!npm.json","snowflake_id":"1524854487523524608","name":"chalk","version":"5.1.2","shasum":"d957f370038b75ac572471e83be4c5ca9f8e8c45","priority":5,"force":true}`),
 			},
 			wantKey: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/advisory.json",
-			mockNPMRegistryClient: func() *mockNpmregistryClient {
-				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
+			mockNPMRegistryClient: func() *mockNpmRegistryClient {
+				mockClient, err := newMockNpmRegistryClient("chalk.json", "chalk_512.json")
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -147,8 +251,8 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				Body:        []byte(`{"type":"urn:hoarding:typosquat!npm.json","snowflake_id":"1652803364692340736","name":"chalk","version":"5.1.2","shasum":"d957f370038b75ac572471e83be4c5ca9f8e8c45","priority":5,"force":true}`),
 			},
 			wantKey: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/typosquat.json",
-			mockNPMRegistryClient: func() *mockNpmregistryClient {
-				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
+			mockNPMRegistryClient: func() *mockNpmRegistryClient {
+				mockClient, err := newMockNpmRegistryClient("chalk.json", "chalk_512.json")
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -181,8 +285,8 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				Body:        []byte(`{"type":"urn:scheduler:dynamic!npm,install.json","snowflake_id":"1524854487523524608","name":"chalk","version":"5.1.2","shasum":"d957f370038b75ac572471e83be4c5ca9f8e8c45","priority":5,"force":true}`),
 			},
 			wantKey: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/dynamic!install!.json",
-			mockNPMRegistryClient: func() *mockNpmregistryClient {
-				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
+			mockNPMRegistryClient: func() *mockNpmRegistryClient {
+				mockClient, err := newMockNpmRegistryClient("chalk.json", "chalk_512.json")
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -212,8 +316,8 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				Body:        []byte(`{"type": "urn:scheduler:dynamic!npm,install.json", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "force": false}`),
 			},
 			wantKey: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/dynamic!install!.json",
-			mockNPMRegistryClient: func() *mockNpmregistryClient {
-				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
+			mockNPMRegistryClient: func() *mockNpmRegistryClient {
+				mockClient, err := newMockNpmRegistryClient("chalk.json", "chalk_512.json")
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -243,8 +347,8 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				Body:        []byte(`{"type": "urn:scheduler:dynamic!npm,install.json", "snowflake_id": "1524854487523524608", "name": "chalk","version": "5.2.0", "shasum": "249623b7d66869c673699fb66d65723e54dfcfb3", "force": false}`),
 			},
 			wantKey: "npm/chalk/5.2.0/249623b7d66869c673699fb66d65723e54dfcfb3/dynamic!install!.json",
-			mockNPMRegistryClient: func() *mockNpmregistryClient {
-				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_520.json")
+			mockNPMRegistryClient: func() *mockNpmRegistryClient {
+				mockClient, err := newMockNpmRegistryClient("chalk.json", "chalk_520.json")
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -274,8 +378,8 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				Body:        []byte(`{"type": "urn:scheduler:dynamic!npm,install.json+urn:hoarding:ai,context", "snowflake_id": "1524854487523524608", "name": "chalk","version": "5.2.0", "shasum": "249623b7d66869c673699fb66d65723e54dfcfb3", "force": false}`),
 			},
 			wantKey: "npm/chalk/5.2.0/249623b7d66869c673699fb66d65723e54dfcfb3/dynamic!install!.json",
-			mockNPMRegistryClient: func() *mockNpmregistryClient {
-				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_520.json")
+			mockNPMRegistryClient: func() *mockNpmRegistryClient {
+				mockClient, err := newMockNpmRegistryClient("chalk.json", "chalk_520.json")
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -299,7 +403,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			args: args{
 				body: []byte(`{"type": "urn:scheduler:dynamic!npm,install.json", "snowflake_id": "1524854487523524608", "name": "chalk"}`),
 			},
-			wantErr:               true,
+			wantErr: true,
 		},
 	}
 
@@ -310,6 +414,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			assert.Nil(t, err)
 			assert.NotNil(t, arbuilder)
 			arbuilder.WithNPMRegistryClient(tt.mockNPMRegistryClient)
+			arbuilder.WithPyPiRegistryClient(tt.mockPyPiRegistryClient)
 			got, err := arbuilder.FromJSON(tt.args.body)
 
 			if tt.wantErr {
@@ -319,7 +424,8 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				assert.Nil(t, tt.wantPublishing)
 				assert.Empty(t, tt.wantKey)
 			} else {
-				assert.Nil(t, err)
+				require.Nil(t, err)
+				require.NotNil(t, got)
 				assert.Equal(t, tt.want, got)
 
 				// Test marshalling
@@ -377,7 +483,7 @@ func TestAnalysisRequestFromFile(t *testing.T) {
 		args                  args
 		want                  []AnalysisRequest
 		wantErr               bool
-		mockNPMRegistryClient *mockNpmregistryClient
+		mockNPMRegistryClient *mockNpmRegistryClient
 	}{
 		{
 			name: "single",
@@ -397,8 +503,8 @@ func TestAnalysisRequestFromFile(t *testing.T) {
 					},
 				},
 			},
-			mockNPMRegistryClient: func() *mockNpmregistryClient {
-				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
+			mockNPMRegistryClient: func() *mockNpmRegistryClient {
+				mockClient, err := newMockNpmRegistryClient("chalk.json", "chalk_512.json")
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -435,8 +541,8 @@ func TestAnalysisRequestFromFile(t *testing.T) {
 					},
 				},
 			},
-			mockNPMRegistryClient: func() *mockNpmregistryClient {
-				mockClient, err := newMockNpmregistryClient("testdata/chalk.json", "testdata/chalk_512.json")
+			mockNPMRegistryClient: func() *mockNpmRegistryClient {
+				mockClient, err := newMockNpmRegistryClient("chalk.json", "chalk_512.json")
 				if err != nil {
 					t.Fatal(err)
 				}
