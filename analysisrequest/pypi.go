@@ -1,9 +1,12 @@
 package analysisrequest
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 
+	"github.com/listendev/pkg/observability/tracer"
+	"github.com/listendev/pkg/pypi"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -16,11 +19,27 @@ var (
 	errPyPiNameEmpty = errors.New("PyPi package name is empty")
 )
 
+type PyPiFillError struct {
+	Err error
+}
+
+func (e PyPiFillError) Error() string {
+	return e.Err.Error()
+}
+
+var (
+	ErrMalfunctioningPyPiRegistryClient = errors.New("malfunctioning (no-op or similar) PyPi registry client")
+	// PyPiFillError instances.
+	ErrGivenVersionNotFoundOnPyPi        = PyPiFillError{errors.New("given PyPi package version not found on PyPi")}
+	ErrGivenSha256DoesNotMatchOnPyPi     = PyPiFillError{errors.New("given PyPi version does not exist on PyPi with the given sha256 digest")}
+	ErrGivenBlake2b256DoesNotMatchOnPyPi = PyPiFillError{errors.New("given PyPi version does not exist on PyPi with the given blake2b256 digest")}
+)
+
 type pypiPackage struct {
-	Name    string `json:"name"`
-	Version string `json:"version,omitempty"`
-	// FIXME: shasum?
-	// Shasum  string `json:"shasum,omitempty"`
+	Name       string `json:"name"`
+	Version    string `json:"version,omitempty"`
+	Sha256     string `json:"sha256,omitempty"`
+	Blake2b256 string `json:"blake2b_256,omitempty"`
 }
 
 type PyPi struct {
@@ -66,4 +85,50 @@ func (arp *PyPi) UnmarshalJSON(data []byte) error {
 	arp.pypiPackage = pypiResult
 
 	return arp.Validate()
+}
+
+func (arp *PyPi) fillMissingData(parent context.Context, client pypi.Registry) error {
+	// Assuming the context contains a tracer...
+	ctx, span := tracer.FromContext(parent).Start(parent, "analysisrequest[pypi].fillMissingData")
+	defer span.End()
+
+	if len(arp.Version) == 0 {
+		pv, err := client.GetPackageLatestVersion(ctx, arp.Name)
+		if err != nil {
+			return err
+		}
+		if pv == nil {
+			return ErrMalfunctioningPyPiRegistryClient
+		}
+		arp.Version = pv.Version
+		arp.Sha256 = pv.Digests.SHA256
+		arp.Blake2b256 = pv.Digests.Blake2bB256
+
+		return nil
+	}
+
+	if len(arp.Blake2b256) == 0 || len(arp.Sha256) == 0 {
+		pv, err := client.GetPackageVersion(ctx, arp.Name, arp.Version)
+		if err != nil {
+			if errors.Is(err, pypi.ErrVersionNotFound) {
+				return ErrGivenVersionNotFoundOnPyPi
+			}
+			// all the other errors are considered as service unavailable or client errors
+
+			return errors.Join(ErrMalfunctioningPyPiRegistryClient, err)
+		}
+		if pv == nil {
+			return ErrMalfunctioningPyPiRegistryClient
+		}
+		if len(arp.Sha256) > 0 && pv.Digests.SHA256 != arp.Sha256 {
+			return ErrGivenSha256DoesNotMatchOnPyPi
+		}
+		if len(arp.Blake2b256) > 0 && pv.Digests.Blake2bB256 != arp.Blake2b256 {
+			return ErrGivenBlake2b256DoesNotMatchOnPyPi
+		}
+		arp.Sha256 = pv.Digests.SHA256
+		arp.Blake2b256 = pv.Digests.Blake2bB256
+	}
+
+	return nil
 }
