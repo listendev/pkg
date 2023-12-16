@@ -12,10 +12,13 @@ import (
 	"github.com/listendev/pkg/observability/tracer"
 )
 
+var _ Registry = (*RegistryClient)(nil)
+
 const defaultRegistryBaseURL = "https://registry.npmjs.org"
 const defaultUserAgent = "listendev/pkg/npm"
 
 var (
+	ErrPackageNotFound        = errors.New("package not found")
 	ErrVersionNotFound        = errors.New("version not found")
 	ErrLatestVersionNotFound  = errors.New("latest version not found")
 	ErrCouldNotDecodeResponse = errors.New("could not decode registry response")
@@ -96,7 +99,7 @@ func (c *RegistryClient) GetPackageList(parent context.Context, name string) (*P
 
 	if response.StatusCode != http.StatusOK {
 		if response.StatusCode == http.StatusNotFound {
-			return nil, ErrVersionNotFound
+			return nil, ErrPackageNotFound
 		}
 
 		return nil, &ServiceError{
@@ -181,25 +184,4 @@ func (c *RegistryClient) GetPackageLatestVersion(parent context.Context, name st
 	}
 
 	return &packageVersion, nil
-}
-
-type NoOpRegistryClient struct{}
-
-func NewNoOpRegistryClient() Registry {
-	return &NoOpRegistryClient{}
-}
-
-func (c *NoOpRegistryClient) GetPackageList(_ context.Context, _ string) (*PackageList, error) {
-	//nolint:nilnil // this is a mock
-	return nil, nil
-}
-
-func (c *NoOpRegistryClient) GetPackageVersion(_ context.Context, _, _ string) (*PackageVersion, error) {
-	//nolint:nilnil // this is a mock
-	return nil, nil
-}
-
-func (c *NoOpRegistryClient) GetPackageLatestVersion(_ context.Context, _ string) (*PackageVersion, error) {
-	//nolint:nilnil // this is a mock
-	return nil, nil
 }
