@@ -28,7 +28,7 @@ func ComposeResultUploadPath(a AnalysisRequest) ResultUploadPath {
 	case ecosystem.Pypi:
 		arp := a.(*PyPi)
 
-		return ResultUploadPath{c.Ecosystem.Case(), arp.Name, arp.Version, filename} // FIXME: shasum or similar?
+		return ResultUploadPath{c.Ecosystem.Case(), arp.Name, arp.Version, arp.Blake2b256, filename}
 	}
 
 	// Assuming there are no types - other than Nop - without ecosystem
