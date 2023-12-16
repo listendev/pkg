@@ -32,13 +32,8 @@ func (e NPMFillError) Error() string {
 var (
 	ErrMalfunctioningNPMRegistryClient = errors.New("malfunctioning (no-op or similar) NPM registry client")
 	// NPMFillError instances.
-	ErrCouldNotRetrieveLastVersionTagFromNPM        = NPMFillError{errors.New("could not retrieve last npm version tag")}
-	ErrCouldNotRetrieveLastVersionFromNPM           = NPMFillError{errors.New("could not retrieve last npm version")}
-	ErrCouldNotRetrieveLastShasumFromNPM            = NPMFillError{errors.New("could not retrieve last npm version shasum")}
-	ErrCouldNotRetrieveShasumForGivenVersionFromNPM = NPMFillError{errors.New("could not retrieve the shasum for the given npm version")}
-	ErrGivenVersionNotFoundOnNPM                    = NPMFillError{errors.New("given npm package version not found on npm")}
-	ErrCouldNotContactNPM                           = NPMFillError{errors.New("could not contact npm")}
-	ErrGivenShasumDoesntMatchGivenVersionOnNPM      = NPMFillError{errors.New("given npm version does not exist on npm with the given shasum")}
+	ErrGivenVersionNotFoundOnNPM               = NPMFillError{errors.New("given npm package version not found on npm")}
+	ErrGivenShasumDoesntMatchGivenVersionOnNPM = NPMFillError{errors.New("given npm version does not exist on npm with the given shasum")}
 )
 
 type npmPackage struct {
@@ -135,7 +130,12 @@ func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.Regis
 	if len(arn.Version) > 0 && len(arn.Shasum) == 0 {
 		pv, err := registryClient.GetPackageVersion(ctx, arn.Name, arn.Version)
 		if err != nil {
-			return err
+			if errors.Is(err, npm.ErrVersionNotFound) {
+				return ErrGivenVersionNotFoundOnNPM
+			}
+			// all the other errors are considered as service unavailable or client errors
+
+			return errors.Join(ErrMalfunctioningNPMRegistryClient, err)
 		}
 		if pv == nil {
 			return ErrMalfunctioningNPMRegistryClient
@@ -153,9 +153,9 @@ func (arn *NPM) fillMissingData(parent context.Context, registryClient npm.Regis
 				return ErrGivenVersionNotFoundOnNPM
 			}
 			// all the other errors are considered as service unavailable or client errors
+
 			return errors.Join(ErrMalfunctioningNPMRegistryClient, err)
 		}
-
 		if pv == nil {
 			return ErrMalfunctioningNPMRegistryClient
 		}
