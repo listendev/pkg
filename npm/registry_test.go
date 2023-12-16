@@ -12,7 +12,9 @@ import (
 
 func TestRegistryClient_GetPackageVersion(t *testing.T) {
 	tests := []struct {
+		version     string
 		name        string
+		descr       string
 		testFile    string
 		wantName    string
 		wantVersion string
@@ -20,14 +22,17 @@ func TestRegistryClient_GetPackageVersion(t *testing.T) {
 		wantErr     bool
 	}{
 		{
-			name:        "react package from upstream registry",
+			descr:       "react package from upstream registry",
+			name:        "react",
+			version:     "15.4.0",
 			testFile:    "package_version.json",
 			wantName:    "react",
 			wantVersion: "15.4.0",
 			wantShasum:  "736c1c7c542e8088127106e1f450b010f86d172b",
 		},
 		{
-			name:        "package from verdaccio registry",
+			descr:       "@frontend-metrics/hotjar package from verdaccio registry",
+			name:        "@frontend-metrics/hotjar",
 			testFile:    "package_version_verdaccio.json",
 			wantName:    "@frontend-metrics/hotjar",
 			wantVersion: "951.512.2-garnet.0",
@@ -35,7 +40,7 @@ func TestRegistryClient_GetPackageVersion(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.descr, func(t *testing.T) {
 			// Set up a mock HTTP server
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
@@ -58,7 +63,7 @@ func TestRegistryClient_GetPackageVersion(t *testing.T) {
 			}
 
 			testCtx := observability.NewNopContext()
-			packageVersion, err := client.GetPackageVersion(testCtx, "chalk", "5.1.2")
+			packageVersion, err := client.GetPackageVersion(testCtx, tt.name, tt.version)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -78,7 +83,7 @@ func TestRegistryClient_GetPackageVersion(t *testing.T) {
 
 func TestRegistryClient_GetPackageList(t *testing.T) {
 	tests := []struct {
-		name                  string
+		descr                 string
 		testFile              string
 		searchName            string
 		wantName              string
@@ -88,7 +93,7 @@ func TestRegistryClient_GetPackageList(t *testing.T) {
 		wantErr               bool
 	}{
 		{
-			name:                  "chalk package from upstream registry",
+			descr:                 "chalk package from upstream registry",
 			testFile:              "package_list.json",
 			searchName:            "chalk",
 			wantName:              "chalk",
@@ -99,7 +104,7 @@ func TestRegistryClient_GetPackageList(t *testing.T) {
 			},
 		},
 		{
-			name:                  "hotjar package from verdaccio registry",
+			descr:                 "hotjar package from verdaccio registry",
 			testFile:              "package_list_verdaccio.json",
 			searchName:            "@frontend-metrics/hotjar",
 			wantName:              "@frontend-metrics/hotjar",
@@ -112,7 +117,7 @@ func TestRegistryClient_GetPackageList(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.descr, func(t *testing.T) {
 			// Set up a mock HTTP server
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
