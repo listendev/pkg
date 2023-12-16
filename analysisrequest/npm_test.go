@@ -56,9 +56,6 @@ func TestSetPrio(t *testing.T) {
 }
 
 func TestErrors(t *testing.T) {
-	assert.True(t, errors.As(ErrCouldNotRetrieveLastVersionTagFromNPM, &NPMFillError{}))
-	assert.True(t, errors.As(ErrCouldNotRetrieveLastVersionFromNPM, &NPMFillError{}))
-	assert.True(t, errors.As(ErrCouldNotRetrieveLastShasumFromNPM, &NPMFillError{}))
 	assert.True(t, errors.As(ErrGivenVersionNotFoundOnNPM, &NPMFillError{}))
 	assert.True(t, errors.As(ErrGivenShasumDoesntMatchGivenVersionOnNPM, &NPMFillError{}))
 }
