@@ -10,7 +10,7 @@ var (
 )
 
 type PackageVersion struct {
-	Name        string // FIXME: ...
+	Name        string
 	Version     string
 	Digests     Digests   `json:"digests"`
 	PackageType string    `json:"packagetype"`
