@@ -305,6 +305,21 @@ func TestTypes(t *testing.T) {
 				},
 			},
 		},
+		{
+			input: PypiTyposquat,
+			want: want{
+				urn:  "urn:hoarding:typosquat!pypi.json",
+				json: []byte(`"urn:hoarding:typosquat!pypi.json"`),
+				TypeComponents: TypeComponents{
+					Framework:       Hoarding,
+					Collector:       TyposquatCollector,
+					CollectorAction: "",
+					Ecosystem:       ecosystem.Pypi,
+					EcosystemAction: "",
+					Format:          "json",
+				},
+			},
+		},
 	}
 
 	for _, tc := range cases {
