@@ -11,6 +11,7 @@ import (
 
 	"github.com/listendev/pkg/npm"
 	"github.com/listendev/pkg/observability/tracer"
+	"github.com/listendev/pkg/pypi"
 )
 
 var (
@@ -18,8 +19,9 @@ var (
 )
 
 type builder struct {
-	ctx                       context.Context
-	npmRegistryRegistryClient npm.Registry // FIXME: make this come from context too?
+	ctx                context.Context
+	npmRegistryClient  npm.Registry
+	pypiRegistryClient pypi.Registry
 }
 
 //nolint:revive // we are doing this on purpose (for now)
@@ -30,18 +32,27 @@ func NewBuilder(ctx context.Context) (*builder, error) {
 	}
 
 	return &builder{
-		ctx:                       ctx,
-		npmRegistryRegistryClient: npm.NewNoOpRegistryClient(),
+		ctx:               ctx,
+		npmRegistryClient: npm.NewNoOpRegistryClient(),
 	}, nil
 }
 
-func (b *builder) WithNPMRegistryClient(npmRegistry npm.Registry) {
-	if npmRegistry == nil || reflect.ValueOf(npmRegistry).IsNil() {
-		b.npmRegistryRegistryClient = npm.NewNoOpRegistryClient()
+func (b *builder) WithNPMRegistryClient(client npm.Registry) {
+	if client == nil || reflect.ValueOf(client).IsNil() {
+		b.npmRegistryClient = npm.NewNoOpRegistryClient()
 
 		return
 	}
-	b.npmRegistryRegistryClient = npmRegistry
+	b.npmRegistryClient = client
+}
+
+func (b *builder) WithPyPiRegistryClient(client pypi.Registry) {
+	if client == nil || reflect.ValueOf(client).IsNil() {
+		b.pypiRegistryClient = pypi.NewNoOpRegistryClient()
+
+		return
+	}
+	b.pypiRegistryClient = client
 }
 
 func (b *builder) FromFile(path string) ([]AnalysisRequest, error) {
@@ -152,11 +163,24 @@ func (b *builder) FromJSON(body []byte) (AnalysisRequest, error) {
 			return nil, err
 		}
 
-		if err := arn.fillMissingData(b.ctx, b.npmRegistryRegistryClient); err != nil {
+		if err := arn.fillMissingData(b.ctx, b.npmRegistryClient); err != nil {
 			return nil, err
 		}
 
 		return &arn, nil
+
+	// PyPi
+	case PypiTyposquat:
+		var arp PyPi
+		if err := json.Unmarshal(body, &arp); err != nil {
+			return nil, err
+		}
+
+		if err := arp.fillMissingData(b.ctx, b.pypiRegistryClient); err != nil {
+			return nil, err
+		}
+
+		return &arp, nil
 
 	// NOP
 	case Nop:
