@@ -27,7 +27,18 @@ type AnalysisRequest interface {
 	BasicAnalysisRequest
 	fmt.Stringer
 	Publisher
+	// Deliverer // FIXME: need this?
 	Results
+	Analyser
+}
+
+type Analyser interface {
+	// PackageName returns the name of the package to analyze
+	PackageName() string
+	// PackageVersion returns the version of the package to analyze
+	PackageVersion() string
+	// PackageDigest returns the digest of the package to analyze
+	PackageDigest() string
 }
 
 type Publisher interface {
