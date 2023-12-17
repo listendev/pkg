@@ -27,7 +27,7 @@ type AnalysisRequest interface {
 	BasicAnalysisRequest
 	fmt.Stringer
 	Publisher
-	// Deliverer // FIXME: need this?
+	Deliverer
 	Results
 	Analyser
 }
