@@ -183,3 +183,15 @@ func (arn NPM) Switch(t Type) (AnalysisRequest, error) {
 
 	return &arn, nil
 }
+
+func (arn NPM) PackageName() string {
+	return arn.Name
+}
+
+func (arn NPM) PackageVersion() string {
+	return arn.Version
+}
+
+func (arn NPM) PackageDigest() string {
+	return arn.Shasum
+}

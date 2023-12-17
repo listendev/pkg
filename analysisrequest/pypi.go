@@ -47,6 +47,18 @@ type PyPi struct {
 	pypiPackage
 }
 
+func (arp PyPi) PackageName() string {
+	return arp.Name
+}
+
+func (arp PyPi) PackageVersion() string {
+	return arp.Version
+}
+
+func (arp PyPi) PackageDigest() string {
+	return arp.Blake2b256
+}
+
 func (arp PyPi) Publishing() (*amqp.Publishing, error) {
 	return ComposeAMQPPublishing(&arp)
 }
