@@ -47,3 +47,15 @@ func (a NOP) Publishing() (*amqp.Publishing, error) {
 func (a NOP) Delivery() (*amqp.Delivery, error) {
 	return ComposeAMQPDelivery(&a)
 }
+
+func (a NOP) PackageName() string {
+	return ""
+}
+
+func (a NOP) PackageVersion() string {
+	return ""
+}
+
+func (a NOP) PackageDigest() string {
+	return ""
+}
