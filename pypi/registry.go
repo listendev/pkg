@@ -14,7 +14,7 @@ import (
 
 var _ Registry = (*RegistryClient)(nil)
 
-const defaultRegistryBaseURL = "https://pypi.org/pypi"
+const defaultRegistryBaseURL = "https://pypi.org"
 const defaultUserAgent = "listendev/pkg/pypi"
 
 var (
@@ -85,7 +85,8 @@ func NewRegistryClient(config RegistryClientConfig) (Registry, error) {
 func (c *RegistryClient) GetPackageList(parent context.Context, name string) (*PackageList, error) {
 	ctx, span := tracer.FromContext(parent).Start(parent, "RegistryClient.GetPackageList")
 	defer span.End()
-	endpoint := c.baseURL.ResolveReference(&url.URL{Path: path.Join(name, "json")})
+
+	endpoint := c.baseURL.ResolveReference(&url.URL{Path: path.Join("pypi", name, "json")})
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint.String(), nil)
 	if err != nil {
@@ -123,7 +124,8 @@ func (c *RegistryClient) GetPackageList(parent context.Context, name string) (*P
 func (c *RegistryClient) GetPackageVersion(parent context.Context, name, version string) (*PackageVersion, error) {
 	ctx, span := tracer.FromContext(parent).Start(parent, "RegistryClient.GetPackageVersion")
 	defer span.End()
-	endpoint := c.baseURL.ResolveReference(&url.URL{Path: path.Join(name, version, "json")})
+
+	endpoint := c.baseURL.ResolveReference(&url.URL{Path: path.Join("pypi", name, version, "json")})
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint.String(), nil)
 	if err != nil {
 		return nil, errors.Join(ErrCouldNotCreateRequest, err)
