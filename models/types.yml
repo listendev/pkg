@@ -39,7 +39,7 @@ components:
       required:
         - pkg
         - version
-        - shasum
+        - digest
         - file
         - ecosystem
         - org # Just to avoid the pointer
@@ -54,27 +54,27 @@ components:
           type: string
           x-oapi-codegen-extra-tags:
             validate: omitempty
-            human: the NPM organization name
+            human: the organization name
             json: "org,omitempty"
             ch: "org"
         pkg:
           type: string
           x-oapi-codegen-extra-tags:
             validate: mandatory
-            human: the NPM package name
+            human: the package name
             ch: "pkg"
         version:
           type: string
           x-oapi-codegen-extra-tags:
             validate: mandatory,semver
-            human: the NPM package version
+            human: the package version
             ch: "version"
-        shasum:
+        digest:
           type: string
           x-oapi-codegen-extra-tags:
-            validate: mandatory,shasum
-            human: the NPM package shasum
-            ch: "shasum"
+            validate: mandatory
+            human: the package digest
+            ch: "digest"
         file:
           type: string
           x-oapi-codegen-extra-tags:

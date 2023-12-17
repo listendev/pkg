@@ -38,7 +38,7 @@ func TestVerdictValidation(t *testing.T) {
 	e = v.Validate()
 	if assert.Error(t, e) {
 		assert.True(t, strings.HasPrefix(e.Error(), "validation errors:"))
-		assert.True(t, strings.Contains(e.Error(), "the NPM organization name must start with @"))
+		assert.True(t, strings.Contains(e.Error(), "organization name must start with @"))
 	}
 	v.Org = ""
 
@@ -56,13 +56,13 @@ func TestVerdictValidation(t *testing.T) {
 	}
 	v.Version = "0.0.1-beta.1+b1234567"
 
-	v.Shasum = "1"
+	v.Digest = "1"
 	e = v.Validate()
 	if assert.Error(t, e) {
 		assert.True(t, strings.HasPrefix(e.Error(), "validation errors:"))
-		assert.True(t, strings.Contains(e.Error(), "40 characters long"))
+		assert.True(t, strings.Contains(e.Error(), "SHA1 (40 characters long)"))
 	}
-	v.Shasum = "aaaaaaaaaa1aaaaaaaaaa1aaaaaaaaaa12345678"
+	v.Digest = "aaaaaaaaaa1aaaaaaaaaa1aaaaaaaaaa12345678"
 
 	v.CreatedAt = &time.Time{}
 
@@ -187,7 +187,7 @@ func TestMarshalOkVerdict(t *testing.T) {
 		Ecosystem:   ecosystem.Npm,
 		Pkg:         "test",
 		Version:     "0.0.1",
-		Shasum:      "0123456789012345678901234567890123456789",
+		Digest:      "0123456789012345678901234567890123456789",
 		File:        "dynamic!install!.json",
 		Fingerprint: "something",
 		Message:     "@vue/devtools 6.5.0 1 B",
@@ -208,7 +208,7 @@ func TestMarshalOkVerdict(t *testing.T) {
 	v.ExpiresIn(time.Second * 5)
 
 	want := heredoc.Docf(`{
-		"shasum": "0123456789012345678901234567890123456789",
+		"digest": "0123456789012345678901234567890123456789",
 		"ecosystem": "npm",
 		"pkg": "test",
 		"version": "0.0.1",
@@ -248,7 +248,7 @@ func TestMarshalEmptyVerdict(t *testing.T) {
 	assert.Equal(t, "npm/test/0.0.1/0123456789012345678901234567890123456789/dynamic!install!.json", k)
 
 	want := heredoc.Docf(`{
-		"shasum": "0123456789012345678901234567890123456789",
+		"digest": "0123456789012345678901234567890123456789",
 		"ecosystem": "npm",
 		"pkg": "test",
 		"version": "0.0.1",
@@ -275,7 +275,7 @@ func TestMarshalEmptyVerdictWithExplicitUnknownCodeAndSeverity(t *testing.T) {
 	assert.Equal(t, "npm/test/0.0.1/0123456789012345678901234567890123456789/dynamic!install!.json", k)
 
 	want := heredoc.Docf(`{
-		"shasum": "0123456789012345678901234567890123456789",
+		"digest": "0123456789012345678901234567890123456789",
 		"ecosystem": "npm",
 		"pkg": "test",
 		"version": "0.0.1",
@@ -297,7 +297,7 @@ func TestUnmarshalEmptyVerdict(t *testing.T) {
 
 	input := heredoc.Docf(`{
 		"ecosystem": "npm",
-		"shasum": "aaaaa12321321cssasaaaaaa12321321cssasa22",
+		"digest": "aaaaa12321321cssasaaaaaa12321321cssasa22",
 		"pkg": "test1",
 		"version": "0.0.2-alpha.1",
 		"file": "typosquat.json",
@@ -321,7 +321,7 @@ func TestUnmarshalOkVerdict(t *testing.T) {
 		CreatedAt:   &now,
 		Pkg:         "test",
 		Version:     "0.0.1",
-		Shasum:      "0123456789012345678901234567890123456789",
+		Digest:      "0123456789012345678901234567890123456789",
 		File:        "dynamic!install!.json",
 		Message:     "@vue/devtools 6.5.0 1 B",
 		Fingerprint: "something",
@@ -341,7 +341,7 @@ func TestUnmarshalOkVerdict(t *testing.T) {
 	}
 	input := heredoc.Docf(`{
 		"ecosystem": "npm",
-		"shasum": "0123456789012345678901234567890123456789",
+		"digest": "0123456789012345678901234567890123456789",
 		"pkg": "test",
 		"version": "0.0.1",
 		"file": "dynamic!install!.json",
@@ -403,7 +403,7 @@ func TestBuffer(t *testing.T) {
 		CreatedAt:   &now,
 		Pkg:         "test",
 		Version:     "0.0.1",
-		Shasum:      "0123456789012345678901234567890123456789",
+		Digest:      "0123456789012345678901234567890123456789",
 		File:        "dynamic!install!.json",
 		Message:     "@vue/devtools 6.5.0 1 B",
 		Fingerprint: "something",
@@ -423,17 +423,16 @@ func TestBuffer(t *testing.T) {
 	}
 	vvvv1.ExpiresIn(time.Second * 5)
 	vvvv2 := Verdict{
-		CreatedAt:   &now,
-		Ecosystem:   ecosystem.Npm,
-		Pkg:         "darcyclarke-manifest-pkg",
-		Severity:    severity.Medium,
-		Shasum:      "429eced1773fbc9ceea5cebda8338c0aaa21eeec",
-		Version:     "2.1.15",
-		Fingerprint: "something",
-		File:        "metadata(mismatches).json",
-		Message:     "This package has inconsistent name in the tarball's package.json",
-		Code:        verdictcode.MDN05,
-		Categories:  []category.Category{category.Metadata},
+		CreatedAt:  &now,
+		Ecosystem:  ecosystem.Npm,
+		Pkg:        "darcyclarke-manifest-pkg",
+		Severity:   severity.Medium,
+		Digest:     "429eced1773fbc9ceea5cebda8338c0aaa21eeec",
+		Version:    "2.1.15",
+		File:       "metadata(mismatches).json",
+		Message:    "This package has inconsistent name in the tarball's package.json",
+		Code:       verdictcode.MDN05,
+		Categories: []category.Category{category.Metadata},
 	}
 	empty, _ := NewEmptyVerdict(ecosystem.Npm, "", "testone", "0.0.2", "a123456789012345678901234567890123456789", "typosquat.json")
 	data := Verdicts{
@@ -458,25 +457,24 @@ func TestFromBuffer(t *testing.T) {
 
 	want := Verdicts{
 		Verdict{
-			CreatedAt:   &now,
-			Ecosystem:   ecosystem.Npm,
-			Pkg:         "darcyclarke-manifest-pkg",
-			Severity:    severity.Medium,
-			Shasum:      "429eced1773fbc9ceea5cebda8338c0aaa21eeec",
-			Version:     "2.1.15",
-			File:        "metadata(mismatches).json",
-			Fingerprint: "something",
-			Message:     "This package has inconsistent name in the tarball's package.json",
-			Code:        verdictcode.MDN05,
-			Categories:  []category.Category{category.Metadata},
-			Metadata:    map[string]interface{}{},
+			CreatedAt:  &now,
+			Ecosystem:  ecosystem.Npm,
+			Pkg:        "darcyclarke-manifest-pkg",
+			Severity:   severity.Medium,
+			Digest:     "429eced1773fbc9ceea5cebda8338c0aaa21eeec",
+			Version:    "2.1.15",
+			File:       "metadata(mismatches).json",
+			Message:    "This package has inconsistent name in the tarball's package.json",
+			Code:       verdictcode.MDN05,
+			Categories: []category.Category{category.Metadata},
+			Metadata:   map[string]interface{}{},
 		},
 		Verdict{
 			CreatedAt:   &now,
 			Ecosystem:   ecosystem.Npm,
 			Pkg:         "test",
 			Version:     "0.0.1",
-			Shasum:      "0123456789012345678901234567890123456789",
+			Digest:      "0123456789012345678901234567890123456789",
 			File:        "dynamic!install!.json",
 			Fingerprint: "something",
 			Message:     "@vue/devtools 6.5.0 1 B",
