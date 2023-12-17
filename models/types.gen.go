@@ -24,15 +24,15 @@ type Verdict struct {
 	Categories  []externalRef1.Category `ch:"categories" human:"one or more verdict category" json:"categories,omitempty" validate:"required_with=Message,dive,is_category"`
 	Code        externalRef3.Code       `ch:"code" human:"the code identifying the verdict type" json:"code,omitempty" validate:"required_with=Message,isdefault|is_verdictcode"`
 	CreatedAt   *time.Time              `ch:"created_at" human:"the moment the verdict was created" json:"created_at,omitempty" validate:"mandatory"`
+	Digest      string                  `ch:"digest" human:"the package digest" json:"digest" validate:"mandatory"`
 	Ecosystem   externalRef0.Ecosystem  `ch:"ecosystem" human:"the ecosystem the target package belongs to" json:"ecosystem" validate:"is_ecosystem"`
 	ExpiresAt   *time.Time              `ch:"expires_at" json:"expires_at"`
 	File        string                  `ch:"file" human:"the result file identifying the analysis type" json:"file" validate:"mandatory,is_resultsfile"`
 	Fingerprint string                  `ch:"fingerprint" human:"a string uniquely identifying this verdict instance" json:"fingerprint,omitempty"`
 	Message     string                  `ch:"message" human:"the verdict message" json:"message,omitempty" validate:"omitempty,gt=1"`
 	Metadata    map[string]interface{}  `ch:"metadata" json:"metadata,omitempty"`
-	Org         string                  `ch:"org" human:"the NPM organization name" json:"org,omitempty" validate:"omitempty"`
-	Pkg         string                  `ch:"pkg" human:"the NPM package name" json:"pkg" validate:"mandatory"`
+	Org         string                  `ch:"org" human:"the organization name" json:"org,omitempty" validate:"omitempty"`
+	Pkg         string                  `ch:"pkg" human:"the package name" json:"pkg" validate:"mandatory"`
 	Severity    externalRef2.Severity   `ch:"severity" human:"the verdict severity" json:"severity,omitempty" validate:"required_with=Message,isdefault|is_severity"`
-	Shasum      string                  `ch:"shasum" human:"the NPM package shasum" json:"shasum" validate:"mandatory,shasum"`
-	Version     string                  `ch:"version" human:"the NPM package version" json:"version" validate:"mandatory,semver"`
+	Version     string                  `ch:"version" human:"the package version" json:"version" validate:"mandatory,semver"`
 }

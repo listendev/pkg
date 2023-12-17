@@ -205,7 +205,11 @@ func init() {
 			return ut.Add("shasum", "{0} must be a valid SHA1 (40 characters long)", true)
 		},
 		func(ut ut.Translator, fe validator.FieldError) string {
-			t, _ := ut.T("shasum", fe.Field())
+			f := fe.Field()
+			if f == "" {
+				f = "the package digest"
+			}
+			t, _ := ut.T("shasum", f)
 
 			return t
 		},
@@ -222,7 +226,7 @@ func init() {
 		func(ut ut.Translator, fe validator.FieldError) string {
 			f := fe.Field()
 			if f == "" {
-				f = "the NPM organization name"
+				f = "the organization name"
 			}
 			t, _ := ut.T("npmorg", f)
 

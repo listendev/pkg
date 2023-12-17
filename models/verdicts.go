@@ -20,14 +20,14 @@ const (
 	NPMPackageVersionMetadataKey = "npm_package_version"
 )
 
-func NewEmptyVerdict(eco ecosystem.Ecosystem, org, pkg, version, shasum, file string) (*Verdict, error) {
+func NewEmptyVerdict(eco ecosystem.Ecosystem, org, pkg, version, digest, file string) (*Verdict, error) {
 	now := time.Now()
 	v := Verdict{
 		Ecosystem:  eco,
 		Org:        org,
 		Pkg:        pkg,
 		Version:    version,
-		Shasum:     shasum,
+		Digest:     digest,
 		File:       file,
 		CreatedAt:  &now,
 		Categories: []category.Category{},    // Forcing empty slice instead of nil
@@ -79,6 +79,7 @@ func (o *Verdict) Validate() error {
 		}
 	}
 	// Other contextual validations
+	// FIXME: validate shasum only for NPM ecosystem, other validations for PyPi ecosystem
 	switch o.Ecosystem {
 	case ecosystem.Npm:
 		if o.Org != "" {
@@ -86,11 +87,21 @@ func (o *Verdict) Validate() error {
 				var orgErr error
 				for _, e := range err.(validate.ValidationErrors) {
 					orgErr = fmt.Errorf(e.Translate(validate.Translator))
+
 					break
 				}
 				all["Org"] = orgErr
 			}
 			// TODO: use npm_package_name validator on org + pkg when ecosystem is NPM
+		}
+		if err := validate.Singleton.Var(o.Digest, "shasum"); err != nil {
+			var digestErr error
+			for _, e := range err.(validate.ValidationErrors) {
+				digestErr = fmt.Errorf(e.Translate(validate.Translator))
+
+				break
+			}
+			all["Digest"] = digestErr
 		}
 	case ecosystem.Pypi:
 		if o.Org != "" {
@@ -168,7 +179,7 @@ func (o Verdict) Key() (string, error) {
 		name = fmt.Sprintf("%s/%s", o.Org, o.Pkg)
 	}
 
-	return fmt.Sprintf("%s/%s/%s/%s/%s", o.Ecosystem.Case(), name, o.Version, o.Shasum, o.File), nil
+	return fmt.Sprintf("%s/%s/%s/%s/%s", o.Ecosystem.Case(), name, o.Version, o.Digest, o.File), nil
 }
 
 type Verdicts []Verdict
