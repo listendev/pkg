@@ -11,6 +11,7 @@ import (
 	"github.com/hgsgtk/jsoncmp"
 	"github.com/listendev/pkg/npm"
 	"github.com/listendev/pkg/observability"
+	"github.com/listendev/pkg/pypi"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -38,7 +39,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 		wantKey                string
 		wantErr                bool
 		mockNPMRegistryClient  *npm.MockRegistryClient
-		mockPyPiRegistryClient *mockPyPiRegistryClient
+		mockPyPiRegistryClient *pypi.MockRegistryClient
 	}{
 		{
 			name: "valid full nop analysis request",
@@ -115,8 +116,8 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			},
 			wantKey: "pypi/cctx/1.0.0/bdd235ad05b2669c50fc2756e35d0fe462bbd085a5b7afb571f443fd2ceb151e/typosquat.json",
 			wantErr: false,
-			mockPyPiRegistryClient: func() *mockPyPiRegistryClient {
-				mockClient, err := newMockPyPiRegistryClient("cctx.json", "cctx_100.json")
+			mockPyPiRegistryClient: func() *pypi.MockRegistryClient {
+				mockClient, err := pypi.NewMockRegistryClient("cctx.json", "cctx_100.json")
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -150,8 +151,8 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			},
 			wantKey: "pypi/boto3/1.33.8/121f1d4c5bbe89542b62ec6a6ba624ef0142e1d0c3267711b4f01f6258399a0a/typosquat.json",
 			wantErr: false,
-			mockPyPiRegistryClient: func() *mockPyPiRegistryClient {
-				mockClient, err := newMockPyPiRegistryClient("boto3.json", "boto3_1338.json")
+			mockPyPiRegistryClient: func() *pypi.MockRegistryClient {
+				mockClient, err := pypi.NewMockRegistryClient("boto3.json", "boto3_1338.json")
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -185,8 +186,8 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			},
 			wantKey: "pypi/boto3/1.34.2/c86666f4e87201f72a79c2bf600f2b7096988572447f4a3dae38e4b4873a346f/typosquat.json",
 			wantErr: false,
-			mockPyPiRegistryClient: func() *mockPyPiRegistryClient {
-				mockClient, err := newMockPyPiRegistryClient("boto3.json", "boto3_1338.json")
+			mockPyPiRegistryClient: func() *pypi.MockRegistryClient {
+				mockClient, err := pypi.NewMockRegistryClient("boto3.json", "boto3_1338.json")
 				if err != nil {
 					t.Fatal(err)
 				}
