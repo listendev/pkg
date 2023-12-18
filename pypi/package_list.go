@@ -6,7 +6,7 @@ type PackageList struct {
 	URLs     PackageVersions            `json:"urls"`
 }
 
-// Fill the version and name field for all the package versions
+// Fill the version and name field for all the package versions.
 func (p *PackageList) Fill() {
 	for v := range p.Versions {
 		for i := range p.Versions[v] {

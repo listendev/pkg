@@ -26,8 +26,8 @@ func getFixture(filepath string) (string, error) {
 	return ret, nil
 }
 
-// TODO: test also output AMQP delivery message
 func TestAnalysisRequestFromJSON(t *testing.T) {
+	// TODO: test also output AMQP delivery message
 	type args struct {
 		body []byte
 	}
