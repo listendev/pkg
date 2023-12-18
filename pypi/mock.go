@@ -31,7 +31,7 @@ func NewMockRegistryClient(listFilename, versionFilename string) (*MockRegistryC
 	}, nil
 }
 
-func (r *MockRegistryClient) GetPackageList(_ context.Context, name string) (*PackageList, error) {
+func (r *MockRegistryClient) GetPackageList(_ context.Context, _ string) (*PackageList, error) {
 	var packageList PackageList
 	err := json.Unmarshal(r.listContent, &packageList)
 	if err != nil {
@@ -42,7 +42,7 @@ func (r *MockRegistryClient) GetPackageList(_ context.Context, name string) (*Pa
 	return &packageList, nil
 }
 
-func (r *MockRegistryClient) GetPackageVersion(_ context.Context, name, version string) (*PackageVersion, error) {
+func (r *MockRegistryClient) GetPackageVersion(_ context.Context, _, version string) (*PackageVersion, error) {
 	var packageList PackageList
 	err := json.Unmarshal(r.versionContent, &packageList)
 	if err != nil {
@@ -56,7 +56,7 @@ func (r *MockRegistryClient) GetPackageVersion(_ context.Context, name, version 
 	return packageVersion, nil
 }
 
-func (r *MockRegistryClient) GetPackageLatestVersion(_ context.Context, name string) (*PackageVersion, error) {
+func (r *MockRegistryClient) GetPackageLatestVersion(_ context.Context, _ string) (*PackageVersion, error) {
 	var packageList PackageList
 	err := json.Unmarshal(r.listContent, &packageList)
 	if err != nil {

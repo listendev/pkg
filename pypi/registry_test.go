@@ -71,8 +71,8 @@ func TestRegistryClinet_GetPackageList(t *testing.T) {
 				if !ok {
 					t.Errorf("Expected version '%s' to be present in package list", version)
 				}
-				ver, err := pkgVersions.GetSdist()
-				assert.Nil(t, err)
+				ver, sdistErr := pkgVersions.GetSdist()
+				assert.Nil(t, sdistErr)
 				assert.NotNil(t, ver)
 				assert.Equal(t, version, ver.Version)
 				assert.Equal(t, tt.searchName, ver.Name)

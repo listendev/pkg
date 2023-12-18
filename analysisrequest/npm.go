@@ -48,7 +48,7 @@ type NPM struct {
 }
 
 // NewNPM creates an AnalysisRequest for the NPM ecosystem.
-func NewNPM(request Type, snowflake string, priority uint8, force bool, name, version, shasum string) (AnalysisRequest, error) {
+func NewNPM(request Type, snowflake string, priority uint8, force bool, name, version, digest string) (AnalysisRequest, error) {
 	tc := request.Components()
 	if !tc.HasEcosystem() {
 		return nil, fmt.Errorf("couldn't instantiate an analysis request for NPM from a type without ecosystem at all")
@@ -64,7 +64,7 @@ func NewNPM(request Type, snowflake string, priority uint8, force bool, name, ve
 			npmPackage: npmPackage{
 				Name:    name,
 				Version: version,
-				Shasum:  shasum,
+				Shasum:  digest,
 			},
 		}, nil
 	}

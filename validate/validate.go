@@ -26,6 +26,7 @@ var Singleton *validator.Validate
 // Translator is the universal translator for validation errors.
 var Translator ut.Translator
 
+//nolint:gocyclo // This only runs once, at boot
 func init() {
 	Singleton = validator.New()
 
