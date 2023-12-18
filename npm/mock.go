@@ -1,4 +1,4 @@
-package analysisrequest
+package npm
 
 import (
 	"context"
@@ -6,18 +6,16 @@ import (
 	"fmt"
 	"os"
 	"path"
-
-	"github.com/listendev/pkg/npm"
 )
 
-var _ npm.Registry = (*mockNpmRegistryClient)(nil)
+var _ Registry = (*MockRegistryClient)(nil)
 
-type mockNpmRegistryClient struct {
+type MockRegistryClient struct {
 	listContent    []byte
 	versionContent []byte
 }
 
-func newMockNpmRegistryClient(listFilename, versionFilename string) (*mockNpmRegistryClient, error) {
+func NewMockRegistryClient(listFilename, versionFilename string) (*MockRegistryClient, error) {
 	prefix := path.Join("testdata", "npm")
 	plist, err := os.ReadFile(path.Join(prefix, listFilename))
 	if err != nil {
@@ -28,14 +26,14 @@ func newMockNpmRegistryClient(listFilename, versionFilename string) (*mockNpmReg
 		return nil, err
 	}
 
-	return &mockNpmRegistryClient{
+	return &MockRegistryClient{
 		listContent:    plist,
 		versionContent: pversion,
 	}, nil
 }
 
-func (r *mockNpmRegistryClient) GetPackageList(_ context.Context, name string) (*npm.PackageList, error) {
-	var packageList npm.PackageList
+func (r *MockRegistryClient) GetPackageList(_ context.Context, name string) (*PackageList, error) {
+	var packageList PackageList
 	err := json.Unmarshal(r.listContent, &packageList)
 	if err != nil {
 		return nil, err
@@ -47,8 +45,8 @@ func (r *mockNpmRegistryClient) GetPackageList(_ context.Context, name string) (
 	return &packageList, nil
 }
 
-func (r *mockNpmRegistryClient) GetPackageVersion(_ context.Context, name, _ string) (*npm.PackageVersion, error) {
-	var packageVersion npm.PackageVersion
+func (r *MockRegistryClient) GetPackageVersion(_ context.Context, name, _ string) (*PackageVersion, error) {
+	var packageVersion PackageVersion
 	err := json.Unmarshal(r.versionContent, &packageVersion)
 	if err != nil {
 		return nil, err
@@ -60,8 +58,8 @@ func (r *mockNpmRegistryClient) GetPackageVersion(_ context.Context, name, _ str
 	return &packageVersion, nil
 }
 
-func (r *mockNpmRegistryClient) GetPackageLatestVersion(_ context.Context, name string) (*npm.PackageVersion, error) {
-	var packageVersion npm.PackageVersion
+func (r *MockRegistryClient) GetPackageLatestVersion(_ context.Context, name string) (*PackageVersion, error) {
+	var packageVersion PackageVersion
 	err := json.Unmarshal(r.versionContent, &packageVersion)
 	if err != nil {
 		return nil, err

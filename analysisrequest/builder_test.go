@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/hgsgtk/jsoncmp"
+	"github.com/listendev/pkg/npm"
 	"github.com/listendev/pkg/observability"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/stretchr/testify/assert"
@@ -36,7 +37,7 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 		wantPublishing         *amqp.Publishing
 		wantKey                string
 		wantErr                bool
-		mockNPMRegistryClient  *mockNpmRegistryClient
+		mockNPMRegistryClient  *npm.MockRegistryClient
 		mockPyPiRegistryClient *mockPyPiRegistryClient
 	}{
 		{
@@ -217,8 +218,8 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				Body:        []byte(`{"type":"urn:hoarding:advisory!npm.json","snowflake_id":"1524854487523524608","name":"chalk","version":"5.1.2","shasum":"d957f370038b75ac572471e83be4c5ca9f8e8c45","priority":5,"force":true}`),
 			},
 			wantKey: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/advisory.json",
-			mockNPMRegistryClient: func() *mockNpmRegistryClient {
-				mockClient, err := newMockNpmRegistryClient("chalk.json", "chalk_512.json")
+			mockNPMRegistryClient: func() *npm.MockRegistryClient {
+				mockClient, err := npm.NewMockRegistryClient("chalk.json", "chalk_512.json")
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -251,8 +252,8 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				Body:        []byte(`{"type":"urn:hoarding:typosquat!npm.json","snowflake_id":"1652803364692340736","name":"chalk","version":"5.1.2","shasum":"d957f370038b75ac572471e83be4c5ca9f8e8c45","priority":5,"force":true}`),
 			},
 			wantKey: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/typosquat.json",
-			mockNPMRegistryClient: func() *mockNpmRegistryClient {
-				mockClient, err := newMockNpmRegistryClient("chalk.json", "chalk_512.json")
+			mockNPMRegistryClient: func() *npm.MockRegistryClient {
+				mockClient, err := npm.NewMockRegistryClient("chalk.json", "chalk_512.json")
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -285,8 +286,8 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				Body:        []byte(`{"type":"urn:scheduler:dynamic!npm,install.json","snowflake_id":"1524854487523524608","name":"chalk","version":"5.1.2","shasum":"d957f370038b75ac572471e83be4c5ca9f8e8c45","priority":5,"force":true}`),
 			},
 			wantKey: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/dynamic!install!.json",
-			mockNPMRegistryClient: func() *mockNpmRegistryClient {
-				mockClient, err := newMockNpmRegistryClient("chalk.json", "chalk_512.json")
+			mockNPMRegistryClient: func() *npm.MockRegistryClient {
+				mockClient, err := npm.NewMockRegistryClient("chalk.json", "chalk_512.json")
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -316,8 +317,8 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				Body:        []byte(`{"type": "urn:scheduler:dynamic!npm,install.json", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "force": false}`),
 			},
 			wantKey: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/dynamic!install!.json",
-			mockNPMRegistryClient: func() *mockNpmRegistryClient {
-				mockClient, err := newMockNpmRegistryClient("chalk.json", "chalk_512.json")
+			mockNPMRegistryClient: func() *npm.MockRegistryClient {
+				mockClient, err := npm.NewMockRegistryClient("chalk.json", "chalk_512.json")
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -347,8 +348,8 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				Body:        []byte(`{"type": "urn:scheduler:dynamic!npm,install.json", "snowflake_id": "1524854487523524608", "name": "chalk","version": "5.2.0", "shasum": "249623b7d66869c673699fb66d65723e54dfcfb3", "force": false}`),
 			},
 			wantKey: "npm/chalk/5.2.0/249623b7d66869c673699fb66d65723e54dfcfb3/dynamic!install!.json",
-			mockNPMRegistryClient: func() *mockNpmRegistryClient {
-				mockClient, err := newMockNpmRegistryClient("chalk.json", "chalk_520.json")
+			mockNPMRegistryClient: func() *npm.MockRegistryClient {
+				mockClient, err := npm.NewMockRegistryClient("chalk.json", "chalk_520.json")
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -378,8 +379,8 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				Body:        []byte(`{"type": "urn:scheduler:dynamic!npm,install.json+urn:hoarding:ai,context", "snowflake_id": "1524854487523524608", "name": "chalk","version": "5.2.0", "shasum": "249623b7d66869c673699fb66d65723e54dfcfb3", "force": false}`),
 			},
 			wantKey: "npm/chalk/5.2.0/249623b7d66869c673699fb66d65723e54dfcfb3/dynamic!install!.json",
-			mockNPMRegistryClient: func() *mockNpmRegistryClient {
-				mockClient, err := newMockNpmRegistryClient("chalk.json", "chalk_520.json")
+			mockNPMRegistryClient: func() *npm.MockRegistryClient {
+				mockClient, err := npm.NewMockRegistryClient("chalk.json", "chalk_520.json")
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -483,7 +484,7 @@ func TestAnalysisRequestFromFile(t *testing.T) {
 		args                  args
 		want                  []AnalysisRequest
 		wantErr               bool
-		mockNPMRegistryClient *mockNpmRegistryClient
+		mockNPMRegistryClient *npm.MockRegistryClient
 	}{
 		{
 			name: "single",
@@ -503,8 +504,8 @@ func TestAnalysisRequestFromFile(t *testing.T) {
 					},
 				},
 			},
-			mockNPMRegistryClient: func() *mockNpmRegistryClient {
-				mockClient, err := newMockNpmRegistryClient("chalk.json", "chalk_512.json")
+			mockNPMRegistryClient: func() *npm.MockRegistryClient {
+				mockClient, err := npm.NewMockRegistryClient("chalk.json", "chalk_512.json")
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -541,8 +542,8 @@ func TestAnalysisRequestFromFile(t *testing.T) {
 					},
 				},
 			},
-			mockNPMRegistryClient: func() *mockNpmRegistryClient {
-				mockClient, err := newMockNpmRegistryClient("chalk.json", "chalk_512.json")
+			mockNPMRegistryClient: func() *npm.MockRegistryClient {
+				mockClient, err := npm.NewMockRegistryClient("chalk.json", "chalk_512.json")
 				if err != nil {
 					t.Fatal(err)
 				}
