@@ -33,6 +33,7 @@ const (
 	STN008 Code = 1108
 	STN009 Code = 1109
 	TSN01  Code = 1011
+	TSP01  Code = 1012
 	UNK    Code = 0
 )
 

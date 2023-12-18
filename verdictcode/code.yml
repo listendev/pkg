@@ -50,6 +50,7 @@ components:
         - 8 # FNI008
         - 1001 # DDN01
         - 1011 # TSN01
+        - 1012 # TSP01
         - 1021 # MDN01
         - 1022 # MDN02
         - 1023 # MDN03
@@ -80,6 +81,7 @@ components:
         - "FNI008" # npm install link sensitive files
         - "DDN01"
         - "TSN01"
+        - "TSP01"
         - "MDN01" # Empty description
         - "MDN02" # Zero version
         - "MDN03" # Prerelease version
