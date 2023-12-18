@@ -1,22 +1,20 @@
-package analysisrequest
+package pypi
 
 import (
 	"context"
 	"encoding/json"
 	"os"
 	"path"
-
-	"github.com/listendev/pkg/pypi"
 )
 
-var _ pypi.Registry = (*mockPyPiRegistryClient)(nil)
+var _ Registry = (*MockRegistryClient)(nil)
 
-type mockPyPiRegistryClient struct {
+type MockRegistryClient struct {
 	listContent    []byte
 	versionContent []byte
 }
 
-func newMockPyPiRegistryClient(listFilename, versionFilename string) (*mockPyPiRegistryClient, error) {
+func NewMockRegistryClient(listFilename, versionFilename string) (*MockRegistryClient, error) {
 	prefix := path.Join("testdata", "pypi")
 	plist, err := os.ReadFile(path.Join(prefix, listFilename))
 	if err != nil {
@@ -27,14 +25,14 @@ func newMockPyPiRegistryClient(listFilename, versionFilename string) (*mockPyPiR
 		return nil, err
 	}
 
-	return &mockPyPiRegistryClient{
+	return &MockRegistryClient{
 		listContent:    plist,
 		versionContent: pversion,
 	}, nil
 }
 
-func (r *mockPyPiRegistryClient) GetPackageList(_ context.Context, name string) (*pypi.PackageList, error) {
-	var packageList pypi.PackageList
+func (r *MockRegistryClient) GetPackageList(_ context.Context, name string) (*PackageList, error) {
+	var packageList PackageList
 	err := json.Unmarshal(r.listContent, &packageList)
 	if err != nil {
 		return nil, err
@@ -44,8 +42,8 @@ func (r *mockPyPiRegistryClient) GetPackageList(_ context.Context, name string) 
 	return &packageList, nil
 }
 
-func (r *mockPyPiRegistryClient) GetPackageVersion(_ context.Context, name, version string) (*pypi.PackageVersion, error) {
-	var packageList pypi.PackageList
+func (r *MockRegistryClient) GetPackageVersion(_ context.Context, name, version string) (*PackageVersion, error) {
+	var packageList PackageList
 	err := json.Unmarshal(r.versionContent, &packageList)
 	if err != nil {
 		return nil, err
@@ -58,8 +56,8 @@ func (r *mockPyPiRegistryClient) GetPackageVersion(_ context.Context, name, vers
 	return packageVersion, nil
 }
 
-func (r *mockPyPiRegistryClient) GetPackageLatestVersion(_ context.Context, name string) (*pypi.PackageVersion, error) {
-	var packageList pypi.PackageList
+func (r *MockRegistryClient) GetPackageLatestVersion(_ context.Context, name string) (*PackageVersion, error) {
+	var packageList PackageList
 	err := json.Unmarshal(r.listContent, &packageList)
 	if err != nil {
 		return nil, err
