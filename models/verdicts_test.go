@@ -19,7 +19,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestVerdictValidation(t *testing.T) {
+func TestNPMVerdictValidation(t *testing.T) {
 	v := &Verdict{}
 	e := v.Validate()
 	if assert.Error(t, e) {
@@ -170,17 +170,26 @@ func TestExpiration(t *testing.T) {
 }
 
 func TestKey(t *testing.T) {
-	v, e := NewEmptyVerdict(ecosystem.Npm, "@phantom", "synpress", "4.0.0-alpha.19", "879524fd7166d1a8659cd0f5d81800afb268d8c2", "metadata(mismatches).json")
-	assert.Nil(t, e)
-	assert.NotNil(t, v)
+	v1, err1 := NewEmptyVerdict(ecosystem.Npm, "@phantom", "synpress", "4.0.0-alpha.19", "879524fd7166d1a8659cd0f5d81800afb268d8c2", "metadata(mismatches).json")
+	assert.Nil(t, err1)
+	assert.NotNil(t, v1)
 
-	k, ke := v.Key()
-	assert.Nil(t, ke)
-	assert.NotNil(t, k)
-	assert.Equal(t, "npm/@phantom/synpress/4.0.0-alpha.19/879524fd7166d1a8659cd0f5d81800afb268d8c2/metadata(mismatches).json", k)
+	k1, k1Err := v1.Key()
+	assert.Nil(t, k1Err)
+	assert.NotNil(t, k1)
+	assert.Equal(t, "npm/@phantom/synpress/4.0.0-alpha.19/879524fd7166d1a8659cd0f5d81800afb268d8c2/metadata(mismatches).json", k1)
+
+	v2, err2 := NewEmptyVerdict(ecosystem.Pypi, "", "boto3", "1.33.8", "879524fd7166d1a8659cd0f5d81800afb268d8c21231312213aasadsda213321", "typosquat.json")
+	assert.Nil(t, err2)
+	assert.NotNil(t, v2)
+
+	k2, k2Err := v2.Key()
+	assert.Nil(t, k2Err)
+	assert.NotNil(t, k2)
+	assert.Equal(t, "pypi/boto3/1.33.8/879524fd7166d1a8659cd0f5d81800afb268d8c21231312213aasadsda213321/typosquat.json", k2)
 }
 
-func TestMarshalOkVerdict(t *testing.T) {
+func TestMarshalNPMOkVerdict(t *testing.T) {
 	now := time.Now()
 	v := Verdict{
 		CreatedAt:   &now,
@@ -238,7 +247,7 @@ func TestMarshalOkVerdict(t *testing.T) {
 	}
 }
 
-func TestMarshalEmptyVerdict(t *testing.T) {
+func TestMarshalNPMEmptyVerdict(t *testing.T) {
 	v, e := NewEmptyVerdict(ecosystem.Npm, "", "test", "0.0.1", "0123456789012345678901234567890123456789", "dynamic!install!.json")
 	assert.Nil(t, e)
 	assert.NotNil(t, v)
@@ -263,7 +272,32 @@ func TestMarshalEmptyVerdict(t *testing.T) {
 	}
 }
 
-func TestMarshalEmptyVerdictWithExplicitUnknownCodeAndSeverity(t *testing.T) {
+func TestMarshalPyPiEmptyVerdict(t *testing.T) {
+	v, e := NewEmptyVerdict(ecosystem.Pypi, "", "boto3", "1.33.8", "0123456789012345678901234567890123456789sasdadadadsadasdaq233332", "typosquat.json")
+	assert.Nil(t, e)
+	assert.NotNil(t, v)
+	k, ke := v.Key()
+	assert.Nil(t, ke)
+	assert.NotNil(t, k)
+	assert.Equal(t, "pypi/boto3/1.33.8/0123456789012345678901234567890123456789sasdadadadsadasdaq233332/typosquat.json", k)
+
+	want := heredoc.Docf(`{
+		"digest": "0123456789012345678901234567890123456789sasdadadadsadasdaq233332",
+		"ecosystem": "pypi",
+		"pkg": "boto3",
+		"version": "1.33.8",
+		"expires_at": null,
+		"file": "typosquat.json",
+		"created_at": %q
+	}`, v.CreatedAt.Format(time.RFC3339Nano))
+
+	got, err := json.Marshal(v)
+	if assert.Nil(t, err, "Marshalling error") {
+		assert.JSONEq(t, want, string(got))
+	}
+}
+
+func TestMarshalNPMEmptyVerdictWithExplicitUnknownCodeAndSeverity(t *testing.T) {
 	v, e := NewEmptyVerdict(ecosystem.Npm, "", "test", "0.0.1", "0123456789012345678901234567890123456789", "dynamic!install!.json")
 	v.Code = verdictcode.UNK
 	v.Severity = severity.Empty
@@ -290,7 +324,34 @@ func TestMarshalEmptyVerdictWithExplicitUnknownCodeAndSeverity(t *testing.T) {
 	}
 }
 
-func TestUnmarshalEmptyVerdict(t *testing.T) {
+func TestMarshalPyPiEmptyVerdictWithExplicitUnknownCodeAndSeverity(t *testing.T) {
+	v, e := NewEmptyVerdict(ecosystem.Pypi, "", "boto3", "1.33.8", "0123456789012345678901234567890123456789sasdadadadsadasdaq233332", "typosquat.json")
+	v.Code = verdictcode.UNK
+	v.Severity = severity.Empty
+	assert.Nil(t, e)
+	assert.NotNil(t, v)
+	k, ke := v.Key()
+	assert.Nil(t, ke)
+	assert.NotNil(t, k)
+	assert.Equal(t, "pypi/boto3/1.33.8/0123456789012345678901234567890123456789sasdadadadsadasdaq233332/typosquat.json", k)
+
+	want := heredoc.Docf(`{
+		"digest": "0123456789012345678901234567890123456789sasdadadadsadasdaq233332",
+		"ecosystem": "pypi",
+		"pkg": "boto3",
+		"version": "1.33.8",
+		"expires_at": null,
+		"file": "typosquat.json",
+		"created_at": %q
+	}`, v.CreatedAt.Format(time.RFC3339Nano))
+
+	got, err := json.Marshal(v)
+	if assert.Nil(t, err, "Marshalling error") {
+		assert.JSONEq(t, want, string(got))
+	}
+}
+
+func TestUnmarshalNPMEmptyVerdict(t *testing.T) {
 	want, e := NewEmptyVerdict(ecosystem.Npm, "", "test1", "0.0.2-alpha.1", "aaaaa12321321cssasaaaaaa12321321cssasa22", "typosquat.json")
 	assert.Nil(t, e)
 	assert.NotNil(t, want)
@@ -314,7 +375,41 @@ func TestUnmarshalEmptyVerdict(t *testing.T) {
 	}
 }
 
-func TestUnmarshalOkVerdict(t *testing.T) {
+func TestUnmarshalPyPiEmptyVerdict(t *testing.T) {
+	want, e := NewEmptyVerdict(ecosystem.Pypi, "", "cctx", "1.0.0", "6435a4aaaa12321321cssasaaaaaa12321321cssasa221234567889012132131", "typosquat.json")
+	assert.Nil(t, e)
+	assert.NotNil(t, want)
+
+	input := heredoc.Docf(`{
+		"ecosystem": "pypi",
+		"digest": "6435a4aaaa12321321cssasaaaaaa12321321cssasa221234567889012132131",
+		"pkg": "cctx",
+		"version": "1.0.0",
+		"file": "typosquat.json",
+		"created_at": %q
+	}`, want.CreatedAt.Format(time.RFC3339Nano))
+
+	var v Verdict
+	err := json.Unmarshal([]byte(input), &v)
+	if assert.Nil(t, err) {
+		opt := cmpopts.IgnoreFields(Verdict{}, "CreatedAt")
+		if !cmp.Equal(v, *want, opt) {
+			t.Fatalf("values are not the same:\n%s", cmp.Diff(v, *want))
+		}
+	}
+}
+
+func TestPyPiVerdictValidations(t *testing.T) {
+	_, err1 := NewEmptyVerdict(ecosystem.Pypi, "ORG", "cctx", "1.0.0", "123", "typosquat.json")
+	assert.NotNil(t, err1)
+	if assert.Error(t, err1) {
+		assert.True(t, strings.HasPrefix(err1.Error(), "validation errors:"))
+		assert.True(t, strings.Contains(err1.Error(), "organization name must be empty"))
+		assert.True(t, strings.Contains(err1.Error(), "digest must be a valid blake2b digest (64 characters long)"))
+	}
+}
+
+func TestUnmarshalNPMOkVerdict(t *testing.T) {
 	now := time.Now()
 	want := Verdict{
 		Ecosystem:   ecosystem.Npm,

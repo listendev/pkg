@@ -79,7 +79,6 @@ func (o *Verdict) Validate() error {
 		}
 	}
 	// Other contextual validations
-	// FIXME: validate shasum only for NPM ecosystem, other validations for PyPi ecosystem
 	switch o.Ecosystem {
 	case ecosystem.Npm:
 		if o.Org != "" {
@@ -104,11 +103,25 @@ func (o *Verdict) Validate() error {
 			all["Digest"] = digestErr
 		}
 	case ecosystem.Pypi:
-		if o.Org != "" {
-			all["Org"] = fmt.Errorf("org must be empty when ecosystem is PyPi")
+		if err := validate.Singleton.Var(o.Org, "pypiorg"); err != nil {
+			var orgErr error
+			for _, e := range err.(validate.ValidationErrors) {
+				orgErr = fmt.Errorf(e.Translate(validate.Translator))
+
+				break
+			}
+			all["Org"] = orgErr
+		}
+		if err := validate.Singleton.Var(o.Digest, "blake2b_256"); err != nil {
+			var digestErr error
+			for _, e := range err.(validate.ValidationErrors) {
+				digestErr = fmt.Errorf(e.Translate(validate.Translator))
+
+				break
+			}
+			all["Digest"] = digestErr
 		}
 	default:
-
 	}
 
 	errors := maps.Values(all)
