@@ -41,6 +41,7 @@ func init() {
 
 	Singleton.RegisterAlias("mandatory", "required")
 	Singleton.RegisterAlias("shasum", "len=40")
+	Singleton.RegisterAlias("blake2b_256", "len=64")
 	Singleton.RegisterAlias("npmorg", "startswith=@")
 
 	if err := Singleton.RegisterValidation("is_severity", func(fl validator.FieldLevel) bool {
@@ -210,6 +211,25 @@ func init() {
 				f = "the package digest"
 			}
 			t, _ := ut.T("shasum", f)
+
+			return t
+		},
+	); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterTranslation(
+		"blake2b_256",
+		Translator,
+		func(ut ut.Translator) error {
+			return ut.Add("blake2b_256", "{0} must be a valid blake2b digest (64 characters long)", true)
+		},
+		func(ut ut.Translator, fe validator.FieldError) string {
+			f := fe.Field()
+			if f == "" {
+				f = "the package digest"
+			}
+			t, _ := ut.T("blake2b_256", f)
 
 			return t
 		},
