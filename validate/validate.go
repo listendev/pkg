@@ -43,6 +43,7 @@ func init() {
 	Singleton.RegisterAlias("shasum", "len=40")
 	Singleton.RegisterAlias("blake2b_256", "len=64")
 	Singleton.RegisterAlias("npmorg", "startswith=@")
+	Singleton.RegisterAlias("pypiorg", "len=0")
 
 	if err := Singleton.RegisterValidation("is_severity", func(fl validator.FieldLevel) bool {
 		f := fl.Field()
@@ -249,6 +250,25 @@ func init() {
 				f = "the organization name"
 			}
 			t, _ := ut.T("npmorg", f)
+
+			return t
+		},
+	); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterTranslation(
+		"pypiorg",
+		Translator,
+		func(ut ut.Translator) error {
+			return ut.Add("pypiorg", "{0} must be empty", true)
+		},
+		func(ut ut.Translator, fe validator.FieldError) string {
+			f := fe.Field()
+			if f == "" {
+				f = "the organization name"
+			}
+			t, _ := ut.T("pypiorg", f)
 
 			return t
 		},
