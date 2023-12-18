@@ -103,4 +103,9 @@ func TestRetrievingTheType(t *testing.T) {
 	assert.Nil(t, e5)
 	assert.NotNil(t, t5)
 	assert.Equal(t, analysisrequest.NPMMetadataMismatches, t5)
+
+	t6, e6 := TSP01.Type(false)
+	assert.Nil(t, e6)
+	assert.NotNil(t, t6)
+	assert.Equal(t, analysisrequest.PypiTyposquat, t6)
 }

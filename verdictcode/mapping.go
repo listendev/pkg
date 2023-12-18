@@ -55,6 +55,9 @@ var mapping = map[analysisrequest.Type]map[Code]bool{
 		STN008: true,
 		STN009: true,
 	},
+	analysisrequest.PypiTyposquat: {
+		TSP01: true,
+	},
 }
 
 // nonUniquelyIdentifying contains the codes that are not uniquely identifying verdicts.
