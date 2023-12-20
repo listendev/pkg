@@ -145,12 +145,14 @@ func TestVerdictValidation(t *testing.T) {
 
 	v.Code = verdictcode.FNI003
 	e = v.Validate()
-	assert.Nil(t, e)
+	if assert.Error(t, e) {
+		assert.True(t, strings.HasPrefix(e.Error(), "validation error:"))
+		assert.True(t, strings.Contains(e.Error(), "a fingerprint is mandatory because the verdict code is not uniquely identifying it"))
+	}
 
 	k, ke := v.Key()
-	assert.Nil(t, ke)
-	assert.NotNil(t, k)
-	assert.Equal(t, "npm/test/0.0.1-beta.1+b1234567/aaaaaaaaaa1aaaaaaaaaa1aaaaaaaaaa12345678/dynamic!install!.json", k)
+	assert.NotNil(t, ke)
+	assert.Empty(t, k)
 }
 
 func TestExpiration(t *testing.T) {
@@ -181,13 +183,14 @@ func TestKey(t *testing.T) {
 func TestMarshalOkVerdict(t *testing.T) {
 	now := time.Now()
 	v := Verdict{
-		CreatedAt: &now,
-		Ecosystem: ecosystem.Npm,
-		Pkg:       "test",
-		Version:   "0.0.1",
-		Shasum:    "0123456789012345678901234567890123456789",
-		File:      "dynamic!install!.json",
-		Message:   "@vue/devtools 6.5.0 1 B",
+		CreatedAt:   &now,
+		Ecosystem:   ecosystem.Npm,
+		Pkg:         "test",
+		Version:     "0.0.1",
+		Shasum:      "0123456789012345678901234567890123456789",
+		File:        "dynamic!install!.json",
+		Fingerprint: "something",
+		Message:     "@vue/devtools 6.5.0 1 B",
 		Metadata: map[string]interface{}{
 			NPMPackageNameMetadataKey:    "electron",
 			NPMPackageVersionMetadataKey: "21.4.2",
@@ -210,6 +213,7 @@ func TestMarshalOkVerdict(t *testing.T) {
 		"pkg": "test",
 		"version": "0.0.1",
 		"file": "dynamic!install!.json",
+		"fingerprint": "something",
 		"created_at": %q,
 		"message": "@vue/devtools 6.5.0 1 B",
 		"severity": "medium",
@@ -313,13 +317,14 @@ func TestUnmarshalEmptyVerdict(t *testing.T) {
 func TestUnmarshalOkVerdict(t *testing.T) {
 	now := time.Now()
 	want := Verdict{
-		Ecosystem: ecosystem.Npm,
-		CreatedAt: &now,
-		Pkg:       "test",
-		Version:   "0.0.1",
-		Shasum:    "0123456789012345678901234567890123456789",
-		File:      "dynamic!install!.json",
-		Message:   "@vue/devtools 6.5.0 1 B",
+		Ecosystem:   ecosystem.Npm,
+		CreatedAt:   &now,
+		Pkg:         "test",
+		Version:     "0.0.1",
+		Shasum:      "0123456789012345678901234567890123456789",
+		File:        "dynamic!install!.json",
+		Message:     "@vue/devtools 6.5.0 1 B",
+		Fingerprint: "something",
 		Metadata: map[string]interface{}{
 			NPMPackageNameMetadataKey:    "electron",
 			NPMPackageVersionMetadataKey: "21.4.2",
@@ -344,6 +349,7 @@ func TestUnmarshalOkVerdict(t *testing.T) {
 		"message": "@vue/devtools 6.5.0 1 B",
 		"severity": "medium",
 		"categories": ["NETWORK", "process"],
+		"fingerprint": "something",
 		"metadata": {
 			"npm_package_name": "electron",
 			"npm_package_version": "21.4.2",
@@ -393,13 +399,14 @@ func TestBufferEmptyVerdicts(t *testing.T) {
 func TestBuffer(t *testing.T) {
 	now := time.Now()
 	vvvv1 := Verdict{
-		Ecosystem: ecosystem.Npm,
-		CreatedAt: &now,
-		Pkg:       "test",
-		Version:   "0.0.1",
-		Shasum:    "0123456789012345678901234567890123456789",
-		File:      "dynamic!install!.json",
-		Message:   "@vue/devtools 6.5.0 1 B",
+		Ecosystem:   ecosystem.Npm,
+		CreatedAt:   &now,
+		Pkg:         "test",
+		Version:     "0.0.1",
+		Shasum:      "0123456789012345678901234567890123456789",
+		File:        "dynamic!install!.json",
+		Message:     "@vue/devtools 6.5.0 1 B",
+		Fingerprint: "something",
 		Metadata: map[string]interface{}{
 			NPMPackageNameMetadataKey:    "electron",
 			NPMPackageVersionMetadataKey: "21.4.2",
@@ -416,16 +423,17 @@ func TestBuffer(t *testing.T) {
 	}
 	vvvv1.ExpiresIn(time.Second * 5)
 	vvvv2 := Verdict{
-		CreatedAt:  &now,
-		Ecosystem:  ecosystem.Npm,
-		Pkg:        "darcyclarke-manifest-pkg",
-		Severity:   severity.Medium,
-		Shasum:     "429eced1773fbc9ceea5cebda8338c0aaa21eeec",
-		Version:    "2.1.15",
-		File:       "metadata(mismatches).json",
-		Message:    "This package has inconsistent name in the tarball's package.json",
-		Code:       verdictcode.MDN05,
-		Categories: []category.Category{category.Metadata},
+		CreatedAt:   &now,
+		Ecosystem:   ecosystem.Npm,
+		Pkg:         "darcyclarke-manifest-pkg",
+		Severity:    severity.Medium,
+		Shasum:      "429eced1773fbc9ceea5cebda8338c0aaa21eeec",
+		Version:     "2.1.15",
+		Fingerprint: "something",
+		File:        "metadata(mismatches).json",
+		Message:     "This package has inconsistent name in the tarball's package.json",
+		Code:        verdictcode.MDN05,
+		Categories:  []category.Category{category.Metadata},
 	}
 	empty, _ := NewEmptyVerdict(ecosystem.Npm, "", "testone", "0.0.2", "a123456789012345678901234567890123456789", "typosquat.json")
 	data := Verdicts{
@@ -450,26 +458,28 @@ func TestFromBuffer(t *testing.T) {
 
 	want := Verdicts{
 		Verdict{
-			CreatedAt:  &now,
-			Ecosystem:  ecosystem.Npm,
-			Pkg:        "darcyclarke-manifest-pkg",
-			Severity:   severity.Medium,
-			Shasum:     "429eced1773fbc9ceea5cebda8338c0aaa21eeec",
-			Version:    "2.1.15",
-			File:       "metadata(mismatches).json",
-			Message:    "This package has inconsistent name in the tarball's package.json",
-			Code:       verdictcode.MDN05,
-			Categories: []category.Category{category.Metadata},
-			Metadata:   map[string]interface{}{},
+			CreatedAt:   &now,
+			Ecosystem:   ecosystem.Npm,
+			Pkg:         "darcyclarke-manifest-pkg",
+			Severity:    severity.Medium,
+			Shasum:      "429eced1773fbc9ceea5cebda8338c0aaa21eeec",
+			Version:     "2.1.15",
+			File:        "metadata(mismatches).json",
+			Fingerprint: "something",
+			Message:     "This package has inconsistent name in the tarball's package.json",
+			Code:        verdictcode.MDN05,
+			Categories:  []category.Category{category.Metadata},
+			Metadata:    map[string]interface{}{},
 		},
 		Verdict{
-			CreatedAt: &now,
-			Ecosystem: ecosystem.Npm,
-			Pkg:       "test",
-			Version:   "0.0.1",
-			Shasum:    "0123456789012345678901234567890123456789",
-			File:      "dynamic!install!.json",
-			Message:   "@vue/devtools 6.5.0 1 B",
+			CreatedAt:   &now,
+			Ecosystem:   ecosystem.Npm,
+			Pkg:         "test",
+			Version:     "0.0.1",
+			Shasum:      "0123456789012345678901234567890123456789",
+			File:        "dynamic!install!.json",
+			Fingerprint: "something",
+			Message:     "@vue/devtools 6.5.0 1 B",
 			Metadata: map[string]interface{}{
 				NPMPackageNameMetadataKey:    "electron",
 				NPMPackageVersionMetadataKey: "21.4.2",
