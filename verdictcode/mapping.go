@@ -72,4 +72,8 @@ var nonUniquelyIdentifying = []Code{
 	STN007,
 	STN008,
 	STN009,
+	FNI001,
+	FNI002,
+	FNI003,
+	RUN001,
 }
