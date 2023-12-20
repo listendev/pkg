@@ -23,16 +23,17 @@ func TestFilter(t *testing.T) {
 
 			return &t
 		}(),
-		Ecosystem:  ecosystem.Npm,
-		Pkg:        "darcyclarke-manifest-pkg",
-		Severity:   severity.High,
-		Shasum:     "429eced1773fbc9ceea5cebda8338c0aaa21eeec",
-		Version:    "2.1.15",
-		File:       "metadata(mismatches).json",
-		Message:    "This package has inconsistent name in the tarball's package.json",
-		Code:       verdictcode.MDN05,
-		Categories: []category.Category{category.Metadata},
-		Metadata:   map[string]interface{}{},
+		Ecosystem:   ecosystem.Npm,
+		Pkg:         "darcyclarke-manifest-pkg",
+		Severity:    severity.High,
+		Shasum:      "429eced1773fbc9ceea5cebda8338c0aaa21eeec",
+		Version:     "2.1.15",
+		File:        "metadata(mismatches).json",
+		Fingerprint: "something",
+		Message:     "This package has inconsistent name in the tarball's package.json",
+		Code:        verdictcode.MDN05,
+		Categories:  []category.Category{category.Metadata},
+		Metadata:    map[string]interface{}{},
 	}
 	v1b, _ := v1.MarshalJSON()
 	var v1raw interface{}
@@ -46,12 +47,13 @@ func TestFilter(t *testing.T) {
 
 			return &t
 		}(),
-		Ecosystem: ecosystem.Npm,
-		Pkg:       "test",
-		Version:   "0.0.1",
-		Shasum:    "0123456789012345678901234567890123456789",
-		File:      "dynamic!install!.json",
-		Message:   "@vue/devtools 6.5.0 1 B",
+		Ecosystem:   ecosystem.Npm,
+		Pkg:         "test",
+		Version:     "0.0.1",
+		Shasum:      "0123456789012345678901234567890123456789",
+		File:        "dynamic!install!.json",
+		Message:     "@vue/devtools 6.5.0 1 B",
+		Fingerprint: "something",
 		Metadata: map[string]interface{}{
 			NPMPackageNameMetadataKey:    "electron",
 			NPMPackageVersionMetadataKey: "21.4.2",
@@ -73,13 +75,14 @@ func TestFilter(t *testing.T) {
 
 			return &t
 		}(),
-		Ecosystem: ecosystem.Npm,
-		Org:       "@expires",
-		Pkg:       "in",
-		Version:   "5.0.0",
-		Shasum:    "32b09b0e3ca7b757802f9a0b9ded8c2035ce7874",
-		File:      "dynamic!install!.json",
-		Message:   "spawn",
+		Ecosystem:   ecosystem.Npm,
+		Org:         "@expires",
+		Pkg:         "in",
+		Version:     "5.0.0",
+		Shasum:      "32b09b0e3ca7b757802f9a0b9ded8c2035ce7874",
+		File:        "dynamic!install!.json",
+		Message:     "spawn",
+		Fingerprint: "something",
 		Metadata: map[string]interface{}{
 			NPMPackageNameMetadataKey:    "electron",
 			NPMPackageVersionMetadataKey: "21.4.2",
@@ -106,13 +109,14 @@ func TestFilter(t *testing.T) {
 
 			return &t
 		}(),
-		Ecosystem: ecosystem.Npm,
-		Org:       "@expires",
-		Pkg:       "in",
-		Version:   "4.0.0",
-		Shasum:    "42b09b0e3ca7b757802f9a0b9ded8c2035ce7874",
-		File:      "dynamic!install!.json",
-		Message:   "some message",
+		Ecosystem:   ecosystem.Npm,
+		Org:         "@expires",
+		Pkg:         "in",
+		Version:     "4.0.0",
+		Shasum:      "42b09b0e3ca7b757802f9a0b9ded8c2035ce7874",
+		File:        "dynamic!install!.json",
+		Fingerprint: "something",
+		Message:     "some message",
 		Metadata: map[string]interface{}{
 			NPMPackageNameMetadataKey:    "electronx",
 			NPMPackageVersionMetadataKey: "21.2.2",
