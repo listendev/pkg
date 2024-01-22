@@ -91,6 +91,33 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "valid full pypi maintainers email analysis request",
+			args: args{
+				body: []byte(`{"type": "urn:hoarding:metadata,email_check!pypi.json", "snowflake_id": "1652803364692340737", "name": "cctx", "version": "1.0.0", "sha256": "1d9ceb0603ed51a4f337cb8d53dd320339fd10814642d074b41a86d00be0bdbd", "blake2b_256": "bdd235ad05b2669c50fc2756e35d0fe462bbd085a5b7afb571f443fd2ceb151e", "priority": 5, "force": true}`),
+			},
+			want: &PyPi{
+				base: base{
+					RequestType: PypiMetadataMaintainersEmailCheck,
+					Snowflake:   "1652803364692340737",
+					Priority:    5,
+					Force:       true,
+				},
+				pypiPackage: pypiPackage{
+					Name:       "cctx",
+					Version:    "1.0.0",
+					Sha256:     "1d9ceb0603ed51a4f337cb8d53dd320339fd10814642d074b41a86d00be0bdbd",
+					Blake2b256: "bdd235ad05b2669c50fc2756e35d0fe462bbd085a5b7afb571f443fd2ceb151e",
+				},
+			},
+			wantPublishing: &amqp.Publishing{
+				ContentType: "application/json",
+				Priority:    5,
+				Body:        []byte(`{"type":"urn:hoarding:metadata,email_check!pypi.json","snowflake_id":"1652803364692340737","name":"cctx","version":"1.0.0","priority":5,"force":true,"sha256":"1d9ceb0603ed51a4f337cb8d53dd320339fd10814642d074b41a86d00be0bdbd","blake2b_256":"bdd235ad05b2669c50fc2756e35d0fe462bbd085a5b7afb571f443fd2ceb151e"}`),
+			},
+			wantKey: "pypi/cctx/1.0.0/bdd235ad05b2669c50fc2756e35d0fe462bbd085a5b7afb571f443fd2ceb151e/metadata(email_check).json",
+			wantErr: false,
+		},
+		{
 			name: "pypi typosquat analysis request without blake2b_256 digest",
 			args: args{
 				body: []byte(`{"type": "urn:hoarding:typosquat!pypi.json", "snowflake_id": "1652803364692340737", "name": "cctx", "version": "1.0.0", "sha256": "1d9ceb0603ed51a4f337cb8d53dd320339fd10814642d074b41a86d00be0bdbd", "priority": 5, "force": true}`),
@@ -219,6 +246,40 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 				Body:        []byte(`{"type":"urn:hoarding:advisory!npm.json","snowflake_id":"1524854487523524608","name":"chalk","version":"5.1.2","shasum":"d957f370038b75ac572471e83be4c5ca9f8e8c45","priority":5,"force":true}`),
 			},
 			wantKey: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/advisory.json",
+			mockNPMRegistryClient: func() *npm.MockRegistryClient {
+				mockClient, err := npm.NewMockRegistryClient("chalk.json", "chalk_512.json")
+				if err != nil {
+					t.Fatal(err)
+				}
+
+				return mockClient
+			}(),
+			wantErr: false,
+		},
+		{
+			name: "valid full npm email check analysis request",
+			args: args{
+				body: []byte(`{"type": "urn:hoarding:metadata,email_check!npm.json", "snowflake_id": "1652803364692340736", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "priority": 5, "force": true}`),
+			},
+			want: &NPM{
+				base: base{
+					RequestType: NPMMetadataMaintainersEmailCheck,
+					Snowflake:   "1652803364692340736",
+					Priority:    5,
+					Force:       true,
+				},
+				npmPackage: npmPackage{
+					Name:    "chalk",
+					Version: "5.1.2",
+					Shasum:  "d957f370038b75ac572471e83be4c5ca9f8e8c45",
+				},
+			},
+			wantPublishing: &amqp.Publishing{
+				ContentType: "application/json",
+				Priority:    5,
+				Body:        []byte(`{"type":"urn:hoarding:metadata,email_check!npm.json","snowflake_id":"1652803364692340736","name":"chalk","version":"5.1.2","shasum":"d957f370038b75ac572471e83be4c5ca9f8e8c45","priority":5,"force":true}`),
+			},
+			wantKey: "npm/chalk/5.1.2/d957f370038b75ac572471e83be4c5ca9f8e8c45/metadata(email_check).json",
 			mockNPMRegistryClient: func() *npm.MockRegistryClient {
 				mockClient, err := npm.NewMockRegistryClient("chalk.json", "chalk_512.json")
 				if err != nil {
