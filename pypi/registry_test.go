@@ -6,31 +6,39 @@ import (
 	"os"
 	"path"
 	"testing"
+	"time"
 
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/listendev/pkg/observability"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestRegistryClinet_GetPackageList(t *testing.T) {
 	tests := []struct {
-		descr                     string
-		testFile                  string
-		searchName                string
-		wantName                  string
-		wantVersionsSha256        map[string]string
-		wantLastVersionTag        string
-		wantLastVersionBlake2b256 string
-		wantLastVersionSha256     string
-		wantErr                   bool
+		descr                            string
+		testFile                         string
+		searchName                       string
+		wantName                         string
+		wantVersionsSha256               map[string]string
+		wantLastVersionTag               string
+		wantLastVersionBlake2b256        string
+		wantLastVersionSha256            string
+		wantLastVersionTime              time.Time
+		wantLastVersionMaintainersEmails []string
+		wantErr                          bool
 	}{
 		{
-			descr:                     "boto3 package from upstream registry",
-			testFile:                  "package_list.json",
-			searchName:                "boto3",
-			wantName:                  "boto3",
-			wantLastVersionTag:        "1.34.2",
-			wantLastVersionBlake2b256: "c86666f4e87201f72a79c2bf600f2b7096988572447f4a3dae38e4b4873a346f",
-			wantLastVersionSha256:     "970fd9f9f522eb48f3cd5574e927b369279ebf5bcf0f2fae5ed9cc6306e58558",
+			descr:                            "boto3 package from upstream registry",
+			testFile:                         "package_list.json",
+			searchName:                       "boto3",
+			wantName:                         "boto3",
+			wantLastVersionTag:               "1.34.2",
+			wantLastVersionBlake2b256:        "c86666f4e87201f72a79c2bf600f2b7096988572447f4a3dae38e4b4873a346f",
+			wantLastVersionSha256:            "970fd9f9f522eb48f3cd5574e927b369279ebf5bcf0f2fae5ed9cc6306e58558",
+			wantLastVersionTime:              func() time.Time { ret, _ := time.Parse(time.RFC3339Nano, "2023-12-15T20:43:50.976124Z"); return ret }(),
+			wantLastVersionMaintainersEmails: []string{},
 			wantVersionsSha256: map[string]string{
 				"0.0.1":   "bc018a3aedc5cf7329dcdeb435ece8a296b605c19fb09842c1821935f1b14cfd",
 				"1.24.36": "b1855ede59e725b968d6336908ffc864b65985ca441d730625b09c43ccd6413b",
@@ -99,6 +107,26 @@ func TestRegistryClinet_GetPackageList(t *testing.T) {
 			gotLastPackageVersion, err := client.GetPackageLatestVersion(testCtx, tt.searchName)
 			assert.Nil(t, err)
 			assert.Equal(t, lastSdistVersion, gotLastPackageVersion)
+
+			gotLatestVersionTime, gotLatestVersionTimeErr := packageList.LatestVersionTime()
+			require.Nil(t, gotLatestVersionTimeErr)
+			require.NotNil(t, gotLatestVersionTime)
+			if !cmp.Equal(*gotLatestVersionTime, tt.wantLastVersionTime, cmpopts.EquateApproxTime(time.Millisecond*2)) {
+				t.Fatal(cmp.Diff(tt.wantLastVersionTime, *gotLatestVersionTime))
+			}
+
+			if len(tt.wantLastVersionMaintainersEmails) > 0 {
+				gotM, gotMaintainersErr := packageList.MaintainersByVersion("latest")
+				require.Nil(t, gotMaintainersErr)
+				require.NotNil(t, gotM)
+
+				gotEmails := gotM.Emails()
+				if !cmp.Equal(gotEmails, tt.wantLastVersionMaintainersEmails, cmpopts.SortSlices(func(x, y string) bool {
+					return x < y
+				})) {
+					t.Fatal(cmp.Diff(tt.wantLastVersionMaintainersEmails, gotEmails))
+				}
+			}
 		})
 	}
 }
