@@ -108,4 +108,14 @@ func TestRetrievingTheType(t *testing.T) {
 	assert.Nil(t, e6)
 	assert.NotNil(t, t6)
 	assert.Equal(t, analysisrequest.PypiTyposquat, t6)
+
+	t7, e7 := MDN04.Type(false)
+	assert.Nil(t, e7)
+	assert.NotNil(t, t7)
+	assert.Equal(t, analysisrequest.NPMMetadataMaintainersEmailCheck, t7)
+
+	t8, e8 := MDP04.Type(false)
+	assert.Nil(t, e8)
+	assert.NotNil(t, t8)
+	assert.Equal(t, analysisrequest.PypiMetadataMaintainersEmailCheck, t8)
 }
