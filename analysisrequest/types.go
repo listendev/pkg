@@ -36,6 +36,9 @@ const (
 	NPMStaticNonRegistryDependency
 
 	PypiTyposquat Type = iota + 986 // 1001
+	// PypiMetadataEmptyDescription
+	// PypiMetadataVersion
+	PypiMetadataMaintainersEmailCheck
 
 	_maxType
 )
