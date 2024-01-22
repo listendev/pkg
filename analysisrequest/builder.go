@@ -99,6 +99,32 @@ func (b *builder) FromFile(path string) ([]AnalysisRequest, error) {
 	return []AnalysisRequest{res}, nil
 }
 
+func (b *builder) getNPMAnalysisRequest(body []byte) (AnalysisRequest, error) {
+	var arn NPM
+	if err := json.Unmarshal(body, &arn); err != nil {
+		return nil, err
+	}
+
+	if err := arn.fillMissingData(b.ctx, b.npmRegistryClient); err != nil {
+		return nil, err
+	}
+
+	return &arn, nil
+}
+
+func (b *builder) getPyPiAnalysisRequest(body []byte) (AnalysisRequest, error) {
+	var arp PyPi
+	if err := json.Unmarshal(body, &arp); err != nil {
+		return nil, err
+	}
+
+	if err := arp.fillMissingData(b.ctx, b.pypiRegistryClient); err != nil {
+		return nil, err
+	}
+
+	return &arp, nil
+}
+
 func (b *builder) FromJSON(body []byte) (AnalysisRequest, error) {
 	t := tracer.FromContext(b.ctx)
 	_, span := t.Start(b.ctx, "analysysrequest.Builder.UnmarshalJSON")
@@ -112,75 +138,43 @@ func (b *builder) FromJSON(body []byte) (AnalysisRequest, error) {
 	// TODO: adjust condition while evolving
 	switch arb.RequestType {
 	// NPM
-	case NPMInstallWhileDynamicInstrumentationAIEnriched:
-		// Not sure we wanna create enrichers from JSON too, but it shouldn't do any harm
-		fallthrough
-
-	case NPMAdvisory:
-		fallthrough
-
 	// TODO: uncomment when ready
 	// case NPMTestWhileDynamicInstrumentation:
 	// 	fallthrough
-
+	case NPMInstallWhileDynamicInstrumentationAIEnriched:
+		fallthrough
+	case NPMAdvisory:
+		fallthrough
 	case NPMTyposquat:
 		fallthrough
-
 	case NPMMetadataEmptyDescription:
 		fallthrough
-
-	// TODO: uncomment when ready
-	// case NPMMetadataMaintainersEmailCheck:
-	// 	fallthrough
-
+	case NPMMetadataMaintainersEmailCheck:
+		fallthrough
 	case NPMMetadataVersion:
 		fallthrough
-
 	case NPMMetadataMismatches:
 		fallthrough
-
 	case NPMStaticAnalysisEnvExfiltration:
 		fallthrough
-
 	case NPMStaticAnalysisDetachedProcessExecution:
 		fallthrough
-
 	case NPMStaticAnalysisEvalBase64:
 		fallthrough
-
 	case NPMStaticAnalysisShadyLinks:
 		fallthrough
-
 	case NPMStaticAnalysisInstallScript:
 		fallthrough
-
 	case NPMStaticNonRegistryDependency:
 		fallthrough
-
 	case NPMInstallWhileDynamicInstrumentation:
-		var arn NPM
-		if err := json.Unmarshal(body, &arn); err != nil {
-			return nil, err
-		}
-
-		if err := arn.fillMissingData(b.ctx, b.npmRegistryClient); err != nil {
-			return nil, err
-		}
-
-		return &arn, nil
+		return b.getNPMAnalysisRequest(body)
 
 	// PyPi
 	case PypiTyposquat:
-		var arp PyPi
-		if err := json.Unmarshal(body, &arp); err != nil {
-			return nil, err
-		}
-
-		if err := arp.fillMissingData(b.ctx, b.pypiRegistryClient); err != nil {
-			return nil, err
-		}
-
-		return &arp, nil
+		fallthrough
+	case PypiMetadataMaintainersEmailCheck:
+		return b.getPyPiAnalysisRequest(body)
 
 	// NOP
 	case Nop:
