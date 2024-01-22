@@ -69,6 +69,7 @@ components:
         - 1108 # STN008
         - 1109 # STN009
         - 1200 # RUN001
+        - 1324 # MDP04
       x-enumNames:
         - "UNK"
         - "FNI001" # npm install spawn a child process
@@ -80,12 +81,12 @@ components:
         - "FNI007" # npm install file write in path
         - "FNI008" # npm install link sensitive files
         - "DDN01"
-        - "TSN01"
-        - "TSP01"
+        - "TSN01" # Typosquat NPM
+        - "TSP01" # Typosquat PyPi
         - "MDN01" # Empty description
         - "MDN02" # Zero version
         - "MDN03" # Prerelease version
-        - "MDN04" # Maintainers email
+        - "MDN04" # Potentially compromised NPM maintainer's email domain
         - "MDN05" # Mismatch between the NPM registry package name vs the tarball's package.json name
         - "MDN06" # Mismatch between the NPM registry package scripts vs the tarball's package.json scripts
         - "MDN07" # Mismatch between the NPM registry package dependencies vs the tarball's package.json dependencies
@@ -100,6 +101,7 @@ components:
         - "STN008" # npm github dependency
         - "STN009" # npm github gist dependency
         - "RUN001" # runtime (DNS)
+        - "MDP04"  # Potentially compromised PyPi maintainer's email domain
       x-oapi-codegen-extra-tags:
         validate: required_with=Message,isdefault|is_verdictcode
         human: the code identifying the verdict type
