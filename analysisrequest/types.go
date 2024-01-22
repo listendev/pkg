@@ -20,7 +20,8 @@ const (
 	NPMInstallWhileDynamicInstrumentation
 	NPMAdvisory
 	NPMInstallWhileDynamicInstrumentationAIEnriched
-	// NPMTestWhileDynamicInstrumentation.
+	// NPMTestWhileDynamicInstrumentation
+
 	NPMTyposquat
 	NPMMetadataEmptyDescription
 	NPMMetadataVersion
@@ -104,10 +105,10 @@ var typeURNs = map[Type]string{
 	// NPMInstallWhileDynamicInstrumentationAIEnriched represents analysis requests to enrich the NPMInstallWhileDynamicInstrumentation results
 	NPMInstallWhileDynamicInstrumentationAIEnriched: "urn:scheduler:dynamic!npm,install.json+urn:hoarding:ai,context",
 	// NPMTestWhileDynamicInstrumentation:     "urn:scheduler:dynamic!npm,test.json",
-	NPMTyposquat:                createType(Hoarding, TyposquatCollector, "", ecosystem.Npm, "", "json"),
-	NPMMetadataEmptyDescription: createType(Hoarding, MetadataCollector, "empty_descr", ecosystem.Npm, "", "json"),
-	NPMMetadataVersion:          createType(Hoarding, MetadataCollector, "version", ecosystem.Npm, "", "json"),
-	// NPMMetadataMaintainersEmailCheck:          createType(Hoarding, MetadataCollector, "email_check", ecosystem.Npm, "", "json"),
+	NPMTyposquat:                              createType(Hoarding, TyposquatCollector, "", ecosystem.Npm, "", "json"),
+	NPMMetadataEmptyDescription:               createType(Hoarding, MetadataCollector, "empty_descr", ecosystem.Npm, "", "json"),
+	NPMMetadataVersion:                        createType(Hoarding, MetadataCollector, "version", ecosystem.Npm, "", "json"),
+	NPMMetadataMaintainersEmailCheck:          createType(Hoarding, MetadataCollector, "email_check", ecosystem.Npm, "", "json"),
 	NPMMetadataMismatches:                     createType(Hoarding, MetadataCollector, "mismatches", ecosystem.Npm, "", "json"),
 	NPMStaticAnalysisEnvExfiltration:          createType(Hoarding, StaticAnalysisCollector, "exfiltrate_env", ecosystem.Npm, "", "json"),
 	NPMStaticAnalysisDetachedProcessExecution: createType(Hoarding, StaticAnalysisCollector, "detached_process_exec", ecosystem.Npm, "", "json"),
@@ -116,7 +117,8 @@ var typeURNs = map[Type]string{
 	NPMStaticAnalysisInstallScript:            createType(Hoarding, StaticAnalysisCollector, "install_script", ecosystem.Npm, "", "json"),
 	NPMStaticNonRegistryDependency:            createType(Hoarding, StaticAnalysisCollector, "non_registry_dependency", ecosystem.Npm, "", "json"),
 
-	PypiTyposquat: createType(Hoarding, TyposquatCollector, "", ecosystem.Pypi, "", "json"),
+	PypiTyposquat:                     createType(Hoarding, TyposquatCollector, "", ecosystem.Pypi, "", "json"),
+	PypiMetadataMaintainersEmailCheck: createType(Hoarding, MetadataCollector, "email_check", ecosystem.Pypi, "", "json"),
 }
 
 func Types() []Type {
