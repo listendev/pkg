@@ -1,5 +1,11 @@
 package pypi
 
+import (
+	"time"
+
+	"github.com/XANi/goneric"
+)
+
 type PackageList struct {
 	Info     Info                       `json:"info"`
 	Versions map[string]PackageVersions `json:"releases"`
@@ -12,6 +18,20 @@ func (p *PackageList) Fill() {
 		for i := range p.Versions[v] {
 			p.Versions[v][i].Version = v
 			p.Versions[v][i].Name = p.Info.Name
+			p.Versions[v][i].Authors = []PackageMaintainer{
+				{
+					Name: p.Info.Author,
+					Mail: p.Info.AuthorEmail,
+					Type: PackageAuthorType,
+				},
+			}
+			p.Versions[v][i].Maintainers = []PackageMaintainer{
+				{
+					Name: p.Info.Maintainer,
+					Mail: p.Info.MaintainerEmail,
+					Type: PackageMaintainerType,
+				},
+			}
 		}
 	}
 }
@@ -60,4 +80,23 @@ func (p *PackageList) GetVersion(version string) (*PackageVersion, error) {
 	pv.Name = p.Info.Name
 
 	return pv, nil
+}
+
+func (p *PackageList) LatestVersionTime() (*time.Time, error) {
+	// TODO: keep in mind we are only considering the "sdist" version (not the wheel distribution one) for now
+	latest, e := p.GetVersion("latest")
+	if e != nil {
+		return nil, e
+	}
+
+	return &latest.UploadTime, nil
+}
+
+func (p *PackageList) MaintainersByVersion(version string) (PackageMaintainers, error) {
+	v, e := p.GetVersion(version)
+	if e != nil {
+		return nil, e
+	}
+
+	return goneric.SliceDedupe(append(v.Authors, v.Maintainers...)), nil
 }
