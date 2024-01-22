@@ -22,3 +22,15 @@ func (l *PackageList) LatestVersionTime() (*time.Time, error) {
 
 	return &t, nil
 }
+
+func (l *PackageList) MaintainersByVersion(version string) (PackageMaintainers, error) {
+	if version == "latest" {
+		version = l.DistTags.Latest
+	}
+	v, ok := l.Versions[version]
+	if !ok {
+		return nil, fmt.Errorf("coulnd't find the version %q", version)
+	}
+
+	return v.Maintainers, nil
+}
