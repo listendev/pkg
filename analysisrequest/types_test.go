@@ -350,5 +350,5 @@ func TestTypes(t *testing.T) {
 func TestLastType(t *testing.T) {
 	got := LastType()
 
-	assert.Equal(t, PypiTyposquat, got)
+	assert.Equal(t, PypiMetadataMaintainersEmailCheck, got)
 }

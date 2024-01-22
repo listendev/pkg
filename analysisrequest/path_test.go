@@ -18,11 +18,11 @@ func TestGetResultFilesByEcosystem(t *testing.T) {
 			wnt = map[Type]string{
 				NPMInstallWhileDynamicInstrumentation: "dynamic!install!.json",
 				// NPMTestWhileDynamicInstrumentation:    "dynamic[test].json",
-				NPMAdvisory:                 "advisory.json",
-				NPMTyposquat:                "typosquat.json",
-				NPMMetadataEmptyDescription: "metadata(empty_descr).json",
-				NPMMetadataVersion:          "metadata(version).json",
-				// NPMMetadataMaintainersEmailCheck:          "metadata(email_check).json",
+				NPMAdvisory:                               "advisory.json",
+				NPMTyposquat:                              "typosquat.json",
+				NPMMetadataEmptyDescription:               "metadata(empty_descr).json",
+				NPMMetadataVersion:                        "metadata(version).json",
+				NPMMetadataMaintainersEmailCheck:          "metadata(email_check).json",
 				NPMMetadataMismatches:                     "metadata(mismatches).json",
 				NPMStaticAnalysisEnvExfiltration:          "static(exfiltrate_env).json",
 				NPMStaticAnalysisEvalBase64:               "static(base64_eval).json",
@@ -33,7 +33,8 @@ func TestGetResultFilesByEcosystem(t *testing.T) {
 			}
 		case ecosystem.Pypi:
 			wnt = map[Type]string{
-				PypiTyposquat: "typosquat.json",
+				PypiTyposquat:                     "typosquat.json",
+				PypiMetadataMaintainersEmailCheck: "metadata(email_check).json",
 			}
 		}
 		got := GetResultFilesByEcosystem(e)
