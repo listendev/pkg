@@ -87,24 +87,26 @@ func TestRegistryClient_GetPackageVersion(t *testing.T) {
 
 func TestRegistryClient_GetPackageList(t *testing.T) {
 	tests := []struct {
-		descr                 string
-		testFile              string
-		searchName            string
-		wantName              string
-		wantVersionsShasums   map[string]string
-		wantLastVersionTag    string
-		wantLastVersionShasum string
-		wantLastVersionTime   time.Time
-		wantErr               bool
+		descr                            string
+		testFile                         string
+		searchName                       string
+		wantName                         string
+		wantVersionsShasums              map[string]string
+		wantLastVersionTag               string
+		wantLastVersionShasum            string
+		wantLastVersionTime              time.Time
+		wantLastVersionMaintainersEmails []string
+		wantErr                          bool
 	}{
 		{
-			descr:                 "chalk package from upstream registry",
-			testFile:              "package_list.json",
-			searchName:            "chalk",
-			wantName:              "chalk",
-			wantLastVersionTag:    "5.2.0",
-			wantLastVersionShasum: "249623b7d66869c673699fb66d65723e54dfcfb3",
-			wantLastVersionTime:   func() time.Time { ret, _ := time.Parse(time.RFC3339Nano, "2022-12-08T18:46:27.169Z"); return ret }(),
+			descr:                            "chalk package from upstream registry",
+			testFile:                         "package_list.json",
+			searchName:                       "chalk",
+			wantName:                         "chalk",
+			wantLastVersionTag:               "5.2.0",
+			wantLastVersionShasum:            "249623b7d66869c673699fb66d65723e54dfcfb3",
+			wantLastVersionTime:              func() time.Time { ret, _ := time.Parse(time.RFC3339Nano, "2022-12-08T18:46:27.169Z"); return ret }(),
+			wantLastVersionMaintainersEmails: []string{},
 			wantVersionsShasums: map[string]string{
 				"0.1.0": "69afbee2ffab5e0db239450767a6125cbea50fa2",
 			},
@@ -169,9 +171,21 @@ func TestRegistryClient_GetPackageList(t *testing.T) {
 			gotLatestVersionTime, gotLatestVersionTimeErr := packageList.LatestVersionTime()
 			require.Nil(t, gotLatestVersionTimeErr)
 			require.NotNil(t, gotLatestVersionTime)
-
 			if !cmp.Equal(*gotLatestVersionTime, tt.wantLastVersionTime, cmpopts.EquateApproxTime(time.Millisecond*2)) {
 				t.Fatal(cmp.Diff(tt.wantLastVersionTime, *gotLatestVersionTime))
+			}
+
+			if len(tt.wantLastVersionMaintainersEmails) > 0 {
+				gotM, gotMaintainersErr := packageList.MaintainersByVersion("latest")
+				require.Nil(t, gotMaintainersErr)
+				require.NotNil(t, gotM)
+
+				gotEmails := gotM.Emails()
+				if !cmp.Equal(gotEmails, tt.wantLastVersionMaintainersEmails, cmpopts.SortSlices(func(x, y string) bool {
+					return x < y
+				})) {
+					t.Fatal(cmp.Diff(tt.wantLastVersionMaintainersEmails, gotEmails))
+				}
 			}
 		})
 	}
