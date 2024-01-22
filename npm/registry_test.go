@@ -106,7 +106,7 @@ func TestRegistryClient_GetPackageList(t *testing.T) {
 			wantLastVersionTag:               "5.2.0",
 			wantLastVersionShasum:            "249623b7d66869c673699fb66d65723e54dfcfb3",
 			wantLastVersionTime:              func() time.Time { ret, _ := time.Parse(time.RFC3339Nano, "2022-12-08T18:46:27.169Z"); return ret }(),
-			wantLastVersionMaintainersEmails: []string{},
+			wantLastVersionMaintainersEmails: []string{"josh@junon.me", "sindresorhus@gmail.com"},
 			wantVersionsShasums: map[string]string{
 				"0.1.0": "69afbee2ffab5e0db239450767a6125cbea50fa2",
 			},
