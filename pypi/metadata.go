@@ -7,8 +7,12 @@ type Digests struct {
 }
 
 type Info struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	Name            string `json:"name"`
+	Author          string `json:"author,omitempty"`
+	AuthorEmail     string `json:"author_email,omitempty"`
+	Maintainer      string `json:"maintainer,omitempty"`
+	MaintainerEmail string `json:"maintainer_email,omitempty"`
+	Description     string `json:"description"`
 	// Version is the last version (list endpoint) or the current version (version endpoint)
 	Version string `json:"version"`
 }
