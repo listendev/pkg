@@ -22,7 +22,9 @@ const (
 	MDN06  Code = 1026
 	MDN07  Code = 1027
 	MDN08  Code = 1028
+	MDN09  Code = 1029
 	MDP04  Code = 1324
+	MDP09  Code = 1329
 	RUN001 Code = 1200
 	STN001 Code = 1101
 	STN002 Code = 1102

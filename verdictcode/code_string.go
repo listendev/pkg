@@ -25,7 +25,9 @@ func _() {
 	_ = x[MDN06-1026]
 	_ = x[MDN07-1027]
 	_ = x[MDN08-1028]
+	_ = x[MDN09-1029]
 	_ = x[MDP04-1324]
+	_ = x[MDP09-1329]
 	_ = x[RUN001-1200]
 	_ = x[STN001-1101]
 	_ = x[STN002-1102]
@@ -45,16 +47,17 @@ const (
 	_Code_name_0 = "UNKFNI001FNI002FNI003FNI004FNI005FNI006FNI007FNI008"
 	_Code_name_1 = "DDN01"
 	_Code_name_2 = "TSN01TSP01"
-	_Code_name_3 = "MDN01MDN02MDN03MDN04MDN05MDN06MDN07MDN08"
+	_Code_name_3 = "MDN01MDN02MDN03MDN04MDN05MDN06MDN07MDN08MDN09"
 	_Code_name_4 = "STN001STN002STN003STN004STN005STN006STN007STN008STN009"
 	_Code_name_5 = "RUN001"
 	_Code_name_6 = "MDP04"
+	_Code_name_7 = "MDP09"
 )
 
 var (
 	_Code_index_0 = [...]uint8{0, 3, 9, 15, 21, 27, 33, 39, 45, 51}
 	_Code_index_2 = [...]uint8{0, 5, 10}
-	_Code_index_3 = [...]uint8{0, 5, 10, 15, 20, 25, 30, 35, 40}
+	_Code_index_3 = [...]uint8{0, 5, 10, 15, 20, 25, 30, 35, 40, 45}
 	_Code_index_4 = [...]uint8{0, 6, 12, 18, 24, 30, 36, 42, 48, 54}
 )
 
@@ -67,7 +70,7 @@ func (i Code) String() string {
 	case 1011 <= i && i <= 1012:
 		i -= 1011
 		return _Code_name_2[_Code_index_2[i]:_Code_index_2[i+1]]
-	case 1021 <= i && i <= 1028:
+	case 1021 <= i && i <= 1029:
 		i -= 1021
 		return _Code_name_3[_Code_index_3[i]:_Code_index_3[i+1]]
 	case 1101 <= i && i <= 1109:
@@ -77,6 +80,8 @@ func (i Code) String() string {
 		return _Code_name_5
 	case i == 1324:
 		return _Code_name_6
+	case i == 1329:
+		return _Code_name_7
 	default:
 		return "Code(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
