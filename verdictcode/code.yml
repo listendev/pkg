@@ -59,6 +59,7 @@ components:
         - 1026 # MDN06
         - 1027 # MDN07
         - 1028 # MDN08
+        - 1029 # MDN09
         - 1101 # STN001
         - 1102 # STN002
         - 1103 # STN003
@@ -70,6 +71,7 @@ components:
         - 1109 # STN009
         - 1200 # RUN001
         - 1324 # MDP04
+        - 1329 # MDP09
       x-enumNames:
         - "UNK"
         - "FNI001" # npm install spawn a child process
@@ -86,11 +88,12 @@ components:
         - "MDN01" # Empty description
         - "MDN02" # Zero version
         - "MDN03" # Prerelease version
-        - "MDN04" # Potentially compromised NPM maintainer's email domain
+        - "MDN04" # Potentially compromised NPM maintainer's email domain (re-registered domain)
         - "MDN05" # Mismatch between the NPM registry package name vs the tarball's package.json name
         - "MDN06" # Mismatch between the NPM registry package scripts vs the tarball's package.json scripts
         - "MDN07" # Mismatch between the NPM registry package dependencies vs the tarball's package.json dependencies
         - "MDN08" # Mismatch between the NPM registry package devDependencies vs the tarball's package.json devDependencies
+        - "MDN09" # Potentially compromised NPM maintainer's email domain (available domain)
         - "STN001" # Javascript env exfiltration
         - "STN002" # Javascript child process exec
         - "STN003" # Shady links
@@ -101,7 +104,8 @@ components:
         - "STN008" # npm github dependency
         - "STN009" # npm github gist dependency
         - "RUN001" # runtime (DNS)
-        - "MDP04"  # Potentially compromised PyPi maintainer's email domain
+        - "MDP04"  # Potentially compromised PyPi maintainer's email domain (re-registered domain)
+        - "MDP09"  # Potentially compromised NPM maintainer's email domain (available domain)
       x-oapi-codegen-extra-tags:
         validate: required_with=Message,isdefault|is_verdictcode
         human: the code identifying the verdict type
