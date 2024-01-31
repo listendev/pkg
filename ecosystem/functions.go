@@ -137,4 +137,11 @@ func (e *Ecosystem) Scan(source any) error {
 	return fmt.Errorf("cannot scan %T into Ecosystem", source)
 }
 
+func (e *Ecosystem) UnmarshalText(text []byte) error {
+	eco, err := FromString(string(text))
+	*e = eco
+
+	return err
+}
+
 //go:generate stringer -type=Ecosystem
