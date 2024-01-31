@@ -4,7 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 
+	"github.com/listendev/pkg/ecosystem"
 	"github.com/listendev/pkg/observability/tracer"
 	"github.com/listendev/pkg/pypi"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -45,6 +47,31 @@ type pypiPackage struct {
 type PyPi struct {
 	base
 	pypiPackage
+}
+
+// NewPyPi creates an AnalysisRequest for the PyPi ecosystem.
+func NewPyPi(request Type, snowflake string, priority uint8, force bool, name, version, digest string) (AnalysisRequest, error) {
+	tc := request.Components()
+	if !tc.HasEcosystem() {
+		return nil, fmt.Errorf("couldn't instantiate an analysis request for PyPi from a type without ecosystem at all")
+	}
+	if tc.Ecosystem == ecosystem.Pypi {
+		return &PyPi{
+			base: base{
+				RequestType: request,
+				Snowflake:   snowflake,
+				Priority:    priority,
+				Force:       force,
+			},
+			pypiPackage: pypiPackage{
+				Name:       name,
+				Version:    version,
+				Blake2b256: digest,
+			},
+		}, nil
+	}
+
+	return nil, fmt.Errorf("couldn't instantiate an analysis request for PyPi")
 }
 
 func (arp PyPi) PackageName() string {
