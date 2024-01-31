@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestEcosystemsFunction(t *testing.T) {
@@ -90,4 +91,18 @@ func TestUnmarshal(t *testing.T) {
 
 	var e Ecosystem
 	assert.Error(t, json.Unmarshal([]byte(fmt.Sprintf("%q", "none")), &e))
+}
+
+func TestUnmarshalText(t *testing.T) {
+	for _, x := range all {
+		var eco1 Ecosystem
+		err1 := eco1.UnmarshalText([]byte(x.String()))
+		require.Nil(t, err1)
+		require.Equal(t, eco1, x)
+
+		var eco2 Ecosystem
+		err2 := eco2.UnmarshalText([]byte(x.Case()))
+		require.Nil(t, err2)
+		require.Equal(t, eco2, x)
+	}
 }
