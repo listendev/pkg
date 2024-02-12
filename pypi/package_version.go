@@ -42,6 +42,7 @@ type PackageVersion struct {
 	Authors     PackageMaintainers
 	Maintainers PackageMaintainers
 
+	URL         string    `json:"url"`
 	Digests     Digests   `json:"digests"`
 	PackageType string    `json:"packagetype"`
 	UploadTime  time.Time `json:"upload_time_iso_8601"`
