@@ -22,6 +22,7 @@ func TestRegistryClinet_GetPackageList(t *testing.T) {
 		searchName                       string
 		wantName                         string
 		wantVersionsSha256               map[string]string
+		wantLastVersionURL               string
 		wantLastVersionTag               string
 		wantLastVersionBlake2b256        string
 		wantLastVersionSha256            string
@@ -38,6 +39,7 @@ func TestRegistryClinet_GetPackageList(t *testing.T) {
 			wantLastVersionBlake2b256:        "c86666f4e87201f72a79c2bf600f2b7096988572447f4a3dae38e4b4873a346f",
 			wantLastVersionSha256:            "970fd9f9f522eb48f3cd5574e927b369279ebf5bcf0f2fae5ed9cc6306e58558",
 			wantLastVersionTime:              func() time.Time { ret, _ := time.Parse(time.RFC3339Nano, "2023-12-15T20:43:50.976124Z"); return ret }(),
+			wantLastVersionURL:               "https://files.pythonhosted.org/packages/c8/66/66f4e87201f72a79c2bf600f2b7096988572447f4a3dae38e4b4873a346f/boto3-1.34.2.tar.gz",
 			wantLastVersionMaintainersEmails: []string{},
 			wantVersionsSha256: map[string]string{
 				"0.0.1":   "bc018a3aedc5cf7329dcdeb435ece8a296b605c19fb09842c1821935f1b14cfd",
@@ -103,6 +105,9 @@ func TestRegistryClinet_GetPackageList(t *testing.T) {
 			if lastSdistVersion.Digests.SHA256 != tt.wantLastVersionSha256 {
 				t.Errorf("Expected last version sha256 digest to be '%s', got '%s'", tt.wantLastVersionSha256, lastSdistVersion.Digests.SHA256)
 			}
+			if lastSdistVersion.URL != tt.wantLastVersionURL {
+				t.Errorf("Expected last version URL to be '%s', got '%s'", tt.wantLastVersionURL, lastSdistVersion.URL)
+			}
 
 			gotLastPackageVersion, err := client.GetPackageLatestVersion(testCtx, tt.searchName)
 			assert.Nil(t, err)
@@ -138,6 +143,7 @@ func TestRegistryClient_GetPackageVersion(t *testing.T) {
 		version        string
 		testFile       string
 		wantName       string
+		wantURL        string
 		wantVersion    string
 		wantSha256     string
 		wantBlake2b256 string
@@ -149,9 +155,21 @@ func TestRegistryClient_GetPackageVersion(t *testing.T) {
 			version:        "1.33.8",
 			testFile:       "package_version.json",
 			wantName:       "boto3",
+			wantURL:        "https://files.pythonhosted.org/packages/12/1f/1d4c5bbe89542b62ec6a6ba624ef0142e1d0c3267711b4f01f6258399a0a/boto3-1.33.8.tar.gz",
 			wantVersion:    "1.33.8",
 			wantSha256:     "d02a084b25aa8d46ef917b128e90877efab1ba45f9d1ba3a11f336930378e350",
 			wantBlake2b256: "121f1d4c5bbe89542b62ec6a6ba624ef0142e1d0c3267711b4f01f6258399a0a",
+		},
+		{
+			descr:          "cctx 1.0.0 package from upstream registry",
+			name:           "cctx",
+			version:        "1.0.0",
+			testFile:       "cctx_100.json",
+			wantName:       "cctx",
+			wantURL:        "https://files.pythonhosted.org/packages/bd/d2/35ad05b2669c50fc2756e35d0fe462bbd085a5b7afb571f443fd2ceb151e/cctx-1.0.0.tar.gz",
+			wantVersion:    "1.0.0",
+			wantSha256:     "1d9ceb0603ed51a4f337cb8d53dd320339fd10814642d074b41a86d00be0bdbd",
+			wantBlake2b256: "bdd235ad05b2669c50fc2756e35d0fe462bbd085a5b7afb571f443fd2ceb151e",
 		},
 	}
 	for _, tt := range tests {
@@ -184,6 +202,9 @@ func TestRegistryClient_GetPackageVersion(t *testing.T) {
 			}
 			if packageVersion.Name != tt.wantName {
 				t.Errorf("Expected name to be '%s', got '%s'", tt.wantName, packageVersion.Name)
+			}
+			if packageVersion.URL != tt.wantURL {
+				t.Errorf("Expected URL to be '%s', got '%s'", tt.wantURL, packageVersion.URL)
 			}
 			if packageVersion.Version != tt.wantVersion {
 				t.Errorf("Expected version to be '%s', got '%s'", tt.wantVersion, packageVersion.Version)
