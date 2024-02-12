@@ -49,7 +49,7 @@ func TestLogrusZapHook(t *testing.T) {
 					},
 				},
 			},
-			testFunc: func(t *testing.T, l *logrus.Logger, _ *observer.ObservedLogs) {
+			testFunc: func(_ *testing.T, l *logrus.Logger, _ *observer.ObservedLogs) {
 				l.WithField("component", "dummyscheduler").Info("here you go")
 			},
 		},
@@ -108,7 +108,7 @@ func TestLogrusZapHook(t *testing.T) {
 					},
 				},
 			},
-			testFunc: func(t *testing.T, l *logrus.Logger, _ *observer.ObservedLogs) {
+			testFunc: func(_ *testing.T, l *logrus.Logger, _ *observer.ObservedLogs) {
 				l.WithField("component", "dummyscheduler").Info("here you go")
 				l.WithField("component", "dummyscheduler").Error("what happened")
 			},
@@ -168,7 +168,7 @@ func TestLogrusZapHook(t *testing.T) {
 					},
 				},
 			},
-			testFunc: func(t *testing.T, l *logrus.Logger, _ *observer.ObservedLogs) {
+			testFunc: func(_ *testing.T, l *logrus.Logger, _ *observer.ObservedLogs) {
 				l.WithField("component", "dummyscheduler").Info("here you go")
 				l.WithField("component", "dummyscheduler").Error("what happened")
 			},
