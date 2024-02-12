@@ -20,7 +20,7 @@ const (
 	NPMInstallWhileDynamicInstrumentation
 	NPMAdvisory
 	NPMInstallWhileDynamicInstrumentationAIEnriched
-	// NPMTestWhileDynamicInstrumentation
+	// NPMTestWhileDynamicInstrumentation.
 
 	NPMTyposquat
 	NPMMetadataEmptyDescription
@@ -37,7 +37,7 @@ const (
 
 	PypiTyposquat Type = iota + 986 // 1001
 	// PypiMetadataEmptyDescription
-	// PypiMetadataVersion
+	// PypiMetadataVersion.
 	PypiMetadataMaintainersEmailCheck
 
 	_maxType
