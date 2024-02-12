@@ -31,14 +31,18 @@ func TestRegistryClinet_GetPackageList(t *testing.T) {
 		wantErr                          bool
 	}{
 		{
-			descr:                            "boto3 package from upstream registry",
-			testFile:                         "package_list.json",
-			searchName:                       "boto3",
-			wantName:                         "boto3",
-			wantLastVersionTag:               "1.34.2",
-			wantLastVersionBlake2b256:        "c86666f4e87201f72a79c2bf600f2b7096988572447f4a3dae38e4b4873a346f",
-			wantLastVersionSha256:            "970fd9f9f522eb48f3cd5574e927b369279ebf5bcf0f2fae5ed9cc6306e58558",
-			wantLastVersionTime:              func() time.Time { ret, _ := time.Parse(time.RFC3339Nano, "2023-12-15T20:43:50.976124Z"); return ret }(),
+			descr:                     "boto3 package from upstream registry",
+			testFile:                  "package_list.json",
+			searchName:                "boto3",
+			wantName:                  "boto3",
+			wantLastVersionTag:        "1.34.2",
+			wantLastVersionBlake2b256: "c86666f4e87201f72a79c2bf600f2b7096988572447f4a3dae38e4b4873a346f",
+			wantLastVersionSha256:     "970fd9f9f522eb48f3cd5574e927b369279ebf5bcf0f2fae5ed9cc6306e58558",
+			wantLastVersionTime: func() time.Time {
+				ret, _ := time.Parse(time.RFC3339Nano, "2023-12-15T20:43:50.976124Z")
+
+				return ret
+			}(),
 			wantLastVersionURL:               "https://files.pythonhosted.org/packages/c8/66/66f4e87201f72a79c2bf600f2b7096988572447f4a3dae38e4b4873a346f/boto3-1.34.2.tar.gz",
 			wantLastVersionMaintainersEmails: []string{},
 			wantVersionsSha256: map[string]string{
@@ -51,7 +55,7 @@ func TestRegistryClinet_GetPackageList(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.descr, func(t *testing.T) {
 			// Set up a mock HTTP server
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				plist, err := os.ReadFile(path.Join("testdata/", tt.testFile))
 				if err != nil {
@@ -175,7 +179,7 @@ func TestRegistryClient_GetPackageVersion(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.descr, func(t *testing.T) {
 			// Set up a mock HTTP server
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				plist, err := os.ReadFile(path.Join("testdata/", tt.testFile))
 				if err != nil {
