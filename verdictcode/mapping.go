@@ -61,6 +61,28 @@ var mapping = map[analysisrequest.Type]map[Code]bool{
 	analysisrequest.PypiMetadataMaintainersEmailCheck: {
 		MDP04: true,
 	},
+	analysisrequest.PypiStaticAnalysisEnvExfiltration: {
+		STP001: true,
+	},
+	analysisrequest.PypiStaticAnalysisDetachedProcessExecution: {
+		STP002: true,
+	},
+	analysisrequest.PypiStaticAnalysisShadyLinks: {
+		STP003: true,
+	},
+	analysisrequest.PypiStaticAnalysisEvalBase64: {
+		STP004: true,
+	},
+	// NOTE: does not exist
+	// analysisrequest.PypiStaticAnalysisInstallScript: {
+	// 	STP005: true,
+	// },
+	analysisrequest.PypiStaticNonRegistryDependency: {
+		STP006: true,
+		STP007: true,
+		STP008: true,
+		STP009: true,
+	},
 }
 
 // nonUniquelyIdentifying contains the codes that are not uniquely identifying verdicts.
@@ -86,4 +108,13 @@ var nonUniquelyIdentifying = []Code{
 	MDN09,
 	MDP04,
 	MDP09,
+	STP001,
+	STP002,
+	STP003,
+	STP004,
+	// STP005, // Not existing
+	STP006,
+	STP007,
+	STP008,
+	STP009,
 }
