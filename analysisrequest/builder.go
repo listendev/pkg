@@ -174,6 +174,16 @@ func (b *builder) FromJSON(body []byte) (AnalysisRequest, error) {
 	case PypiTyposquat:
 		fallthrough
 	case PypiMetadataMaintainersEmailCheck:
+		fallthrough
+	case PypiStaticAnalysisEnvExfiltration:
+		fallthrough
+	case PypiStaticAnalysisDetachedProcessExecution:
+		fallthrough
+	case PypiStaticAnalysisEvalBase64:
+		fallthrough
+	case PypiStaticAnalysisShadyLinks:
+		fallthrough
+	case PypiStaticNonRegistryDependency:
 		return b.getPyPiAnalysisRequest(body)
 
 	// NOP
