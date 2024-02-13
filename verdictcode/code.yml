@@ -72,6 +72,15 @@ components:
         - 1200 # RUN001
         - 1324 # MDP04
         - 1329 # MDP09
+        - 1401 # STP001
+        - 1402 # STP002
+        - 1403 # STP003
+        - 1404 # STP004
+        # - 1405 # STP005
+        - 1406 # STP006
+        - 1407 # STP007
+        - 1408 # STP008
+        - 1409 # STP009
       x-enumNames:
         - "UNK"
         - "FNI001" # npm install spawn a child process
@@ -106,6 +115,15 @@ components:
         - "RUN001" # runtime (DNS)
         - "MDP04"  # Potentially compromised PyPi maintainer's email domain (re-registered domain)
         - "MDP09"  # Potentially compromised NPM maintainer's email domain (available domain)
+        - "STP001" # Python env exfiltration
+        - "STP002" # Python child process exec
+        - "STP003" # Shady links in PyPi project
+        - "STP004" # Python eval base64
+        # - "STP005" # install script (not feasible for PyPi)
+        - "STP006" # Python git dependency
+        - "STP007" # Python http dependency
+        - "STP008" # Python github dependency
+        - "STP009" # Python github gist dependency
       x-oapi-codegen-extra-tags:
         validate: required_with=Message,isdefault|is_verdictcode
         human: the code identifying the verdict type
