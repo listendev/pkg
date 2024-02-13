@@ -118,4 +118,9 @@ func TestRetrievingTheType(t *testing.T) {
 	assert.Nil(t, e8)
 	assert.NotNil(t, t8)
 	assert.Equal(t, analysisrequest.PypiMetadataMaintainersEmailCheck, t8)
+
+	t9, e9 := STP003.Type(false)
+	assert.Nil(t, e9)
+	assert.NotNil(t, t9)
+	assert.Equal(t, analysisrequest.PypiStaticAnalysisShadyLinks, t9)
 }
