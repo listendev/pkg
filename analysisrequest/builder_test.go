@@ -223,6 +223,33 @@ func TestAnalysisRequestFromJSON(t *testing.T) {
 			}(),
 		},
 		{
+			name: "valid full pypi static (shady links) analysis request",
+			args: args{
+				body: []byte(`{"type": "urn:hoarding:static,shady_links!pypi.json", "snowflake_id": "1652803364692340737", "name": "cctx", "version": "1.0.0", "sha256": "1d9ceb0603ed51a4f337cb8d53dd320339fd10814642d074b41a86d00be0bdbd", "blake2b_256": "bdd235ad05b2669c50fc2756e35d0fe462bbd085a5b7afb571f443fd2ceb151e", "priority": 5, "force": true}`),
+			},
+			want: &PyPi{
+				base: base{
+					RequestType: PypiStaticAnalysisShadyLinks,
+					Snowflake:   "1652803364692340737",
+					Priority:    5,
+					Force:       true,
+				},
+				pypiPackage: pypiPackage{
+					Name:       "cctx",
+					Version:    "1.0.0",
+					Sha256:     "1d9ceb0603ed51a4f337cb8d53dd320339fd10814642d074b41a86d00be0bdbd",
+					Blake2b256: "bdd235ad05b2669c50fc2756e35d0fe462bbd085a5b7afb571f443fd2ceb151e",
+				},
+			},
+			wantPublishing: &amqp.Publishing{
+				ContentType: "application/json",
+				Priority:    5,
+				Body:        []byte(`{"type":"urn:hoarding:static,shady_links!pypi.json","snowflake_id":"1652803364692340737","name":"cctx","version":"1.0.0","priority":5,"force":true,"sha256":"1d9ceb0603ed51a4f337cb8d53dd320339fd10814642d074b41a86d00be0bdbd","blake2b_256":"bdd235ad05b2669c50fc2756e35d0fe462bbd085a5b7afb571f443fd2ceb151e"}`),
+			},
+			wantKey: "pypi/cctx/1.0.0/bdd235ad05b2669c50fc2756e35d0fe462bbd085a5b7afb571f443fd2ceb151e/static(shady_links).json",
+			wantErr: false,
+		},
+		{
 			name: "valid full npm advisory analysis request",
 			args: args{
 				body: []byte(`{"type": "urn:hoarding:advisory!npm.json", "snowflake_id": "1524854487523524608", "name": "chalk", "version": "5.1.2", "shasum": "d957f370038b75ac572471e83be4c5ca9f8e8c45", "priority": 5, "force": true}`),
