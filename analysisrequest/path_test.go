@@ -33,8 +33,13 @@ func TestGetResultFilesByEcosystem(t *testing.T) {
 			}
 		case ecosystem.Pypi:
 			wnt = map[Type]string{
-				PypiTyposquat:                     "typosquat.json",
-				PypiMetadataMaintainersEmailCheck: "metadata(email_check).json",
+				PypiTyposquat:                              "typosquat.json",
+				PypiMetadataMaintainersEmailCheck:          "metadata(email_check).json",
+				PypiStaticAnalysisEnvExfiltration:          "static(exfiltrate_env).json",
+				PypiStaticAnalysisEvalBase64:               "static(base64_eval).json",
+				PypiStaticAnalysisDetachedProcessExecution: "static(detached_process_exec).json",
+				PypiStaticAnalysisShadyLinks:               "static(shady_links).json",
+				PypiStaticNonRegistryDependency:            "static(non_registry_dependency).json",
 			}
 		}
 		got := GetResultFilesByEcosystem(e)
@@ -70,7 +75,13 @@ func TestGetTypeForEcosystemFromResultFile(t *testing.T) {
 			}
 		case ecosystem.Pypi:
 			wnt = map[string]Type{
-				"typosquat.json": PypiTyposquat,
+				"typosquat.json":                       PypiTyposquat,
+				"metadata(email_check).json":           PypiMetadataMaintainersEmailCheck,
+				"static(exfiltrate_env).json":          PypiStaticAnalysisEnvExfiltration,
+				"static(base64_eval).json":             PypiStaticAnalysisEvalBase64,
+				"static(detached_process_exec).json":   PypiStaticAnalysisDetachedProcessExecution,
+				"static(shady_links).json":             PypiStaticAnalysisShadyLinks,
+				"static(non_registry_dependency).json": PypiStaticNonRegistryDependency,
 			}
 		}
 
@@ -93,18 +104,18 @@ func TestGetTypesFromResultFile(t *testing.T) {
 	wnt := map[string][]Type{
 		"dynamic!install!.json": {NPMInstallWhileDynamicInstrumentation},
 		// "dynamic[test].json":    {NPMTestWhileDynamicInstrumentation},
-		"advisory.json":              {NPMAdvisory},
-		"typosquat.json":             {NPMTyposquat, PypiTyposquat},
-		"metadata(empty_descr).json": {NPMMetadataEmptyDescription},
-		"metadata(version).json":     {NPMMetadataVersion},
-		// "metadata(email_check).json":           {NPMMetadataMaintainersEmailCheck},
+		"advisory.json":                        {NPMAdvisory},
+		"typosquat.json":                       {NPMTyposquat, PypiTyposquat},
+		"metadata(empty_descr).json":           {NPMMetadataEmptyDescription},
+		"metadata(version).json":               {NPMMetadataVersion},
+		"metadata(email_check).json":           {NPMMetadataMaintainersEmailCheck, PypiMetadataMaintainersEmailCheck},
 		"metadata(mismatches).json":            {NPMMetadataMismatches},
-		"static(exfiltrate_env).json":          {NPMStaticAnalysisEnvExfiltration},
-		"static(shady_links).json":             {NPMStaticAnalysisShadyLinks},
-		"static(detached_process_exec).json":   {NPMStaticAnalysisDetachedProcessExecution},
-		"static(base64_eval).json":             {NPMStaticAnalysisEvalBase64},
+		"static(exfiltrate_env).json":          {NPMStaticAnalysisEnvExfiltration, PypiStaticAnalysisEnvExfiltration},
+		"static(shady_links).json":             {NPMStaticAnalysisShadyLinks, PypiStaticAnalysisShadyLinks},
+		"static(detached_process_exec).json":   {NPMStaticAnalysisDetachedProcessExecution, PypiStaticAnalysisDetachedProcessExecution},
+		"static(base64_eval).json":             {NPMStaticAnalysisEvalBase64, PypiStaticAnalysisEvalBase64},
 		"static(install_script).json":          {NPMStaticAnalysisInstallScript},
-		"static(non_registry_dependency).json": {NPMStaticNonRegistryDependency},
+		"static(non_registry_dependency).json": {NPMStaticNonRegistryDependency, PypiStaticNonRegistryDependency},
 	}
 	for f, typ := range wnt {
 		got, err := GetTypesFromResultFile(f)

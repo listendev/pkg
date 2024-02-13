@@ -320,6 +320,81 @@ func TestTypes(t *testing.T) {
 				},
 			},
 		},
+		{
+			input: PypiStaticAnalysisEnvExfiltration,
+			want: want{
+				urn:  "urn:hoarding:static,exfiltrate_env!pypi.json",
+				json: []byte(`"urn:hoarding:static,exfiltrate_env!pypi.json"`),
+				TypeComponents: TypeComponents{
+					Framework:       Hoarding,
+					Collector:       StaticAnalysisCollector,
+					CollectorAction: "exfiltrate_env",
+					Ecosystem:       ecosystem.Pypi,
+					EcosystemAction: "",
+					Format:          "json",
+				},
+			},
+		},
+		{
+			input: PypiStaticAnalysisDetachedProcessExecution,
+			want: want{
+				urn:  "urn:hoarding:static,detached_process_exec!pypi.json",
+				json: []byte(`"urn:hoarding:static,detached_process_exec!pypi.json"`),
+				TypeComponents: TypeComponents{
+					Framework:       Hoarding,
+					Collector:       StaticAnalysisCollector,
+					CollectorAction: "detached_process_exec",
+					Ecosystem:       ecosystem.Pypi,
+					EcosystemAction: "",
+					Format:          "json",
+				},
+			},
+		},
+		{
+			input: PypiStaticAnalysisEvalBase64,
+			want: want{
+				urn:  "urn:hoarding:static,base64_eval!pypi.json",
+				json: []byte(`"urn:hoarding:static,base64_eval!pypi.json"`),
+				TypeComponents: TypeComponents{
+					Framework:       Hoarding,
+					Collector:       StaticAnalysisCollector,
+					CollectorAction: "base64_eval",
+					Ecosystem:       ecosystem.Pypi,
+					EcosystemAction: "",
+					Format:          "json",
+				},
+			},
+		},
+		{
+			input: PypiStaticAnalysisShadyLinks,
+			want: want{
+				urn:  "urn:hoarding:static,shady_links!pypi.json",
+				json: []byte(`"urn:hoarding:static,shady_links!pypi.json"`),
+				TypeComponents: TypeComponents{
+					Framework:       Hoarding,
+					Collector:       StaticAnalysisCollector,
+					CollectorAction: "shady_links",
+					Ecosystem:       ecosystem.Pypi,
+					EcosystemAction: "",
+					Format:          "json",
+				},
+			},
+		},
+		{
+			input: PypiStaticNonRegistryDependency,
+			want: want{
+				urn:  "urn:hoarding:static,non_registry_dependency!pypi.json",
+				json: []byte(`"urn:hoarding:static,non_registry_dependency!pypi.json"`),
+				TypeComponents: TypeComponents{
+					Framework:       Hoarding,
+					Collector:       StaticAnalysisCollector,
+					CollectorAction: "non_registry_dependency",
+					Ecosystem:       ecosystem.Pypi,
+					EcosystemAction: "",
+					Format:          "json",
+				},
+			},
+		},
 	}
 
 	for _, tc := range cases {
@@ -350,5 +425,5 @@ func TestTypes(t *testing.T) {
 func TestLastType(t *testing.T) {
 	got := LastType()
 
-	assert.Equal(t, PypiMetadataMaintainersEmailCheck, got)
+	assert.Equal(t, PypiStaticNonRegistryDependency, got)
 }
