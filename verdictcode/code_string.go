@@ -38,6 +38,14 @@ func _() {
 	_ = x[STN007-1107]
 	_ = x[STN008-1108]
 	_ = x[STN009-1109]
+	_ = x[STP001-1401]
+	_ = x[STP002-1402]
+	_ = x[STP003-1403]
+	_ = x[STP004-1404]
+	_ = x[STP006-1406]
+	_ = x[STP007-1407]
+	_ = x[STP008-1408]
+	_ = x[STP009-1409]
 	_ = x[TSN01-1011]
 	_ = x[TSP01-1012]
 	_ = x[UNK-0]
@@ -52,6 +60,8 @@ const (
 	_Code_name_5 = "RUN001"
 	_Code_name_6 = "MDP04"
 	_Code_name_7 = "MDP09"
+	_Code_name_8 = "STP001STP002STP003STP004"
+	_Code_name_9 = "STP006STP007STP008STP009"
 )
 
 var (
@@ -59,6 +69,8 @@ var (
 	_Code_index_2 = [...]uint8{0, 5, 10}
 	_Code_index_3 = [...]uint8{0, 5, 10, 15, 20, 25, 30, 35, 40, 45}
 	_Code_index_4 = [...]uint8{0, 6, 12, 18, 24, 30, 36, 42, 48, 54}
+	_Code_index_8 = [...]uint8{0, 6, 12, 18, 24}
+	_Code_index_9 = [...]uint8{0, 6, 12, 18, 24}
 )
 
 func (i Code) String() string {
@@ -82,6 +94,12 @@ func (i Code) String() string {
 		return _Code_name_6
 	case i == 1329:
 		return _Code_name_7
+	case 1401 <= i && i <= 1404:
+		i -= 1401
+		return _Code_name_8[_Code_index_8[i]:_Code_index_8[i+1]]
+	case 1406 <= i && i <= 1409:
+		i -= 1406
+		return _Code_name_9[_Code_index_9[i]:_Code_index_9[i+1]]
 	default:
 		return "Code(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
