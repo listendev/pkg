@@ -35,10 +35,14 @@ const (
 	NPMStaticAnalysisInstallScript
 	NPMStaticNonRegistryDependency
 
-	PypiTyposquat Type = iota + 986 // 1001
-	// PypiMetadataEmptyDescription
-	// PypiMetadataVersion.
-	PypiMetadataMaintainersEmailCheck
+	PypiTyposquat                     Type = iota + 990 // 1005
+	PypiMetadataMaintainersEmailCheck Type = iota + 992 // 1008
+
+	PypiStaticAnalysisEnvExfiltration Type = iota + 1001 // 1018
+	PypiStaticAnalysisDetachedProcessExecution
+	PypiStaticAnalysisShadyLinks
+	PypiStaticAnalysisEvalBase64
+	PypiStaticNonRegistryDependency Type = iota + 1002 // 1023
 
 	_maxType
 )
@@ -120,8 +124,13 @@ var typeURNs = map[Type]string{
 	NPMStaticAnalysisInstallScript:            createType(Hoarding, StaticAnalysisCollector, "install_script", ecosystem.Npm, "", "json"),
 	NPMStaticNonRegistryDependency:            createType(Hoarding, StaticAnalysisCollector, "non_registry_dependency", ecosystem.Npm, "", "json"),
 
-	PypiTyposquat:                     createType(Hoarding, TyposquatCollector, "", ecosystem.Pypi, "", "json"),
-	PypiMetadataMaintainersEmailCheck: createType(Hoarding, MetadataCollector, "email_check", ecosystem.Pypi, "", "json"),
+	PypiTyposquat:                              createType(Hoarding, TyposquatCollector, "", ecosystem.Pypi, "", "json"),
+	PypiMetadataMaintainersEmailCheck:          createType(Hoarding, MetadataCollector, "email_check", ecosystem.Pypi, "", "json"),
+	PypiStaticAnalysisEnvExfiltration:          createType(Hoarding, StaticAnalysisCollector, "exfiltrate_env", ecosystem.Pypi, "", "json"),
+	PypiStaticAnalysisDetachedProcessExecution: createType(Hoarding, StaticAnalysisCollector, "detached_process_exec", ecosystem.Pypi, "", "json"),
+	PypiStaticAnalysisShadyLinks:               createType(Hoarding, StaticAnalysisCollector, "shady_links", ecosystem.Pypi, "", "json"),
+	PypiStaticAnalysisEvalBase64:               createType(Hoarding, StaticAnalysisCollector, "base64_eval", ecosystem.Pypi, "", "json"),
+	PypiStaticNonRegistryDependency:            createType(Hoarding, StaticAnalysisCollector, "non_registry_dependency", ecosystem.Pypi, "", "json"),
 }
 
 func Types() []Type {
