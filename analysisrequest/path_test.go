@@ -40,6 +40,7 @@ func TestGetResultFilesByEcosystem(t *testing.T) {
 				PypiStaticAnalysisDetachedProcessExecution: "static(detached_process_exec).json",
 				PypiStaticAnalysisShadyLinks:               "static(shady_links).json",
 				PypiStaticNonRegistryDependency:            "static(non_registry_dependency).json",
+				PypiStaticAnalysisCodeExecutionAtSetup:     "static(code_exec_at_setup).json",
 			}
 		}
 		got := GetResultFilesByEcosystem(e)
@@ -60,11 +61,11 @@ func TestGetTypeForEcosystemFromResultFile(t *testing.T) {
 			wnt = map[string]Type{
 				"dynamic!install!.json": NPMInstallWhileDynamicInstrumentation,
 				// "dynamic[test].json":    NPMTestWhileDynamicInstrumentation,
-				"advisory.json":              NPMAdvisory,
-				"typosquat.json":             NPMTyposquat,
-				"metadata(empty_descr).json": NPMMetadataEmptyDescription,
-				"metadata(version).json":     NPMMetadataVersion,
-				// "metadata(email_check).json":           NPMMetadataMaintainersEmailCheck,
+				"advisory.json":                        NPMAdvisory,
+				"typosquat.json":                       NPMTyposquat,
+				"metadata(empty_descr).json":           NPMMetadataEmptyDescription,
+				"metadata(version).json":               NPMMetadataVersion,
+				"metadata(email_check).json":           NPMMetadataMaintainersEmailCheck,
 				"metadata(mismatches).json":            NPMMetadataMismatches,
 				"static(exfiltrate_env).json":          NPMStaticAnalysisEnvExfiltration,
 				"static(shady_links).json":             NPMStaticAnalysisShadyLinks,
@@ -82,6 +83,7 @@ func TestGetTypeForEcosystemFromResultFile(t *testing.T) {
 				"static(detached_process_exec).json":   PypiStaticAnalysisDetachedProcessExecution,
 				"static(shady_links).json":             PypiStaticAnalysisShadyLinks,
 				"static(non_registry_dependency).json": PypiStaticNonRegistryDependency,
+				"static(code_exec_at_setup).json":      PypiStaticAnalysisCodeExecutionAtSetup,
 			}
 		}
 
