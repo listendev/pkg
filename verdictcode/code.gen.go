@@ -35,6 +35,7 @@ const (
 	STN007 Code = 1107
 	STN008 Code = 1108
 	STN009 Code = 1109
+	STN010 Code = 1110
 	STP001 Code = 1401
 	STP002 Code = 1402
 	STP003 Code = 1403
@@ -43,6 +44,7 @@ const (
 	STP007 Code = 1407
 	STP008 Code = 1408
 	STP009 Code = 1409
+	STP010 Code = 1410
 	TSN01  Code = 1011
 	TSP01  Code = 1012
 	UNK    Code = 0
