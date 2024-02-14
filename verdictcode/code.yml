@@ -69,6 +69,7 @@ components:
         - 1107 # STN007
         - 1108 # STN008
         - 1109 # STN009
+        - 1110 # STN010
         - 1200 # RUN001
         - 1324 # MDP04
         - 1329 # MDP09
@@ -81,6 +82,7 @@ components:
         - 1407 # STP007
         - 1408 # STP008
         - 1409 # STP009
+        - 1410 # STP010
       x-enumNames:
         - "UNK"
         - "FNI001" # npm install spawn a child process
@@ -112,6 +114,7 @@ components:
         - "STN007" # npm http dependency
         - "STN008" # npm github dependency
         - "STN009" # npm github gist dependency
+        - "STN010" # npm shady IPv4 or IPv6
         - "RUN001" # runtime (DNS)
         - "MDP04"  # Potentially compromised PyPi maintainer's email domain (re-registered domain)
         - "MDP09"  # Potentially compromised NPM maintainer's email domain (available domain)
@@ -124,6 +127,7 @@ components:
         - "STP007" # Python http dependency
         - "STP008" # Python github dependency
         - "STP009" # Python github gist dependency
+        - "STP010" # Python shady IPv4 or IPv6
       x-oapi-codegen-extra-tags:
         validate: required_with=Message,isdefault|is_verdictcode
         human: the code identifying the verdict type

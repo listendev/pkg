@@ -38,6 +38,7 @@ func _() {
 	_ = x[STN007-1107]
 	_ = x[STN008-1108]
 	_ = x[STN009-1109]
+	_ = x[STN010-1110]
 	_ = x[STP001-1401]
 	_ = x[STP002-1402]
 	_ = x[STP003-1403]
@@ -46,6 +47,7 @@ func _() {
 	_ = x[STP007-1407]
 	_ = x[STP008-1408]
 	_ = x[STP009-1409]
+	_ = x[STP010-1410]
 	_ = x[TSN01-1011]
 	_ = x[TSP01-1012]
 	_ = x[UNK-0]
@@ -56,21 +58,21 @@ const (
 	_Code_name_1 = "DDN01"
 	_Code_name_2 = "TSN01TSP01"
 	_Code_name_3 = "MDN01MDN02MDN03MDN04MDN05MDN06MDN07MDN08MDN09"
-	_Code_name_4 = "STN001STN002STN003STN004STN005STN006STN007STN008STN009"
+	_Code_name_4 = "STN001STN002STN003STN004STN005STN006STN007STN008STN009STN010"
 	_Code_name_5 = "RUN001"
 	_Code_name_6 = "MDP04"
 	_Code_name_7 = "MDP09"
 	_Code_name_8 = "STP001STP002STP003STP004"
-	_Code_name_9 = "STP006STP007STP008STP009"
+	_Code_name_9 = "STP006STP007STP008STP009STP010"
 )
 
 var (
 	_Code_index_0 = [...]uint8{0, 3, 9, 15, 21, 27, 33, 39, 45, 51}
 	_Code_index_2 = [...]uint8{0, 5, 10}
 	_Code_index_3 = [...]uint8{0, 5, 10, 15, 20, 25, 30, 35, 40, 45}
-	_Code_index_4 = [...]uint8{0, 6, 12, 18, 24, 30, 36, 42, 48, 54}
+	_Code_index_4 = [...]uint8{0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60}
 	_Code_index_8 = [...]uint8{0, 6, 12, 18, 24}
-	_Code_index_9 = [...]uint8{0, 6, 12, 18, 24}
+	_Code_index_9 = [...]uint8{0, 6, 12, 18, 24, 30}
 )
 
 func (i Code) String() string {
@@ -85,7 +87,7 @@ func (i Code) String() string {
 	case 1021 <= i && i <= 1029:
 		i -= 1021
 		return _Code_name_3[_Code_index_3[i]:_Code_index_3[i+1]]
-	case 1101 <= i && i <= 1109:
+	case 1101 <= i && i <= 1110:
 		i -= 1101
 		return _Code_name_4[_Code_index_4[i]:_Code_index_4[i+1]]
 	case i == 1200:
@@ -97,7 +99,7 @@ func (i Code) String() string {
 	case 1401 <= i && i <= 1404:
 		i -= 1401
 		return _Code_name_8[_Code_index_8[i]:_Code_index_8[i+1]]
-	case 1406 <= i && i <= 1409:
+	case 1406 <= i && i <= 1410:
 		i -= 1406
 		return _Code_name_9[_Code_index_9[i]:_Code_index_9[i+1]]
 	default:
