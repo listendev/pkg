@@ -42,6 +42,7 @@ var mapping = map[analysisrequest.Type]map[Code]bool{
 	},
 	analysisrequest.NPMStaticAnalysisShadyLinks: {
 		STN003: true,
+		STN010: true,
 	},
 	analysisrequest.NPMStaticAnalysisEvalBase64: {
 		STN004: true,
@@ -69,6 +70,7 @@ var mapping = map[analysisrequest.Type]map[Code]bool{
 	},
 	analysisrequest.PypiStaticAnalysisShadyLinks: {
 		STP003: true,
+		STP010: true,
 	},
 	analysisrequest.PypiStaticAnalysisEvalBase64: {
 		STP004: true,
