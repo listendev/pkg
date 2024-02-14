@@ -77,7 +77,7 @@ components:
         - 1402 # STP002
         - 1403 # STP003
         - 1404 # STP004
-        # - 1405 # STP005
+        - 1405 # STP005
         - 1406 # STP006
         - 1407 # STP007
         - 1408 # STP008
@@ -122,7 +122,7 @@ components:
         - "STP002" # Python child process exec
         - "STP003" # Shady links in PyPi project
         - "STP004" # Python eval base64
-        # - "STP005" # install script (not feasible for PyPi)
+        - "STP005" # Executing OS command in setup.py
         - "STP006" # Python git dependency
         - "STP007" # Python http dependency
         - "STP008" # Python github dependency

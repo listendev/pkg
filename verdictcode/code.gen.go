@@ -40,6 +40,7 @@ const (
 	STP002 Code = 1402
 	STP003 Code = 1403
 	STP004 Code = 1404
+	STP005 Code = 1405
 	STP006 Code = 1406
 	STP007 Code = 1407
 	STP008 Code = 1408
