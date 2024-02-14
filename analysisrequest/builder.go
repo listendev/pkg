@@ -181,6 +181,8 @@ func (b *builder) FromJSON(body []byte) (AnalysisRequest, error) {
 		fallthrough
 	case PypiStaticAnalysisEvalBase64:
 		fallthrough
+	case PypiStaticAnalysisCodeExecutionAtSetup:
+		fallthrough
 	case PypiStaticAnalysisShadyLinks:
 		fallthrough
 	case PypiStaticNonRegistryDependency:

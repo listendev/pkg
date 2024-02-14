@@ -42,7 +42,8 @@ const (
 	PypiStaticAnalysisDetachedProcessExecution
 	PypiStaticAnalysisShadyLinks
 	PypiStaticAnalysisEvalBase64
-	PypiStaticNonRegistryDependency Type = iota + 1002 // 1023
+	PypiStaticAnalysisCodeExecutionAtSetup
+	PypiStaticNonRegistryDependency
 
 	_maxType
 )
@@ -130,6 +131,7 @@ var typeURNs = map[Type]string{
 	PypiStaticAnalysisDetachedProcessExecution: createType(Hoarding, StaticAnalysisCollector, "detached_process_exec", ecosystem.Pypi, "", "json"),
 	PypiStaticAnalysisShadyLinks:               createType(Hoarding, StaticAnalysisCollector, "shady_links", ecosystem.Pypi, "", "json"),
 	PypiStaticAnalysisEvalBase64:               createType(Hoarding, StaticAnalysisCollector, "base64_eval", ecosystem.Pypi, "", "json"),
+	PypiStaticAnalysisCodeExecutionAtSetup:     createType(Hoarding, StaticAnalysisCollector, "code_exec_at_setup", ecosystem.Pypi, "", "json"),
 	PypiStaticNonRegistryDependency:            createType(Hoarding, StaticAnalysisCollector, "non_registry_dependency", ecosystem.Pypi, "", "json"),
 }
 
