@@ -123,4 +123,14 @@ func TestRetrievingTheType(t *testing.T) {
 	assert.Nil(t, e9)
 	assert.NotNil(t, t9)
 	assert.Equal(t, analysisrequest.PypiStaticAnalysisShadyLinks, t9)
+
+	ta, ea := STP010.Type(false)
+	assert.Nil(t, ea)
+	assert.NotNil(t, ta)
+	assert.Equal(t, analysisrequest.PypiStaticAnalysisShadyLinks, ta)
+
+	tb, eb := STN010.Type(false)
+	assert.Nil(t, eb)
+	assert.NotNil(t, tb)
+	assert.Equal(t, analysisrequest.NPMStaticAnalysisShadyLinks, tb)
 }
