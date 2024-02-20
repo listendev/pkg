@@ -13,40 +13,35 @@ func IsEmpty(value interface{}) bool {
 		valueV = valueV.Elem()
 	}
 
-	// short circuit for zero values of certain types
 	switch valueV.Kind() {
 	case reflect.Struct:
 		if IsZero(value) {
 			return true
 		}
-	}
 
-	switch valueV.Kind() {
 	case reflect.Array, reflect.Slice:
 		if valueV.Len() == 0 {
 			return true
-		} else {
-			for i := 0; i < valueV.Len(); i++ {
-				if indexV := valueV.Index(i); indexV.IsValid() && !IsEmpty(indexV.Interface()) {
-					return false
-				}
-			}
-
-			return true
 		}
+		for i := 0; i < valueV.Len(); i++ {
+			if indexV := valueV.Index(i); indexV.IsValid() && !IsEmpty(indexV.Interface()) {
+				return false
+			}
+		}
+
+		return true
 
 	case reflect.Map:
 		if valueV.Len() == 0 {
 			return true
-		} else {
-			for _, keyV := range valueV.MapKeys() {
-				if indexV := valueV.MapIndex(keyV); indexV.IsValid() && !IsEmpty(indexV.Interface()) {
-					return false
-				}
-			}
-
-			return true
 		}
+		for _, keyV := range valueV.MapKeys() {
+			if indexV := valueV.MapIndex(keyV); indexV.IsValid() && !IsEmpty(indexV.Interface()) {
+				return false
+			}
+		}
+
+		return true
 
 	case reflect.Chan:
 		if valueV.Len() == 0 {
