@@ -14,6 +14,10 @@ func IsEmpty(value interface{}) bool {
 	}
 
 	switch valueV.Kind() {
+	// Nil values have invalid kind: we consider them empty
+	case reflect.Invalid:
+		return true
+
 	case reflect.Struct:
 		if IsZero(value) {
 			return true
