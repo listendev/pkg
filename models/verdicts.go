@@ -9,6 +9,7 @@ import (
 
 	"github.com/listendev/pkg/analysisrequest"
 	"github.com/listendev/pkg/ecosystem"
+	maputil "github.com/listendev/pkg/map/util"
 	"github.com/listendev/pkg/models/category"
 	"github.com/listendev/pkg/validate"
 	"github.com/listendev/pkg/verdictcode"
@@ -171,6 +172,13 @@ func (o Verdict) MarshalJSON() ([]byte, error) {
 	err := o.Validate()
 	if err != nil {
 		return nil, err
+	}
+
+	// Compact the metadata because we don't want a huge JSON with empty/zero values
+	var compactErr error
+	o.Metadata, compactErr = maputil.Compact(o.Metadata)
+	if compactErr != nil {
+		return nil, compactErr
 	}
 
 	type alias Verdict
