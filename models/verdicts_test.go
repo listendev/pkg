@@ -223,9 +223,16 @@ func TestMarshalNPMOkVerdict(t *testing.T) {
 			// Expecting this to not be present into the resulting JSON
 			"emptymap": map[string]string{},
 			// Expecting this to not be present into the resulting JSON
-			"start": map[string]int{
+			"start": map[string]interface{}{
 				"col":    0,
 				"line":   0,
+				"offset": 0,
+			},
+			// Expecting this to not be present into the resulting JSON
+			"nilkey": nil,
+			"partialmap": map[string]int{
+				"col":    0,
+				"line":   10,
 				"offset": 0,
 			},
 		},
@@ -251,7 +258,10 @@ func TestMarshalNPMOkVerdict(t *testing.T) {
 			"npm_package_version": "21.4.2",
 			"commandline": "sh -c node install.js",
 			"parent_name": "node",
-			"executable_path": "/bin/sh"
+			"executable_path": "/bin/sh",
+			"partialmap": {
+				"line": 10
+			}
 		},
 		"code": "FNI001",
 		"expires_at": %q
