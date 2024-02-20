@@ -201,14 +201,33 @@ func TestMarshalNPMOkVerdict(t *testing.T) {
 		Fingerprint: "something",
 		Message:     "@vue/devtools 6.5.0 1 B",
 		Metadata: map[string]interface{}{
+			// Expecting this to not be present into the resulting JSON
+			"end": map[string]int{
+				"col":    0,
+				"line":   0,
+				"offset": 0,
+			},
 			NPMPackageNameMetadataKey:    "electron",
 			NPMPackageVersionMetadataKey: "21.4.2",
 			"commandline":                "sh -c node install.js",
 			"parent_name":                "node",
 			"executable_path":            "/bin/sh",
-			"server_ip":                  "",
-			"server_port":                float64(0),
-			"file_descriptor":            "",
+			// Expecting this to not be present into the resulting JSON
+			"server_ip": "",
+			// Expecting this to not be present into the resulting JSON
+			"server_port": float64(0),
+			// Expecting this to not be present into the resulting JSON
+			"file_descriptor": "",
+			// Expecting this to not be present into the resulting JSON
+			"emptyarray": []string{},
+			// Expecting this to not be present into the resulting JSON
+			"emptymap": map[string]string{},
+			// Expecting this to not be present into the resulting JSON
+			"start": map[string]int{
+				"col":    0,
+				"line":   0,
+				"offset": 0,
+			},
 		},
 		Severity:   severity.Medium,
 		Categories: []category.Category{category.Network, category.Process},
@@ -232,10 +251,7 @@ func TestMarshalNPMOkVerdict(t *testing.T) {
 			"npm_package_version": "21.4.2",
 			"commandline": "sh -c node install.js",
 			"parent_name": "node",
-			"executable_path": "/bin/sh",
-			"server_ip": "",
-			"server_port": 0,
-			"file_descriptor": ""
+			"executable_path": "/bin/sh"
 		},
 		"code": "FNI001",
 		"expires_at": %q
@@ -579,9 +595,6 @@ func TestFromBuffer(t *testing.T) {
 				"commandline":                "sh -c node install.js",
 				"parent_name":                "node",
 				"executable_path":            "/bin/sh",
-				"server_ip":                  "",
-				"server_port":                float64(0),
-				"file_descriptor":            "",
 			},
 			Severity:   severity.Medium,
 			Categories: []category.Category{category.AdjacentNetwork, category.CIS},
