@@ -21,6 +21,10 @@ const (
 	NPMPackageVersionMetadataKey = "npm_package_version"
 )
 
+var (
+	CompactMetadata bool = true
+)
+
 func NewEmptyVerdict(eco ecosystem.Ecosystem, org, pkg, version, digest, file string) (*Verdict, error) {
 	now := time.Now()
 	v := Verdict{
@@ -175,10 +179,12 @@ func (o Verdict) MarshalJSON() ([]byte, error) {
 	}
 
 	// Compact the metadata because we don't want a huge JSON with empty/zero values
-	var compactErr error
-	o.Metadata, compactErr = maputil.Compact(o.Metadata)
-	if compactErr != nil {
-		return nil, compactErr
+	if CompactMetadata {
+		var compactErr error
+		o.Metadata, compactErr = maputil.Compact(o.Metadata)
+		if compactErr != nil {
+			return nil, compactErr
+		}
 	}
 
 	type alias Verdict
