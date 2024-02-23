@@ -27,6 +27,7 @@ var mapping = map[analysisrequest.Type]map[Code]bool{
 	},
 	analysisrequest.NPMMetadataMaintainersEmailCheck: {
 		MDN04: true,
+		MDP09: true,
 	},
 	analysisrequest.NPMMetadataMismatches: {
 		MDN05: true,
@@ -74,6 +75,7 @@ var mapping = map[analysisrequest.Type]map[Code]bool{
 	},
 	analysisrequest.PypiStaticAnalysisEvalBase64: {
 		STP004: true,
+		STP009: true,
 	},
 	// NOTE: does not exist
 	// analysisrequest.PypiStaticAnalysisInstallScript: {
