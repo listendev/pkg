@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 
+	stringutil "github.com/listendev/pkg/string/util"
 	"golang.org/x/exp/maps"
 )
 
@@ -29,7 +30,10 @@ type PackageMaintainers []PackageMaintainer
 func (pm PackageMaintainers) Emails() []string {
 	ret := map[string]bool{}
 	for _, pm := range pm {
-		ret[pm.Mail] = true
+		emails := stringutil.MatchEmails(pm.Mail)
+		for _, e := range emails {
+			ret[e] = true
+		}
 	}
 
 	return maps.Keys(ret)

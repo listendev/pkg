@@ -1,6 +1,9 @@
 package npm
 
-import "golang.org/x/exp/maps"
+import (
+	stringutil "github.com/listendev/pkg/string/util"
+	"golang.org/x/exp/maps"
+)
 
 type PackageMaintainer struct {
 	Name string `json:"name"`
@@ -24,7 +27,10 @@ type PackageVersion struct {
 func (pm PackageMaintainers) Emails() []string {
 	ret := map[string]bool{}
 	for _, pm := range pm {
-		ret[pm.Mail] = true
+		emails := stringutil.MatchEmails(pm.Mail)
+		for _, e := range emails {
+			ret[e] = true
+		}
 	}
 
 	return maps.Keys(ret)
