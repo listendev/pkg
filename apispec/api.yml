@@ -1,0 +1,76 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: api
+  description: Listendev API
+  contact:
+    name: The Engineering Team
+    email: engineering@garnet.ai
+servers:
+  - url: https://core.listen.dev
+security:
+  - JWT: [dependencyevents:write]
+
+paths:
+  /api/v1/dependencies/event:
+    post:
+      summary: Create a new dependency event
+      description: This endpoint allows for the creation of a new event.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DependencyEvent"
+      responses:
+        "202":
+          description: Event created successfully
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      security:
+        - JWT: [dependencyevents:write]
+
+components:
+  schemas:
+    Error:
+      type: object
+      required: [message]
+      example:
+        message: Unauthorized
+      properties:
+        identifier:
+          type: string
+        message:
+          type: string
+    DependencyEvent:
+      type: object
+      properties:
+        verdict:
+          type: object
+          x-go-type: models.Verdict
+          description: The verdict of the event
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          description: A map of tags associated with the event.
+      required:
+        - verdict
+        - tags
+  securitySchemes:
+    JWT:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: "Enter JWT Bearer token"
+      bearerFormat: JWT
