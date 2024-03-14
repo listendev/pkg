@@ -2,7 +2,7 @@ openapi: "3.0.3"
 info:
   version: 1.0.0
   title: api
-  description: Listendev API
+  description: listen.dev Events API
   contact:
     name: The Engineering Team
     email: engineering@garnet.ai
