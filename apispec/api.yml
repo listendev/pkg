@@ -56,115 +56,111 @@ components:
     GitHubDependencyEventContext:
       type: object
       required:
+        - action
+        - actor
+        - actor_id
+        - event_name
+        - job
+        - ref
+        - ref_name
+        - ref_protected
+        - ref_type
+        - repository
         - repository_id
         - repository_owner
         - repository_owner_id
-        - repository
+        - run_attempt
         - run_id
+        - run_number
+        - runner_arch
+        - runner_os
+        - server_url
+        - sha
+        - triggering_actor
         - workflow
         - workflow_ref
-        - ref
-        - ref_name
-        - ref_type
-        - ref_protected
-        - job
-        - action
-        - action_path
-        - action_repository
-        - server_url
-        - run_number
-        - run_attempt
-        - actor
-        - actor_id
-        - triggering_actor
-        - event_name
-        - sha
-        - runner_arch
-        - runner_debug
-        - runner_os
         - workspace
       properties:
-        repository_id:
-          type: integer
-          example: 123456789
-        repository_owner:
+        action:
+          example: "actionscheckout"
           type: string
+        action_path:
+          example: "/home/runner/work/_actions/repo-owner/name-of-action-repo/v1"
+          type: string
+        action_repository:
+          example: "repo-owner/name-of-action-repo"
+          type: string
+        actor:
           example: "octocat"
-        repository_owner_id:
-          type: integer
+          type: string
+        actor_id:
           example: 1234567
-        repository:
-          type: string
-          example: "octocat/Hello-World"
-        run_id:
           type: integer
-          example: 1658821493
-        workflow:
+        event_name:
+          example: "workflow_dispatch"
           type: string
-          example: "Something"
-        workflow_ref:
+        job:
+          example: "build"
           type: string
-          example: "octocat/hello-world/.github/workflows/my-workflow.yml@refs/heads/my_branch"
         ref:
-          type: string
           example: "refs/heads/my_branch"
-        ref_name:
           type: string
+        ref_name:
           example: "123/merge"
-        ref_type:
           type: string
         ref_protected:
-          type: boolean
           example: true
-        job:
-          type: string
-          example: "build"
-        action:
-          type: string
-          example: "actionscheckout"
-        action_path:
-          type: string
-          example: "/home/runner/work/_actions/repo-owner/name-of-action-repo/v1"
-        action_repository:
-          type: string
-          example: "repo-owner/name-of-action-repo"
-        server_url:
-          type: string
-          example: "https://github.com"
-        run_number:
-          type: integer
-          example: 3
-        run_attempt:
-          type: integer
-          example: 1
-        actor:
-          type: string
-          example: "octocat"
-        actor_id:
-          type: integer
-          example: 1234567
-        triggering_actor:
-          type: string
-          example: "octocat"
-        event_name:
-          type: string
-          example: "workflow_dispatch"
-        sha:
-          type: string
-          example: "ffac537e6cbbf934b08745a378932722df287a53"
-        runner_arch:
-          type: string
-          example: "X86"
-        runner_debug:
           type: boolean
+        ref_type:
+          type: string
+        repository:
+          example: "octocat/Hello-World"
+          type: string
+        repository_id:
+          example: 123456789
+          type: integer
+        repository_owner:
+          example: "octocat"
+          type: string
+        repository_owner_id:
+          example: 1234567
+          type: integer
+        run_attempt:
+          example: 1
+          type: integer
+        run_id:
+          example: 1658821493
+          type: integer
+        run_number:
+          example: 3
+          type: integer
+        runner_arch:
+          example: "X86"
+          type: string
+        runner_debug:
           example: false
+          type: boolean
         runner_os:
-          type: string
           example: "Linux"
-        workspace:
           type: string
+        server_url:
+          example: "https://github.com"
+          type: string
+        sha:
+          example: "ffac537e6cbbf934b08745a378932722df287a53"
+          type: string
+        triggering_actor:
+          example: "octocat"
+          type: string
+        workflow:
+          example: "Something"
+          type: string
+        workflow_ref:
+          example: "octocat/hello-world/.github/workflows/my-workflow.yml@refs/heads/my_branch"
+          type: string
+        workspace:
           example: "/home/runner/work/my-repo-name/my-repo-name"
-
+          type: string
     DependencyEvent:
       type: object
       properties:

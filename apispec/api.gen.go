@@ -41,33 +41,33 @@ type Error struct {
 
 // GitHubDependencyEventContext defines model for GitHubDependencyEventContext.
 type GitHubDependencyEventContext struct {
-	Action            string `json:"action"`
-	ActionPath        string `json:"action_path"`
-	ActionRepository  string `json:"action_repository"`
-	Actor             string `json:"actor"`
-	ActorId           int    `json:"actor_id"`
-	EventName         string `json:"event_name"`
-	Job               string `json:"job"`
-	Ref               string `json:"ref"`
-	RefName           string `json:"ref_name"`
-	RefProtected      bool   `json:"ref_protected"`
-	RefType           string `json:"ref_type"`
-	Repository        string `json:"repository"`
-	RepositoryId      int    `json:"repository_id"`
-	RepositoryOwner   string `json:"repository_owner"`
-	RepositoryOwnerId int    `json:"repository_owner_id"`
-	RunAttempt        int    `json:"run_attempt"`
-	RunId             int    `json:"run_id"`
-	RunNumber         int    `json:"run_number"`
-	RunnerArch        string `json:"runner_arch"`
-	RunnerDebug       bool   `json:"runner_debug"`
-	RunnerOs          string `json:"runner_os"`
-	ServerUrl         string `json:"server_url"`
-	Sha               string `json:"sha"`
-	TriggeringActor   string `json:"triggering_actor"`
-	Workflow          string `json:"workflow"`
-	WorkflowRef       string `json:"workflow_ref"`
-	Workspace         string `json:"workspace"`
+	Action            string  `json:"action"`
+	ActionPath        *string `json:"action_path,omitempty"`
+	ActionRepository  string  `json:"action_repository"`
+	Actor             string  `json:"actor"`
+	ActorId           int     `json:"actor_id"`
+	EventName         string  `json:"event_name"`
+	Job               string  `json:"job"`
+	Ref               string  `json:"ref"`
+	RefName           string  `json:"ref_name"`
+	RefProtected      bool    `json:"ref_protected"`
+	RefType           string  `json:"ref_type"`
+	Repository        string  `json:"repository"`
+	RepositoryId      int     `json:"repository_id"`
+	RepositoryOwner   string  `json:"repository_owner"`
+	RepositoryOwnerId int     `json:"repository_owner_id"`
+	RunAttempt        int     `json:"run_attempt"`
+	RunId             int     `json:"run_id"`
+	RunNumber         int     `json:"run_number"`
+	RunnerArch        string  `json:"runner_arch"`
+	RunnerDebug       bool    `json:"runner_debug"`
+	RunnerOs          string  `json:"runner_os"`
+	ServerUrl         string  `json:"server_url"`
+	Sha               string  `json:"sha"`
+	TriggeringActor   string  `json:"triggering_actor"`
+	Workflow          string  `json:"workflow"`
+	WorkflowRef       string  `json:"workflow_ref"`
+	Workspace         string  `json:"workspace"`
 }
 
 // PostApiV1DependenciesEventJSONRequestBody defines body for PostApiV1DependenciesEvent for application/json ContentType.
@@ -402,25 +402,25 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/7RX32/bNhD+VwRuj7boH3Hs6KldG6wZ9lBgWTugCASKOklMJZIjKTte4P99ICk5piyn",
-	"LbC9WeR9x+PxvrvPz4iKRgoO3GiUPCNNK2iI+/keJPAcON3fboEbuySVkKAMA2dQMlO1WUoFN/Dk9n9W",
-	"UKAE/YRfnOLOI/6VmQ9tNnD6rsMeJmgLKmfUuclBU8WkYYKjBN1XEHWbkSgiU0EELqAJMnsJKEEiewRq",
-	"v5+mpZh2i43Iodbxp87t4TBBCv5umYIcJV+Ox02G13gYuj1M0K1SQtnI4Ik0sgb7swGtSWnt/uSkNZVQ",
-	"7B/IrXWYJZYDN6xg4Bx0rrVRjJfW+OjmbG8QcG84Ft+ruT17N0J9Zk+u063Zt6JfRXuS25dIvUkqialC",
-	"LK5EA1i1nIPCO6G+4rRzhxVIMRU7u8FJA1NRTP3W1O7g7fyVg6yFZkaofXjc6z4vOBw8HxLUCErMReuU",
-	"5QFgvlhera7XR3PGDZSgrL0rxtSGEh5hM1HUYpfmTEtiaDV22KPIQlTWsjofs3TUCvNQaFwByTVu9mmm",
-	"CB8/QkExEt18scQNqBIuQaQSBqiBMA9GtXAEZELUQHiP8KvPY+7GX7J7BPwB6lpMPwt16eY9/MKrbG7G",
-	"3uUE5qrluwtgCPyBWlAtT4kx0EgTQi4ZD11frzabxfzqZnkJwNsmG9zlkq0NnSg6YOtfm+vRS3v7HLK2",
-	"DAAFqfX4k3uE0KH/3xlvn8ZO0KC2oNJW1SGgMkbqBGPfh2MqmlF0RUJYURC6Wq7hmmZZcbO8ymab9dWK",
-	"LNebm+VivVjkxWKzJqvlmDOjWFmC/Up/rDf0nA4Bf4gGTGVNXoGkZwTuy79y5b+z5Y9jnwXcoyy3p/1H",
-	"vG/qN99LewvSklD4VrNu9q5xTm2PCD7OvQ5GUkjMEcaNcyloCEcanCR3kDTf+04a2Um7GfYq31H7GYLC",
-	"qTU2WoK6DCgWsrmfIifzYaSOgmngizak4oBopyw6fbLzIW9zz3gh7GtaqUK8VIKGsBolCHjJOLhQ3pRE",
-	"cTAxYWiCfON3Gur2xSS6B9LYIgmVVs20AR7nsI2cgtDR24939prMeJEgrcstKO3t5/Esnlk3QgK3mwla",
-	"xrPYUs7m2zUGTCTD2znOe3HCQGM4CkqhRxUf0xHwXArGTURqy4OoEMppP6qAWDurBUnEYefVYIxcGMrt",
-	"3eUoQR+FNm8l+zR/f3L0baccbRmDNr+IfN9ntAuJSFkz6tzgR+11ktew31K4Q8F8CPliR6db0FJw7aXY",
-	"YrY4v75D+3tCHumWUtC6aOt6b3N9NZv/ZxF7XeviDEMYStrVbPb/H3rHDShO6sgzMoLO0FKUtoqZPUq+",
-	"PKPfPt/b5rNTzEByLKu9qwLLIqmEpYxl6MPhYYJ02zTESg/0zqW0q5oXZPd34nA4DintDnKT6jieqFAQ",
-	"vzAEHR4O/wYAAP//DuU63j0NAAA=",
+	"H4sIAAAAAAAC/7RX32/bNhD+VwRuj7boH3Hs+KldG6wZ9lBgWTugCAyKOllMJZIjKTte4P99OFJ2TFlO",
+	"W2B7s8j77o7H+46fnwlXtVYSpLNk+UwsL6Fm/ud70CBzkHx3uwHpcEkbpcE4Ad5gLVzZZCuupIMnv/+z",
+	"gYIsyU/0xSltPdJfhfvQZB2n71rsfkA2YHLBvZscLDdCO6EkWZL7EpJ2M1FF4kpIwCc0IG6ngSyJyh6B",
+	"4/fTcK2G7WKtcqhs+ql1u98PiIG/G2EgJ8svx3CD7jEeum73A3JrjDKYGTyxWleAP2uwlq3R7k/JGlcq",
+	"I/6BHK3jKokcpBOFAO+gdW2dEXKNxkc3Z3udhA+Gffm9Wtuze2M8VPbkOO0a3hX/qpqT2r5kGkxWmrky",
+	"xtJS1UBNIyUYulXmK1217qgBrYZqixuS1TBUxTBsDXGHbsavBEILK5wyuzjc6z4vOOxcH1HcKc7cReuV",
+	"yCPAeDK9ml3Pj+ZCOliDQXvfjCtMJQ6BlSgqtV3lwmrmeNkX7FFlMSprRJX3WXpqxXUoLC2B5ZbWu1Vm",
+	"mOwPYaDoyW48mdIazBouQbRRDriDuA7ONHAEZEpVwOQBEVaf+9z132R7CfQDVJUaflbm0skP8Au3srjp",
+	"u5cTmO+W726ALvAHesE0csWcg1q7GHLJuOv6erZYTMZXN9NLANnUWecsl2wxdWZ4h61/La57Dx3sc8ia",
+	"dQQoWGX7rzwglI39/y5k89QXwYLZgFk1pooBpXPaLikNczjlqu5FlyyGFQXjs+kcrnmWFTfTq2y0mF/N",
+	"2HS+uJlO5pNJXkwWczab9jlzRqzXgF+rH5sNB07HgD9UDa5Ek1cgqzMCH9q/9O2/xfanaagCPaCQ28PD",
+	"R7qrqzffS3sEWc04fGtY1zs/OIc4I6KPc6+dJ6l9SPom9mHonozTaFKGyRem2smI6o6ek8ESjZHuUOhh",
+	"ez+PY4oeORhxKyZPhxqnfR/1dGjRnt466ZpON5xe0vmzjtUWslB4fyhOWBBHUDNRkSUBuRYSfKA3a2Yk",
+	"uJQJMiBh1HvVdPtiktwDq7EtYm1VCetApjlsEq8ZbPL24x0eQrggCzS63ICxwX6cjtIRulEaJG4uyTQd",
+	"pUgy1AV+FFCmBd2MaX6QIwIshaOEVLZX4wmbgMy1EtIlrMLOTwplvNrjBhjaofpjiYRt0H8p8WkYv3eX",
+	"kyX5qKx7q8Wn8fuT0LetVsTGBet+UfnuUNE2JaZ1Jbh3Qx9tUEZBtX5L03Yl8j5mCD6WfsFqJW0QX5PR",
+	"5Pz4Hh3OCXliG87B2qKpqh3W+mo0/s8yDkrW5xmn0BWxs9Ho/w96Jx0Yyaok8CiB1hCJxRsj3I4svzyT",
+	"3z7f47jZGuFgeWyrne8CZKE2CimDRH7YPwyIbeqaodgg73xJ2655QbZ/IPb747NkfSD/Nh0fJK4MpC8M",
+	"IfuH/b8BAAD//3Lp/D4vDQAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
