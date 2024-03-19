@@ -8,8 +8,6 @@ info:
     email: engineering@garnet.ai
 servers:
   - url: https://core.listen.dev
-security:
-  - JWT: [dependencyevents:write]
 
 paths:
   /api/v1/dependencies/event:
@@ -38,7 +36,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
       security:
-        - JWT: [dependencyevents:write]
+        - JWT:
+            - "write:dependencyevents"
+            - "project_id"
 
 components:
   schemas:
@@ -52,6 +52,119 @@ components:
           type: string
         message:
           type: string
+    # see: https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
+    GitHubDependencyEventContext:
+      type: object
+      required:
+        - repository_id
+        - repository_owner
+        - repository_owner_id
+        - repository
+        - run_id
+        - workflow
+        - workflow_ref
+        - ref
+        - ref_name
+        - ref_type
+        - ref_protected
+        - job
+        - action
+        - action_path
+        - action_repository
+        - server_url
+        - run_number
+        - run_attempt
+        - actor
+        - actor_id
+        - triggering_actor
+        - event_name
+        - sha
+        - runner_arch
+        - runner_debug
+        - runner_os
+        - workspace
+      properties:
+        repository_id:
+          type: integer
+          example: 123456789
+        repository_owner:
+          type: string
+          example: "octocat"
+        repository_owner_id:
+          type: integer
+          example: 1234567
+        repository:
+          type: string
+          example: "octocat/Hello-World"
+        run_id:
+          type: integer
+          example: 1658821493
+        workflow:
+          type: string
+          example: "Something"
+        workflow_ref:
+          type: string
+          example: "octocat/hello-world/.github/workflows/my-workflow.yml@refs/heads/my_branch"
+        ref:
+          type: string
+          example: "refs/heads/my_branch"
+        ref_name:
+          type: string
+          example: "123/merge"
+        ref_type:
+          type: string
+        ref_protected:
+          type: boolean
+          example: true
+        job:
+          type: string
+          example: "build"
+        action:
+          type: string
+          example: "actionscheckout"
+        action_path:
+          type: string
+          example: "/home/runner/work/_actions/repo-owner/name-of-action-repo/v1"
+        action_repository:
+          type: string
+          example: "repo-owner/name-of-action-repo"
+        server_url:
+          type: string
+          example: "https://github.com"
+        run_number:
+          type: integer
+          example: 3
+        run_attempt:
+          type: integer
+          example: 1
+        actor:
+          type: string
+          example: "octocat"
+        actor_id:
+          type: integer
+          example: 1234567
+        triggering_actor:
+          type: string
+          example: "octocat"
+        event_name:
+          type: string
+          example: "workflow_dispatch"
+        sha:
+          type: string
+          example: "ffac537e6cbbf934b08745a378932722df287a53"
+        runner_arch:
+          type: string
+          example: "X86"
+        runner_debug:
+          type: boolean
+          example: false
+        runner_os:
+          type: string
+          example: "Linux"
+        workspace:
+          type: string
+          example: "/home/runner/work/my-repo-name/my-repo-name"
+
     DependencyEvent:
       type: object
       properties:
@@ -59,18 +172,8 @@ components:
           type: object
           x-go-type: models.Verdict
           description: The verdict of the event
-        tags:
-          type: object
-          additionalProperties:
-            type: string
-          description: A map of tags associated with the event.
+        github_context:
+          $ref: "#/components/schemas/GitHubDependencyEventContext"
       required:
         - verdict
-        - tags
-  securitySchemes:
-    JWT:
-      type: apiKey
-      in: header
-      name: Authorization
-      description: "Enter JWT Bearer token"
-      bearerFormat: JWT
+        - github_context
