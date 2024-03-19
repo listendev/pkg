@@ -27,8 +27,7 @@ const (
 
 // DependencyEvent defines model for DependencyEvent.
 type DependencyEvent struct {
-	// Tags A map of tags associated with the event.
-	Tags map[string]string `json:"tags"`
+	GithubContext GitHubDependencyEventContext `json:"github_context"`
 
 	// Verdict The verdict of the event
 	Verdict models.Verdict `json:"verdict"`
@@ -38,6 +37,37 @@ type DependencyEvent struct {
 type Error struct {
 	Identifier *string `json:"identifier,omitempty"`
 	Message    string  `json:"message"`
+}
+
+// GitHubDependencyEventContext defines model for GitHubDependencyEventContext.
+type GitHubDependencyEventContext struct {
+	Action            string `json:"action"`
+	ActionPath        string `json:"action_path"`
+	ActionRepository  string `json:"action_repository"`
+	Actor             string `json:"actor"`
+	ActorId           int    `json:"actor_id"`
+	EventName         string `json:"event_name"`
+	Job               string `json:"job"`
+	Ref               string `json:"ref"`
+	RefName           string `json:"ref_name"`
+	RefProtected      bool   `json:"ref_protected"`
+	RefType           string `json:"ref_type"`
+	Repository        string `json:"repository"`
+	RepositoryId      int    `json:"repository_id"`
+	RepositoryOwner   string `json:"repository_owner"`
+	RepositoryOwnerId int    `json:"repository_owner_id"`
+	RunAttempt        int    `json:"run_attempt"`
+	RunId             int    `json:"run_id"`
+	RunNumber         int    `json:"run_number"`
+	RunnerArch        string `json:"runner_arch"`
+	RunnerDebug       bool   `json:"runner_debug"`
+	RunnerOs          string `json:"runner_os"`
+	ServerUrl         string `json:"server_url"`
+	Sha               string `json:"sha"`
+	TriggeringActor   string `json:"triggering_actor"`
+	Workflow          string `json:"workflow"`
+	WorkflowRef       string `json:"workflow_ref"`
+	Workspace         string `json:"workspace"`
 }
 
 // PostApiV1DependenciesEventJSONRequestBody defines body for PostApiV1DependenciesEvent for application/json ContentType.
@@ -327,7 +357,7 @@ type MiddlewareFunc func(c *gin.Context)
 // PostApiV1DependenciesEvent operation middleware
 func (siw *ServerInterfaceWrapper) PostApiV1DependenciesEvent(c *gin.Context) {
 
-	c.Set(JWTScopes, []string{"dependencyevents:write"})
+	c.Set(JWTScopes, []string{"write:dependencyevents", "project_id"})
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -372,18 +402,25 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/7RUwXLjNgz9FQ7aoyLZSXvRqU7jziTtITN1k0PGB0aELaYSyQKUHTWjf98BLdtrO6ed",
-	"3ZM4BPjwALynD6h8G7xDFxnKD+Cqxlan4x0GdAZd1c836KJcBfIBKVpMCVGv01cbY6P1TjePp/E+IJTA",
-	"kaxbw5CBQa7IBsmFEmaq1UH5lRIcpZl9ZXVEo7Y21irWqFDq5pDtkfzrG1ZRkDZIxlaJ0ynookY1BhP0",
-	"HuUCJIP3q7W/Gi9bb7Dh/GmEHYYMCP/rLKGB8uVQLtv1vPyE0ZzIk/DBd92GBuXYIrNeS94/Tnex9mT/",
-	"RyPZp4O0Bl20K4v06dgOMBexM5r7xEt+QwaMVUc29n/Lhnd1H54X8nlFTUh/eGp1hDLdnu9q7iKSenhe",
-	"qNuUrKL/Fx1kYCVaozZIkIHTrVSdjb3q9PpARgf7J/YwCBvrVl5qV95FvVsktto2UAK6tXWI0uFva00O",
-	"Y67tEVw2PD+mqAXq9lJcf1mOot6Nmj3eCwUbm5EDJPnwLm+aT/KJPPcBnQRLuMkn+Q1kEHSs05gKHWyx",
-	"mRZmbwiLXODBE54/1aFlhc4Eb11Uumn8ltXKU1JkRZhGIwrVyuH2qHSRRYrdGyjh0XOcBfs0vfuq9HzU",
-	"s2weOd560+8nOVLSITS2SjDFGwufvbHl9DPhCkr4qTg6vxhtX5x7fjiVWKQO0wUH73gnouvJ9WX76fWu",
-	"TzSKu6pC5lXXNL3M+pfJ9Lsx3vku8TylcG65XyeTH1/0XnzidKMYaYOkcEw82g/Kl9F4L3AQVJ/2z+WW",
-	"bERYDssMuGtbTT2U8Hua4iiU45PxvzZ8E3hixym9IzFdHWPgsigqT5g3yTy5wQ0My+FLAAAA//8DPZ2f",
-	"IwYAAA==",
+	"H4sIAAAAAAAC/7RX32/bNhD+VwRuj7boH3Hs6KldG6wZ9lBgWTugCASKOklMJZIjKTte4P99ICk5piyn",
+	"LbC9WeR9x+PxvrvPz4iKRgoO3GiUPCNNK2iI+/keJPAcON3fboEbuySVkKAMA2dQMlO1WUoFN/Dk9n9W",
+	"UKAE/YRfnOLOI/6VmQ9tNnD6rsMeJmgLKmfUuclBU8WkYYKjBN1XEHWbkSgiU0EELqAJMnsJKEEiewRq",
+	"v5+mpZh2i43Iodbxp87t4TBBCv5umYIcJV+Ox02G13gYuj1M0K1SQtnI4Ik0sgb7swGtSWnt/uSkNZVQ",
+	"7B/IrXWYJZYDN6xg4Bx0rrVRjJfW+OjmbG8QcG84Ft+ruT17N0J9Zk+u063Zt6JfRXuS25dIvUkqialC",
+	"LK5EA1i1nIPCO6G+4rRzhxVIMRU7u8FJA1NRTP3W1O7g7fyVg6yFZkaofXjc6z4vOBw8HxLUCErMReuU",
+	"5QFgvlhera7XR3PGDZSgrL0rxtSGEh5hM1HUYpfmTEtiaDV22KPIQlTWsjofs3TUCvNQaFwByTVu9mmm",
+	"CB8/QkExEt18scQNqBIuQaQSBqiBMA9GtXAEZELUQHiP8KvPY+7GX7J7BPwB6lpMPwt16eY9/MKrbG7G",
+	"3uUE5qrluwtgCPyBWlAtT4kx0EgTQi4ZD11frzabxfzqZnkJwNsmG9zlkq0NnSg6YOtfm+vRS3v7HLK2",
+	"DAAFqfX4k3uE0KH/3xlvn8ZO0KC2oNJW1SGgMkbqBGPfh2MqmlF0RUJYURC6Wq7hmmZZcbO8ymab9dWK",
+	"LNebm+VivVjkxWKzJqvlmDOjWFmC/Up/rDf0nA4Bf4gGTGVNXoGkZwTuy79y5b+z5Y9jnwXcoyy3p/1H",
+	"vG/qN99LewvSklD4VrNu9q5xTm2PCD7OvQ5GUkjMEcaNcyloCEcanCR3kDTf+04a2Um7GfYq31H7GYLC",
+	"qTU2WoK6DCgWsrmfIifzYaSOgmngizak4oBopyw6fbLzIW9zz3gh7GtaqUK8VIKGsBolCHjJOLhQ3pRE",
+	"cTAxYWiCfON3Gur2xSS6B9LYIgmVVs20AR7nsI2cgtDR24939prMeJEgrcstKO3t5/Esnlk3QgK3mwla",
+	"xrPYUs7m2zUGTCTD2znOe3HCQGM4CkqhRxUf0xHwXArGTURqy4OoEMppP6qAWDurBUnEYefVYIxcGMrt",
+	"3eUoQR+FNm8l+zR/f3L0baccbRmDNr+IfN9ntAuJSFkz6tzgR+11ktew31K4Q8F8CPliR6db0FJw7aXY",
+	"YrY4v75D+3tCHumWUtC6aOt6b3N9NZv/ZxF7XeviDEMYStrVbPb/H3rHDShO6sgzMoLO0FKUtoqZPUq+",
+	"PKPfPt/b5rNTzEByLKu9qwLLIqmEpYxl6MPhYYJ02zTESg/0zqW0q5oXZPd34nA4DintDnKT6jieqFAQ",
+	"vzAEHR4O/wYAAP//DuU63j0NAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
