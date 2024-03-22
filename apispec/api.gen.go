@@ -19,6 +19,7 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gin-gonic/gin"
 	"github.com/listendev/pkg/models"
+	"github.com/listendev/pkg/type/int64string"
 )
 
 const (
@@ -41,33 +42,33 @@ type Error struct {
 
 // GitHubDependencyEventContext defines model for GitHubDependencyEventContext.
 type GitHubDependencyEventContext struct {
-	Action            string  `json:"action"`
-	ActionPath        *string `json:"action_path,omitempty"`
-	ActionRepository  string  `json:"action_repository"`
-	Actor             string  `json:"actor"`
-	ActorId           int     `json:"actor_id"`
-	EventName         string  `json:"event_name"`
-	Job               string  `json:"job"`
-	Ref               string  `json:"ref"`
-	RefName           string  `json:"ref_name"`
-	RefProtected      bool    `json:"ref_protected"`
-	RefType           string  `json:"ref_type"`
-	Repository        string  `json:"repository"`
-	RepositoryId      int     `json:"repository_id"`
-	RepositoryOwner   string  `json:"repository_owner"`
-	RepositoryOwnerId int     `json:"repository_owner_id"`
-	RunAttempt        int     `json:"run_attempt"`
-	RunId             int     `json:"run_id"`
-	RunNumber         int     `json:"run_number"`
-	RunnerArch        string  `json:"runner_arch"`
-	RunnerDebug       bool    `json:"runner_debug"`
-	RunnerOs          string  `json:"runner_os"`
-	ServerUrl         string  `json:"server_url"`
-	Sha               string  `json:"sha"`
-	TriggeringActor   string  `json:"triggering_actor"`
-	Workflow          string  `json:"workflow"`
-	WorkflowRef       string  `json:"workflow_ref"`
-	Workspace         string  `json:"workspace"`
+	Action            string                  `json:"action"`
+	ActionPath        *string                 `json:"action_path,omitempty"`
+	ActionRepository  *string                 `json:"action_repository,omitempty"`
+	Actor             string                  `json:"actor"`
+	ActorId           int64string.Int64String `json:"actor_id"`
+	EventName         string                  `json:"event_name"`
+	Job               string                  `json:"job"`
+	Ref               string                  `json:"ref"`
+	RefName           string                  `json:"ref_name"`
+	RefProtected      bool                    `json:"ref_protected"`
+	RefType           string                  `json:"ref_type"`
+	Repository        string                  `json:"repository"`
+	RepositoryId      int64string.Int64String `json:"repository_id"`
+	RepositoryOwner   string                  `json:"repository_owner"`
+	RepositoryOwnerId int64string.Int64String `json:"repository_owner_id"`
+	RunAttempt        int64string.Int64String `json:"run_attempt"`
+	RunId             int64string.Int64String `json:"run_id"`
+	RunNumber         int64string.Int64String `json:"run_number"`
+	RunnerArch        string                  `json:"runner_arch"`
+	RunnerDebug       *bool                   `json:"runner_debug,omitempty"`
+	RunnerOs          string                  `json:"runner_os"`
+	ServerUrl         string                  `json:"server_url"`
+	Sha               string                  `json:"sha"`
+	TriggeringActor   string                  `json:"triggering_actor"`
+	Workflow          string                  `json:"workflow"`
+	WorkflowRef       string                  `json:"workflow_ref"`
+	Workspace         string                  `json:"workspace"`
 }
 
 // PostApiV1DependenciesEventJSONRequestBody defines body for PostApiV1DependenciesEvent for application/json ContentType.
@@ -402,25 +403,25 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/7RX32/bNhD+VwRuj7boH3Hs+KldG6wZ9lBgWTugCAyKOllMJZIjKTte4P99OFJ2TFlO",
-	"W2B7s8j77o7H+46fnwlXtVYSpLNk+UwsL6Fm/ud70CBzkHx3uwHpcEkbpcE4Ad5gLVzZZCuupIMnv/+z",
-	"gYIsyU/0xSltPdJfhfvQZB2n71rsfkA2YHLBvZscLDdCO6EkWZL7EpJ2M1FF4kpIwCc0IG6ngSyJyh6B",
-	"4/fTcK2G7WKtcqhs+ql1u98PiIG/G2EgJ8svx3CD7jEeum73A3JrjDKYGTyxWleAP2uwlq3R7k/JGlcq",
-	"I/6BHK3jKokcpBOFAO+gdW2dEXKNxkc3Z3udhA+Gffm9Wtuze2M8VPbkOO0a3hX/qpqT2r5kGkxWmrky",
-	"xtJS1UBNIyUYulXmK1217qgBrYZqixuS1TBUxTBsDXGHbsavBEILK5wyuzjc6z4vOOxcH1HcKc7cReuV",
-	"yCPAeDK9ml3Pj+ZCOliDQXvfjCtMJQ6BlSgqtV3lwmrmeNkX7FFlMSprRJX3WXpqxXUoLC2B5ZbWu1Vm",
-	"mOwPYaDoyW48mdIazBouQbRRDriDuA7ONHAEZEpVwOQBEVaf+9z132R7CfQDVJUaflbm0skP8Au3srjp",
-	"u5cTmO+W726ALvAHesE0csWcg1q7GHLJuOv6erZYTMZXN9NLANnUWecsl2wxdWZ4h61/La57Dx3sc8ia",
-	"dQQoWGX7rzwglI39/y5k89QXwYLZgFk1pooBpXPaLikNczjlqu5FlyyGFQXjs+kcrnmWFTfTq2y0mF/N",
-	"2HS+uJlO5pNJXkwWczab9jlzRqzXgF+rH5sNB07HgD9UDa5Ek1cgqzMCH9q/9O2/xfanaagCPaCQ28PD",
-	"R7qrqzffS3sEWc04fGtY1zs/OIc4I6KPc6+dJ6l9SPom9mHonozTaFKGyRem2smI6o6ek8ESjZHuUOhh",
-	"ez+PY4oeORhxKyZPhxqnfR/1dGjRnt466ZpON5xe0vmzjtUWslB4fyhOWBBHUDNRkSUBuRYSfKA3a2Yk",
-	"uJQJMiBh1HvVdPtiktwDq7EtYm1VCetApjlsEq8ZbPL24x0eQrggCzS63ICxwX6cjtIRulEaJG4uyTQd",
-	"pUgy1AV+FFCmBd2MaX6QIwIshaOEVLZX4wmbgMy1EtIlrMLOTwplvNrjBhjaofpjiYRt0H8p8WkYv3eX",
-	"kyX5qKx7q8Wn8fuT0LetVsTGBet+UfnuUNE2JaZ1Jbh3Qx9tUEZBtX5L03Yl8j5mCD6WfsFqJW0QX5PR",
-	"5Pz4Hh3OCXliG87B2qKpqh3W+mo0/s8yDkrW5xmn0BWxs9Ho/w96Jx0Yyaok8CiB1hCJxRsj3I4svzyT",
-	"3z7f47jZGuFgeWyrne8CZKE2CimDRH7YPwyIbeqaodgg73xJ2655QbZ/IPb747NkfSD/Nh0fJK4MpC8M",
-	"IfuH/b8BAAD//3Lp/D4vDQAA",
+	"H4sIAAAAAAAC/7RXXW/bNhT9KwK3R1v0Z+zoqV0brBn2UKBdO6AIBIq6sphKJEdSdrzA/30gKTuiLKfd",
+	"0r1Z4j2HV/fz+BFRUUvBgRuNkkekaQk1cT/fggSeA6f7my1wY19JJSQow8AZbJgpmyylght4cOc/KyhQ",
+	"gn7CT6S4ZcS/MvOuyXqkb1rsYYS2oHJGHU0OmiomDRMcJehjCVF7GIkiMiVE4BwaIbOXgBIksnug9vlh",
+	"vBHj9mUtcqh0/KmlPRxGSMFfDVOQo+TL6bpR/zPu+rSHEbpRSijrGTyQWlZgf9agNdlYuz84aUwpFPsb",
+	"cmsdRonlwA0rGDiCllobxfjGGp9ozs56Dh8Nh/x7NrZneSPUR7bzOe07myv6VTSd2D556k1SSUwZYnEp",
+	"asCq4RwU3gn1FactHVYgxVjs7AEnNYxFMfZHY3uCt9NnLrIWmhmh9uF1z3NeIOylDwlqBCXmonXK8hAw",
+	"nc0Xy6vVGSAsOsbN1cKfxLf294cTravZ1HocEtuAFZXYpTnTkhhaDvl0L7IQlTWsyocsXQeG4So0LoHk",
+	"Gtf7NFOED1+hoBjwbjqb4xrUBi5BpBIGqIEwXEY1cAJkQlRA+BHh3z4O0Q0nvM0VfgdVJcafhbr05Uf4",
+	"peStr/97+jrsrva+u5z6wB9fWarhKTEGaml6zC/jPHP0arlez6aL6/nLeHlTZ/0AvozShpUo2ptLf66v",
+	"BhPi7XPImk0AKEilh6vWI4QO+X9nvHkYukGD2oJKG1WFgNIYqROM/caJqagH0SUJYUVB6HK+giuaZcX1",
+	"fJFN1qvFksxX6+v5bDWb5cVsvSLL+RCZUWyzAfuU/rspeBxLIeCDqMGUPj0XIenZDDp2cOk6eGc7GMc+",
+	"CviIsuNpfHyI93X16nsnlwVpSSh8ay3Ve7cixnbMBQ/nrL3l267M4yrpLIlgsPtB7YdwZ6L2J2VnDgZT",
+	"rz/DBqbO8DwJZ8Cpe4N2CxulW9RBwfr6GyicTkn0Ut3NwLk6saFkvBA2OVZjEa/xoCasQgkCvmEc3EWv",
+	"NkRxMDFhaIT8KnLi7+bJJPoIpLY5DyVixbQBHuewjZz00dHr97f2I5jx6kZayi0o7e2n8SSeWBohgdvD",
+	"BM3jSWw7yMob1+eYSIa3U5wfVRUDjeGkhIUelKpMR8BzKRg3EalsWUeFUE60UgXE2lkRSyIOOy9jY+Tc",
+	"UO7sNkcJei+0eS3Zp+nbztU3reS1VQna/CLy/TGirUtEyopRR4PvtRd4Xnx/S5r3lf4hLH+7zN0LLQXX",
+	"XkPOJrPzz3do/52QR7qhFLQumqra21gvJtMf5rEX5M7P0IW+Fl9OJv//pbfcgOKkinwfRdAa2saijWJm",
+	"j5Ivj+i3zx/tLNkpZiA5ldXeVYHtQqmEbRnbuXeHuxHSTV0TK4bQGxfStmqekO3/oMPhtHO0u8gtntO2",
+	"oUJB/NQh6HB3+CcAAP//2T/kNvYNAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
