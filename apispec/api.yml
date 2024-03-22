@@ -94,8 +94,9 @@ components:
           example: "octocat"
           type: string
         actor_id:
-          example: 1234567
-          type: integer
+          example: "1234567"
+          type: string
+          x-go-type: int64string.Int64String
         event_name:
           example: "workflow_dispatch"
           type: string
@@ -117,23 +118,28 @@ components:
           example: "octocat/Hello-World"
           type: string
         repository_id:
-          example: 123456789
-          type: integer
+          example: "123456789"
+          type: string
+          x-go-type: int64string.Int64String
         repository_owner:
           example: "octocat"
           type: string
         repository_owner_id:
-          example: 1234567
-          type: integer
+          example: "1234567"
+          type: string
+          x-go-type: int64string.Int64String
         run_attempt:
-          example: 1
-          type: integer
+          example: "1"
+          type: string
+          x-go-type: int64string.Int64String
         run_id:
-          example: 1658821493
-          type: integer
+          example: "1658821493"
+          type: string
+          x-go-type: int64string.Int64String
         run_number:
-          example: 3
-          type: integer
+          example: "3"
+          type: string
+          x-go-type: int64string.Int64String
         runner_arch:
           example: "X86"
           type: string
