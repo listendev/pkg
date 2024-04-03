@@ -29,6 +29,7 @@ func (m *Int64String) UnmarshalJSON(data []byte) error {
 	}
 
 	*m = Int64String(intValue)
+
 	return nil
 }
 
