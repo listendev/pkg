@@ -1,0 +1,4 @@
+package: lockfile
+output: lockfiles.gen.go
+generate:
+  models: true

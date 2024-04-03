@@ -1,0 +1,35 @@
+openapi: "3.1"
+info:
+  version: 1.0.0
+  title: Lockfile Model
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: The Engineering Team
+    email: engineering@garnet.ai
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /temp-severity:
+    post:
+      operationId: temp-lockfile
+      description: This is just to let openapi-codegen generate the Lockfile model.
+      responses:
+        default:
+          description: The Lockfile model.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lockfile'
+components:
+  schemas:
+    Lockfile:
+      type: string
+      enum:
+        - ""
+        - "package-lock.json"
+        - "poetry.lock"
+      x-enum-varnames:
+        - None
+        - PackageLockJSON
+        - PoetryLock
