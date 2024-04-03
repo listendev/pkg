@@ -1,0 +1,4 @@
+package: manifest
+output: manifests.gen.go
+generate:
+  models: true
