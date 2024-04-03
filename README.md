@@ -13,6 +13,8 @@ A collection of common packages.
 - [github.com/listendev/pkg/rand](/rand)
 - [github.com/listendev/pkg/validate](/validate)
 - [github.com/listendev/pkg/verdictcode](/verdictcode)
+- [github.com/listendev/pkg/lockfile](/lockfile)
+- [github.com/listendev/pkg/manifest](/manifest)
 
 ## Generation
 
@@ -25,4 +27,5 @@ go generate -x ./models/category
 go generate -x ./models/severity
 go generate -x ./models
 go generate -x ./lockfile
+go generate -x ./manifest
 ```
