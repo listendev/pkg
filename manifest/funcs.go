@@ -11,6 +11,7 @@ import (
 )
 
 func (s Manifest) String() string {
+	//nolint:gocritic // temporary single case switch
 	switch s {
 	case PackageJSON:
 		return string(s)
@@ -22,6 +23,7 @@ func (s Manifest) String() string {
 func FromString(input string) (Manifest, error) {
 	s := strings.ToLower(input)
 
+	//nolint:gocritic // temporary single case switch
 	switch s {
 	case PackageJSON.String():
 		return PackageJSON, nil
