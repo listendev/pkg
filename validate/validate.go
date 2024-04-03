@@ -45,6 +45,7 @@ func init() {
 	Singleton.RegisterAlias("blake2b_256", "len=64")
 	Singleton.RegisterAlias("npmorg", "startswith=@")
 	Singleton.RegisterAlias("pypiorg", "len=0")
+	Singleton.RegisterAlias("filevalue", "dive,file")
 
 	if err := Singleton.RegisterValidation("is_severity", func(fl validator.FieldLevel) bool {
 		f := fl.Field()
@@ -391,6 +392,21 @@ func init() {
 		},
 		func(ut ut.Translator, fe validator.FieldError) string {
 			t, _ := ut.T("required_with", fe.Field(), strings.ToLower(fe.Param()))
+
+			return t
+		},
+	); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterTranslation(
+		"filevalue",
+		Translator,
+		func(ut ut.Translator) error {
+			return ut.Add("filevalue", "{0} not found", true)
+		},
+		func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("filevalue", fe.Value().(string))
 
 			return t
 		},
