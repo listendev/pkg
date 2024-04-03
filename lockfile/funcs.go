@@ -41,7 +41,7 @@ func FromPath(path string) (Lockfile, error) {
 	return FromString(file)
 }
 
-func GetEcosystem(lockfile Lockfile) ecosystem.Ecosystem {
+func Ecosystem(lockfile Lockfile) ecosystem.Ecosystem {
 	for eco, files := range lockfiles {
 		if goneric.SliceIn(files, lockfile) {
 			return eco
