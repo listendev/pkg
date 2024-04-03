@@ -24,4 +24,5 @@ go generate -x ./ecosystem
 go generate -x ./models/category
 go generate -x ./models/severity
 go generate -x ./models
+go generate -x ./lockfile
 ```
