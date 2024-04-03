@@ -7,7 +7,7 @@ import (
 const (
 	// emailPattern matches email addresses (also IDN) into text.
 	// Using it ^ at the beginning (asserting start of line position) would make it only extract valid emails
-	// Anyways we can't be sure the input
+	// Anyways we can't be sure the input.
 	emailPattern = `(?i)(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})`
 )
 

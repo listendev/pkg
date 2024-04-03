@@ -22,7 +22,7 @@ const (
 )
 
 var (
-	CompactMetadata bool = true
+	CompactMetadata = true
 )
 
 func NewEmptyVerdict(eco ecosystem.Ecosystem, org, pkg, version, digest, file string) (*Verdict, error) {
