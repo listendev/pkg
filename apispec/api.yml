@@ -53,7 +53,7 @@ components:
         message:
           type: string
     # see: https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
-    GitHubDependencyEventContext:
+    GitHubEventContext:
       type: object
       required:
         - action
@@ -167,6 +167,8 @@ components:
         workspace:
           example: "/home/runner/work/my-repo-name/my-repo-name"
           type: string
+    GitHubDependencyEventContext:
+      $ref: "#/components/schemas/GitHubEventContext"
     DependencyEvent:
       type: object
       properties:
