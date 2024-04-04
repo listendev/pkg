@@ -74,8 +74,21 @@ type GitHubEventContext struct {
 	Workspace         string                  `json:"workspace"`
 }
 
+// GitHubPipelineEventContext defines model for GitHubPipelineEventContext.
+type GitHubPipelineEventContext = GitHubEventContext
+
+// PipelineEvent defines model for PipelineEvent.
+type PipelineEvent struct {
+	Data          interface{}                `json:"data"`
+	GithubContext GitHubPipelineEventContext `json:"github_context"`
+	Type          string                     `json:"type"`
+}
+
 // PostApiV1DependenciesEventJSONRequestBody defines body for PostApiV1DependenciesEvent for application/json ContentType.
 type PostApiV1DependenciesEventJSONRequestBody = DependencyEvent
+
+// PostApiV1PipelineEventJSONRequestBody defines body for PostApiV1PipelineEvent for application/json ContentType.
+type PostApiV1PipelineEventJSONRequestBody = PipelineEvent
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -154,6 +167,11 @@ type ClientInterface interface {
 	PostApiV1DependenciesEventWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	PostApiV1DependenciesEvent(ctx context.Context, body PostApiV1DependenciesEventJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PostApiV1PipelineEventWithBody request with any body
+	PostApiV1PipelineEventWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	PostApiV1PipelineEvent(ctx context.Context, body PostApiV1PipelineEventJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) PostApiV1DependenciesEventWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -170,6 +188,30 @@ func (c *Client) PostApiV1DependenciesEventWithBody(ctx context.Context, content
 
 func (c *Client) PostApiV1DependenciesEvent(ctx context.Context, body PostApiV1DependenciesEventJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewPostApiV1DependenciesEventRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PostApiV1PipelineEventWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostApiV1PipelineEventRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PostApiV1PipelineEvent(ctx context.Context, body PostApiV1PipelineEventJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostApiV1PipelineEventRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -201,6 +243,46 @@ func NewPostApiV1DependenciesEventRequestWithBody(server string, contentType str
 	}
 
 	operationPath := fmt.Sprintf("/api/v1/dependencies/event")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewPostApiV1PipelineEventRequest calls the generic PostApiV1PipelineEvent builder with application/json body
+func NewPostApiV1PipelineEventRequest(server string, body PostApiV1PipelineEventJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewPostApiV1PipelineEventRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewPostApiV1PipelineEventRequestWithBody generates requests for PostApiV1PipelineEvent with any type of body
+func NewPostApiV1PipelineEventRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/pipeline/event")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -267,6 +349,11 @@ type ClientWithResponsesInterface interface {
 	PostApiV1DependenciesEventWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1DependenciesEventResponse, error)
 
 	PostApiV1DependenciesEventWithResponse(ctx context.Context, body PostApiV1DependenciesEventJSONRequestBody, reqEditors ...RequestEditorFn) (*PostApiV1DependenciesEventResponse, error)
+
+	// PostApiV1PipelineEventWithBodyWithResponse request with any body
+	PostApiV1PipelineEventWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1PipelineEventResponse, error)
+
+	PostApiV1PipelineEventWithResponse(ctx context.Context, body PostApiV1PipelineEventJSONRequestBody, reqEditors ...RequestEditorFn) (*PostApiV1PipelineEventResponse, error)
 }
 
 type PostApiV1DependenciesEventResponse struct {
@@ -292,6 +379,29 @@ func (r PostApiV1DependenciesEventResponse) StatusCode() int {
 	return 0
 }
 
+type PostApiV1PipelineEventResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON401      *Error
+	JSON500      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r PostApiV1PipelineEventResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PostApiV1PipelineEventResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 // PostApiV1DependenciesEventWithBodyWithResponse request with arbitrary body returning *PostApiV1DependenciesEventResponse
 func (c *ClientWithResponses) PostApiV1DependenciesEventWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1DependenciesEventResponse, error) {
 	rsp, err := c.PostApiV1DependenciesEventWithBody(ctx, contentType, body, reqEditors...)
@@ -307,6 +417,23 @@ func (c *ClientWithResponses) PostApiV1DependenciesEventWithResponse(ctx context
 		return nil, err
 	}
 	return ParsePostApiV1DependenciesEventResponse(rsp)
+}
+
+// PostApiV1PipelineEventWithBodyWithResponse request with arbitrary body returning *PostApiV1PipelineEventResponse
+func (c *ClientWithResponses) PostApiV1PipelineEventWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1PipelineEventResponse, error) {
+	rsp, err := c.PostApiV1PipelineEventWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostApiV1PipelineEventResponse(rsp)
+}
+
+func (c *ClientWithResponses) PostApiV1PipelineEventWithResponse(ctx context.Context, body PostApiV1PipelineEventJSONRequestBody, reqEditors ...RequestEditorFn) (*PostApiV1PipelineEventResponse, error) {
+	rsp, err := c.PostApiV1PipelineEvent(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostApiV1PipelineEventResponse(rsp)
 }
 
 // ParsePostApiV1DependenciesEventResponse parses an HTTP response from a PostApiV1DependenciesEventWithResponse call
@@ -342,11 +469,47 @@ func ParsePostApiV1DependenciesEventResponse(rsp *http.Response) (*PostApiV1Depe
 	return response, nil
 }
 
+// ParsePostApiV1PipelineEventResponse parses an HTTP response from a PostApiV1PipelineEventWithResponse call
+func ParsePostApiV1PipelineEventResponse(rsp *http.Response) (*PostApiV1PipelineEventResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PostApiV1PipelineEventResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// Create a new dependency event
 	// (POST /api/v1/dependencies/event)
 	PostApiV1DependenciesEvent(c *gin.Context)
+	// Create a new pipeline event
+	// (POST /api/v1/pipeline/event)
+	PostApiV1PipelineEvent(c *gin.Context)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -371,6 +534,21 @@ func (siw *ServerInterfaceWrapper) PostApiV1DependenciesEvent(c *gin.Context) {
 	}
 
 	siw.Handler.PostApiV1DependenciesEvent(c)
+}
+
+// PostApiV1PipelineEvent operation middleware
+func (siw *ServerInterfaceWrapper) PostApiV1PipelineEvent(c *gin.Context) {
+
+	c.Set(JWTScopes, []string{"write:pipelineevents", "project_id"})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.PostApiV1PipelineEvent(c)
 }
 
 // GinServerOptions provides options for the Gin server.
@@ -401,30 +579,33 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	}
 
 	router.POST(options.BaseURL+"/api/v1/dependencies/event", wrapper.PostApiV1DependenciesEvent)
+	router.POST(options.BaseURL+"/api/v1/pipeline/event", wrapper.PostApiV1PipelineEvent)
 }
 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"H4sIAAAAAAAC/+xZT2/buBP9KgJ/v6Mt+W/s+NRuG2yz2EOAZtsFisCgqJHFVCK5JGXHG/i7L0hKjinL",
+	"Sdok2D3oJokzj6OZ4eMD5h4RXgjOgGmFFvdIkQwKbB8/ggCWACPbizUwbT4JyQVITcEarKjOynhJONNw",
+	"Z9f/LyFFC/S/6AE0qhCjX6n+VMYN0A+V766H1iATSixMAopIKjTlDC3QdQZBtRjwNNAZBGAD6iG9FYAW",
+	"iMe3QMz7XX/F+9XHgieQq/BLBbvb9ZCEv0oqIUGLb/vtes3fuGnC7nroQkouTWRwhwuRg3ksQCm8MnZ/",
+	"MFzqjEv6NyTG2s8STYBpmlKwABW00pKylTHewxytNQKuDdviezS3R3XDxGX24Heqb6ZW5DsvD3L7EKkz",
+	"WQqsM983yngBkSwZAxltuPweLSu4SILgfb4xCwwX0Odp3y31zUq0Hj6ykbFQVHO59bd7HPMEYKN8iBPN",
+	"CdYnrZc08R2Go/FkejY7cvCbjjJ9NnEr4aV5/ryHtT27NBH7wCZhac43y4QqgTXJ2mK65bHvFZc0T9os",
+	"7Qn005WqKAOcqKjYLmOJWfsWEtKW6IajcVSAXMEpFyG5BqLBT5eWJewdYs5zwKz2cF/v2+DaC17VKvoE",
+	"ec77X7k89ee1+6nizc9/vnwH6Lb3nt1OTcfX7yxZsiXWGgqhG8gvwzwK9Gw6n4+Gk/Pxy3BZWcTNBL4M",
+	"0qQVS9LgpT/nZ60FcfYJxOXKc0hxrtq71nlw5eP/Tll517aDArkGuSxl7jtkWgu1iCJ344SEF63eGfbd",
+	"0hST6XgGZySO0/PxJB7MZ5MpHs/m5+PRbDRK0tF8hqfjNjAt6WoF5m35YyxY05Lv8JkXoDNXnpMuyyMO",
+	"qk9wZk/wxpzgKHRZiGovQ0/9+iXcFvm75zKXcVICE3jqWiq29oroG5rzXo5RG5dvdWXWV8nBJeERuyNq",
+	"R8IHjNpkygMe9FivyWEtrNPOJz4H7E+vd9z8g3LY1F7Duv5raZyDlmiU+rACp9VJp0k6TdJpkk6TdJqk",
+	"0ySdJuk0yX9Bk1xRATll0GmTTpt02qTTJp026bRJp006bfLvahNPlRzLkQRrfHAftA6/KNMgU0zgfmcQ",
+	"f2ZS16qNdnW4T02rqmLZWJ8xYjPulKXcABsr7AaBUGCaowUCtqIMbHbfrbBkoENMUQ+5+9dOCC8eTIJr",
+	"wIUJ1Z8j5lRpYGEC68D+kwreX12aylHtJJ0wkGuQytkPw0E4MDBcADOLCzQOB6GhDaPpbC0iLGi0HkZJ",
+	"PXqjoCLY142r1nkmVQGwRHDKdIBzc5aDlEs72SQSsLELeBrggMEm2ENv3dgzRDYiac0uE7RAV1zp94J+",
+	"GX48iOKiGpGaooDSv/BkWye3ig4LkVNiYaJb5QSua4GnGqQ5Gd751Tdixn5QgjPlmnY0GB1nwnq7X4Yk",
+	"UCUhoFRa5vnWpH0yGL5axG6Aa+P0Q2jObqeDwdtvemlOJ8N54HgkgMrQEAspJdVbtPh2j377em2O0kZS",
+	"DYuHNrBdYFhISG5Oj2Gum91ND6myKLARg+iDTemJBrIb1Y0rqlP+yk1bwz7Zsj7XvU27+nt0zfr2zVqX",
+	"/0db1W8bF43bVtlNrELcy0LCJYQPrI52N7t/AgAA//98uG7UzyIAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
