@@ -10,40 +10,48 @@ import (
 func TestMap(t *testing.T) {
 	type testCase struct {
 		input []string
-		want  map[Lockfile]string
+		want  map[Lockfile][]string
 	}
 
 	cases := []testCase{
 		{
-			want: map[Lockfile]string{},
+			want: map[Lockfile][]string{},
 		},
 		{
 			input: []string{"unknown.json"},
-			want:  map[Lockfile]string{},
+			want:  map[Lockfile][]string{},
 		},
 		{
 			input: []string{"package-lock.json"},
-			want:  map[Lockfile]string{PackageLockJSON: "package-lock.json"},
+			want:  map[Lockfile][]string{PackageLockJSON: {"package-lock.json"}},
 		},
 		{
 			input: []string{"package-lock.JSON"},
-			want:  map[Lockfile]string{PackageLockJSON: "package-lock.JSON"},
+			want:  map[Lockfile][]string{PackageLockJSON: {"package-lock.JSON"}},
 		},
 		{
 			input: []string{"working/dir/package-lock.JSON"},
-			want:  map[Lockfile]string{PackageLockJSON: "working/dir/package-lock.JSON"},
+			want:  map[Lockfile][]string{PackageLockJSON: {"working/dir/package-lock.JSON"}},
 		},
 		{
 			input: []string{"poetry.lock"},
-			want:  map[Lockfile]string{PoetryLock: "poetry.lock"},
+			want:  map[Lockfile][]string{PoetryLock: {"poetry.lock"}},
 		},
 		{
 			input: []string{"somedir/poetry.lock"},
-			want:  map[Lockfile]string{PoetryLock: "somedir/poetry.lock"},
+			want:  map[Lockfile][]string{PoetryLock: {"somedir/poetry.lock"}},
 		},
 		{
 			input: []string{"somedir/poetry.lock", "package-lock.json"},
-			want:  map[Lockfile]string{PoetryLock: "somedir/poetry.lock", PackageLockJSON: "package-lock.json"},
+			want:  map[Lockfile][]string{PoetryLock: {"somedir/poetry.lock"}, PackageLockJSON: {"package-lock.json"}},
+		},
+		{
+			input: []string{"somedir/poetry.lock", "somedir/poetry.lock", "package-lock.json"},
+			want:  map[Lockfile][]string{PoetryLock: {"somedir/poetry.lock"}, PackageLockJSON: {"package-lock.json"}},
+		},
+		{
+			input: []string{"somedir/poetry.lock", "package-lock.json", "otherdir/poetry.lock"},
+			want:  map[Lockfile][]string{PoetryLock: {"somedir/poetry.lock", "otherdir/poetry.lock"}, PackageLockJSON: {"package-lock.json"}},
 		},
 	}
 
@@ -55,51 +63,44 @@ func TestMap(t *testing.T) {
 func TestExisting(t *testing.T) {
 	type testCase struct {
 		input   []string
-		want    map[Lockfile]string
-		wantErr map[Lockfile]error
+		want    map[Lockfile][]string
+		wantErr map[Lockfile][]error
 	}
 
 	cases := []testCase{
 		{
-			want:    map[Lockfile]string{},
-			wantErr: map[Lockfile]error{},
+			want:    map[Lockfile][]string{},
+			wantErr: map[Lockfile][]error{},
 		},
 		{
 			input:   []string{"unknown.json"},
-			want:    map[Lockfile]string{},
-			wantErr: map[Lockfile]error{},
+			want:    map[Lockfile][]string{},
+			wantErr: map[Lockfile][]error{},
 		},
-		// FIXME: doesn't work in GitHub actions?!
-		// {
-		// 	input:   []string{"testdata/package-lock.JSON"},
-		// 	want:    map[Lockfile]string{PackageLockJSON: "testdata/package-lock.JSON"},
-		// 	wantErr: map[Lockfile]error{},
-		// },
 		{
 			input:   []string{"package-lock.json"},
-			want:    map[Lockfile]string{},
-			wantErr: map[Lockfile]error{PackageLockJSON: fmt.Errorf("package-lock.json not found")},
+			want:    map[Lockfile][]string{},
+			wantErr: map[Lockfile][]error{PackageLockJSON: {fmt.Errorf("package-lock.json not found")}},
 		},
 		{
 			input:   []string{"somedir/poetry.lock"},
-			want:    map[Lockfile]string{},
-			wantErr: map[Lockfile]error{PoetryLock: fmt.Errorf("somedir/poetry.lock not found")},
+			want:    map[Lockfile][]string{},
+			wantErr: map[Lockfile][]error{PoetryLock: {fmt.Errorf("somedir/poetry.lock not found")}},
 		},
 		{
 			input:   []string{"testdata/poetry.lock", "testdata/package-lock.json"},
-			want:    map[Lockfile]string{PoetryLock: "testdata/poetry.lock", PackageLockJSON: "testdata/package-lock.json"},
-			wantErr: map[Lockfile]error{},
+			want:    map[Lockfile][]string{PoetryLock: {"testdata/poetry.lock"}, PackageLockJSON: {"testdata/package-lock.json"}},
+			wantErr: map[Lockfile][]error{},
 		},
 		{
 			input:   []string{"unk/poetry.lock", "testdata/package-lock.json"},
-			want:    map[Lockfile]string{PackageLockJSON: "testdata/package-lock.json"},
-			wantErr: map[Lockfile]error{PoetryLock: fmt.Errorf("unk/poetry.lock not found")},
+			want:    map[Lockfile][]string{PackageLockJSON: {"testdata/package-lock.json"}},
+			wantErr: map[Lockfile][]error{PoetryLock: {fmt.Errorf("unk/poetry.lock not found")}},
 		},
 		{
-			// Order matters: the last poetry.lock overrides the previous one
-			input:   []string{"testdata/package-lock.json", "testdata/poetry.lock", "unk/poetry.lock"},
-			want:    map[Lockfile]string{PackageLockJSON: "testdata/package-lock.json"},
-			wantErr: map[Lockfile]error{PoetryLock: fmt.Errorf("unk/poetry.lock not found")},
+			input:   []string{"testdata/package-lock.json", "testdata/poetry.lock", "unk/poetry.lock", "testdata/1/poetry.lock", "boh/package-lock.json"},
+			want:    map[Lockfile][]string{PackageLockJSON: {"testdata/package-lock.json"}, PoetryLock: {"testdata/poetry.lock", "testdata/1/poetry.lock"}},
+			wantErr: map[Lockfile][]error{PoetryLock: {fmt.Errorf("unk/poetry.lock not found")}, PackageLockJSON: {fmt.Errorf("boh/package-lock.json not found")}},
 		},
 	}
 
