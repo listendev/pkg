@@ -63,10 +63,8 @@ func Map(paths []string) map[Manifest][]string {
 
 		if _, ok := ret[l]; !ok {
 			ret[l] = []string{f}
-		} else {
-			if !goneric.SliceIn(ret[l], f) {
-				ret[l] = append(ret[l], f)
-			}
+		} else if !goneric.SliceIn(ret[l], f) {
+			ret[l] = append(ret[l], f)
 		}
 	}
 
