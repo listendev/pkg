@@ -71,10 +71,8 @@ func Map(paths []string) map[Lockfile][]string {
 
 		if _, ok := ret[l]; !ok {
 			ret[l] = []string{f}
-		} else {
-			if !goneric.SliceIn(ret[l], f) {
-				ret[l] = append(ret[l], f)
-			}
+		} else if !goneric.SliceIn(ret[l], f) {
+			ret[l] = append(ret[l], f)
 		}
 	}
 
