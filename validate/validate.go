@@ -45,7 +45,7 @@ func init() {
 	Singleton.RegisterAlias("blake2b_256", "len=64")
 	Singleton.RegisterAlias("npmorg", "startswith=@")
 	Singleton.RegisterAlias("pypiorg", "len=0")
-	Singleton.RegisterAlias("filevalue", "dive,file")
+	Singleton.RegisterAlias("filevalue", "dive,dive,file")
 
 	if err := Singleton.RegisterValidation("is_severity", func(fl validator.FieldLevel) bool {
 		f := fl.Field()
