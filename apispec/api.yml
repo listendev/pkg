@@ -222,6 +222,7 @@ components:
       properties:
         type:
           type: string
+          pattern: "^[a-zA-Z0-9_]+$"
         data:
           type: object
           x-go-type: interface{}
