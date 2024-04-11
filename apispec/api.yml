@@ -206,6 +206,8 @@ components:
     DependencyEvent:
       type: object
       properties:
+        group_sha256:
+          $ref: "#/components/schemas/GroupSHA256"
         verdict:
           type: object
           x-go-type: models.Verdict
@@ -220,6 +222,8 @@ components:
     PipelineEvent:
       type: object
       properties:
+        group_sha256:
+          $ref: "#/components/schemas/GroupSHA256"
         type:
           type: string
           pattern: "^[a-zA-Z0-9_]+$"
@@ -232,3 +236,7 @@ components:
         - type
         - data
         - github_context
+    GroupSHA256:
+      type: string
+      pattern: "^[a-fA-F0-9]{64}$"
+      description: The sha256 hash of the event group (events with the same sha256 are grouped together). Optional.
