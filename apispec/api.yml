@@ -210,6 +210,9 @@ components:
           type: object
           x-go-type: models.Verdict
           description: The verdict of the event
+        lock_file_path:
+          type: string
+          description: Identifies the file path of the lock file used to retrieve the dependency this event is about
         github_context:
           $ref: "#/components/schemas/GitHubDependencyEventContext"
       required:
