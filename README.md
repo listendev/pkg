@@ -28,4 +28,5 @@ go generate -x ./models/severity
 go generate -x ./models
 go generate -x ./lockfile
 go generate -x ./manifest
+go generate -x ./apispec
 ```
