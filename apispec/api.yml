@@ -10,6 +10,35 @@ servers:
   - url: https://core.listen.dev
 
 paths:
+  /api/v1/detections/event:
+    post:
+      summary: Create a new detection event
+      description: This endpoint allows for the creation of a new detection event.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DetectionEvent'
+      responses:
+        "202":
+          description: Event created successfully
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      security:
+        - JWT:
+            - "write:detectionevents"
+            - "project_id"
   /api/v1/pipeline/event:
     post:
       summary: Create a new pipeline event
@@ -231,6 +260,37 @@ components:
           x-go-type: interface{}
         github_context:
           $ref: "#/components/schemas/GitHubPipelineEventContext"
+      required:
+        - type
+        - data
+        - github_context
+    GitHubDetectionEventContext:
+      $ref: "#/components/schemas/GitHubEventContext"
+    DetectionEvent:
+      type: object
+      properties:
+        type:
+          type: string
+          pattern: "^[a-zA-Z0-9_]+$"
+        data:
+          type: object
+          required:
+            - unique_id
+            - head
+            - body
+          properties:
+            unique_id:
+              type: string
+              pattern: "^[0-9a-f]{64}$"
+              description: Unique SHA256 identifier
+            head:
+              type: object
+              x-go-type: interface{}
+            body:
+              type: object
+              x-go-type: interface{}
+        github_context:
+          $ref: "#/components/schemas/GitHubDetectionEventContext"
       required:
         - type
         - data
