@@ -1,0 +1,81 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: Detection Types Model
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: The Engineering Team
+    email: engineering@garnet.ai
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /temp-event-type:
+    post:
+      operationId: temp-event-type
+      description: This is just to let openapi-codegen generate the Detection Event Type model.
+      responses:
+        default:
+          description: The Ecosystem model.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+components:
+  schemas:
+    Event:
+      type: integer
+      format: uint64
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+        - 11
+        - 12
+        - 13
+        - 14
+        - 15
+        - 16
+        - 17
+        - 18
+        - 19
+        - 20
+        - 21
+        - 22
+        - 23
+        - 24
+        - 25
+      x-enumNames:
+        - "none"
+        - "shell_config_modification"
+        - "capabilities_modification"
+        - "sudoers_modification"
+        - "cpu_fingerprint"
+        - "filesystem_fingerprint"
+        - "machine_fingerprint"
+        - "os_fingerprint"
+        - "process_fingerprint"
+        - "shobj_deleted_after_load"
+        - "java_libinstrument_load"
+        - "java_debug_wire_proto_load"
+        - "core_pattern_access"
+        - "sched_debug_access"
+        - "sysrq_access"
+        - "unprivileged_bpf_config_access"
+        - "ssl_certificate_access"
+        - "credentials_files_access"
+        - "os_status_fingerprint"
+        - "pam_config_modification"
+        - "package_repo_config_modification"
+        - "code_modification_through_procfs"
+        - "process_code_modification"
+        - "process_memory_access"
+        - "container_escape_attempt"
