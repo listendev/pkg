@@ -88,7 +88,7 @@ func FromString(input string) (Event, error) {
 }
 
 func (e Event) MarshalJSON() ([]byte, error) {
-	s := e.String()
+	s := e.Case()
 	if _, err := FromString(s); err != nil {
 		return nil, err
 	}
