@@ -52,7 +52,6 @@ components:
         - 22
         - 23
         - 24
-        - 25
       x-enumNames:
         - "none"
         - "shell_config_modification"
