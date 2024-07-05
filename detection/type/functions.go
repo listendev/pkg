@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+
+	"github.com/iancoleman/strcase"
 )
 
 var events = []Event{}
@@ -24,10 +26,42 @@ func EventTypes() []Event {
 	return events
 }
 
-func EventTypesAsStrings() []string {
+type EventOutputOption uint8
+
+const (
+	ApplyCase EventOutputOption = iota
+	SingleQuotes
+	WithValue
+)
+
+func EventTypesAsStrings(opts ...EventOutputOption) []string {
+	applyCase := false
+	singleQuotes := false
+	withValue := false
+	for _, o := range opts {
+		switch o {
+		case ApplyCase:
+			applyCase = true
+		case SingleQuotes:
+			singleQuotes = true
+		case WithValue:
+			withValue = true
+		}
+	}
+
 	strs := []string{}
 	for _, e := range events {
-		strs = append(strs, e.String())
+		s := e.String()
+		if applyCase {
+			s = e.Case()
+		}
+		if singleQuotes {
+			s = fmt.Sprintf("'%s'", s)
+		}
+		if withValue {
+			s = fmt.Sprintf("%s = %d", s, e)
+		}
+		strs = append(strs, s)
 	}
 
 	return strs
@@ -45,7 +79,7 @@ func FromUint64(input uint64) (Event, error) {
 
 func FromString(input string) (Event, error) {
 	for _, e := range events {
-		if e.String() == input || strings.EqualFold(e.String(), input) {
+		if e.String() == input || e.Case() == input || strings.EqualFold(e.String(), input) {
 			return e, nil
 		}
 	}
@@ -107,6 +141,11 @@ func (e *Event) UnmarshalText(text []byte) error {
 	*e = eco
 
 	return err
+}
+
+// Case returns the snake case string version of the receiving Event enum type.
+func (e Event) Case() string {
+	return strings.ToLower(strcase.ToSnake(e.String()))
 }
 
 //go:generate stringer -type=Event
