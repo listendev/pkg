@@ -1,0 +1,4 @@
+package: detectiontype
+output: detectiontype.gen.go
+generate:
+  models: true
