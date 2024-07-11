@@ -10,10 +10,12 @@ import (
 	"github.com/go-playground/validator/v10"
 	en_translations "github.com/go-playground/validator/v10/translations/en"
 	"github.com/listendev/pkg/analysisrequest"
+	detectiontype "github.com/listendev/pkg/detection/type"
 	"github.com/listendev/pkg/ecosystem"
 	"github.com/listendev/pkg/models/category"
 	"github.com/listendev/pkg/models/severity"
 	"github.com/listendev/pkg/verdictcode"
+	"golang.org/x/exp/slices"
 )
 
 type ValidationErrors = validator.ValidationErrors
@@ -70,6 +72,44 @@ func init() {
 			return err == nil
 		}
 
+		panic(fmt.Sprintf("bad field type: %T", f.Interface()))
+	}); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterValidation("is_detection_event_type", func(fl validator.FieldLevel) bool {
+		f := fl.Field()
+
+		kind := reflect.String
+		opt := detectiontype.DefaultCase
+		switch fl.Param() {
+		case "enum":
+			kind = reflect.Uint64
+		case "singlequotes":
+			opt = detectiontype.SingleQuotes
+		case "withvalue":
+			opt = detectiontype.WithValue
+		case "case":
+			opt = detectiontype.SnakeCase
+		default:
+			opt = detectiontype.DefaultCase
+		}
+
+		switch kind {
+		case reflect.String:
+			if f.Kind() == reflect.String {
+				return slices.Contains(detectiontype.EventTypesAsStrings(opt), f.String())
+			}
+		case reflect.Uint64:
+			if f.Kind() == reflect.Uint64 {
+				detEvt, err := detectiontype.FromUint64(f.Uint())
+
+				return err == nil && detEvt != detectiontype.None
+			}
+
+		default:
+			panic(fmt.Sprintf("bad field type: %T", f.Interface()))
+		}
 		panic(fmt.Sprintf("bad field type: %T", f.Interface()))
 	}); err != nil {
 		panic(err)
@@ -164,6 +204,21 @@ func init() {
 		},
 		func(ut ut.Translator, fe validator.FieldError) string {
 			t, _ := ut.T("is_severity", fe.Field())
+
+			return t
+		},
+	); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterTranslation(
+		"is_detection_event_type",
+		Translator,
+		func(ut ut.Translator) error {
+			return ut.Add("is_detection_event_type", "{0} must be a valid detection event type", true)
+		},
+		func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("is_detection_event_type", fe.Field())
 
 			return t
 		},
