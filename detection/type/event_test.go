@@ -13,8 +13,9 @@ import (
 
 func TestEventTypesAsStringsOptions(t *testing.T) {
 	require.Contains(t, EventTypesAsStrings(), ShellConfigModification.String())
-	require.Contains(t, EventTypesAsStrings(ApplyCase), SudoersModification.Case())
-	require.Contains(t, EventTypesAsStrings(ApplyCase, SingleQuotes), fmt.Sprintf("'%s'", SslCertificateAccess.Case()))
+	require.Contains(t, EventTypesAsStrings(DefaultCase), MachineFingerprint.String())
+	require.Contains(t, EventTypesAsStrings(SnakeCase), SudoersModification.Case())
+	require.Contains(t, EventTypesAsStrings(SnakeCase, SingleQuotes), fmt.Sprintf("'%s'", SslCertificateAccess.Case()))
 	require.Contains(t, EventTypesAsStrings(SingleQuotes, WithValue), fmt.Sprintf("'%s' = %d", ProcessCodeModification, ProcessCodeModification))
 }
 
