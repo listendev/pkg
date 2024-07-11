@@ -29,19 +29,20 @@ func EventTypes() []Event {
 type EventOutputOption uint8
 
 const (
-	ApplyCase EventOutputOption = iota
+	DefaultCase EventOutputOption = iota
+	SnakeCase
 	SingleQuotes
 	WithValue
 )
 
 func EventTypesAsStrings(opts ...EventOutputOption) []string {
-	applyCase := false
+	snakeCase := false
 	singleQuotes := false
 	withValue := false
 	for _, o := range opts {
 		switch o {
-		case ApplyCase:
-			applyCase = true
+		case SnakeCase:
+			snakeCase = true
 		case SingleQuotes:
 			singleQuotes = true
 		case WithValue:
@@ -52,7 +53,7 @@ func EventTypesAsStrings(opts ...EventOutputOption) []string {
 	strs := []string{}
 	for _, e := range events {
 		s := e.String()
-		if applyCase {
+		if snakeCase {
 			s = e.Case()
 		}
 		if singleQuotes {
