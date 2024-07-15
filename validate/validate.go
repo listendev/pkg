@@ -106,10 +106,8 @@ func init() {
 
 				return err == nil && detEvt != detectiontype.None
 			}
-
-		default:
-			panic(fmt.Sprintf("bad field type: %T", f.Interface()))
 		}
+
 		panic(fmt.Sprintf("bad field type: %T", f.Interface()))
 	}); err != nil {
 		panic(err)
