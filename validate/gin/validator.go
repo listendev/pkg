@@ -60,6 +60,7 @@ func (v *Validator) ValidateStruct(obj any) error {
 		if len(validateRet) == 0 {
 			return nil
 		}
+
 		return validateRet
 	default:
 		return nil
@@ -68,7 +69,7 @@ func (v *Validator) ValidateStruct(obj any) error {
 
 func eventuallyMany(err error) error {
 	if err == nil {
-		return err
+		return nil
 	}
 
 	validationErrors, _ := err.(validate.ValidationErrors)
