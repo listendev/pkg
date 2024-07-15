@@ -272,6 +272,9 @@ components:
         type:
           type: string
           pattern: "^[a-zA-Z0-9_]+$"
+          x-oapi-codegen-extra-tags:
+            validate: mandatory,is_detection_event_type=case
+            human: the detection event type
         data:
           type: object
           required:
