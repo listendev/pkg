@@ -16,6 +16,17 @@ type test struct {
 	AsCamelCase string              `validate:"is_detection_event_type"`
 }
 
+type badTypeTest struct {
+	Wrong []uint8 `validate:"is_detection_event_type"`
+}
+
+func TestBadFieldType(t *testing.T) {
+	input := badTypeTest{
+		Wrong: []uint8("pam_config_modification"),
+	}
+	require.PanicsWithValue(t, "bad field type: []uint8", func() { Singleton.Struct(input) })
+}
+
 func TestIsDetectionTypeValidator(t *testing.T) {
 	allValid := test{
 		AsEnum:      detectiontype.CapabilitiesModification,
