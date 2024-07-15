@@ -24,7 +24,10 @@ func TestBadFieldType(t *testing.T) {
 	input := badTypeTest{
 		Wrong: []uint8("pam_config_modification"),
 	}
-	require.PanicsWithValue(t, "bad field type: []uint8", func() { Singleton.Struct(input) })
+	require.PanicsWithValue(t, "bad field type: []uint8", func() {
+		//nolint:errcheck // we are checking it panics
+		Singleton.Struct(input)
+	})
 }
 
 func TestIsDetectionTypeValidator(t *testing.T) {
