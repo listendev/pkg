@@ -15,6 +15,7 @@ func _() {
 	_ = x[CpuFingerprint-4]
 	_ = x[CredentialsFilesAccess-17]
 	_ = x[FilesystemFingerprint-5]
+	_ = x[Informational-26]
 	_ = x[JavaDebugWireProtoLoad-11]
 	_ = x[JavaLibinstrumentLoad-10]
 	_ = x[MachineFingerprint-6]
@@ -36,9 +37,9 @@ func _() {
 	_ = x[UnprivilegedBpfConfigAccess-15]
 }
 
-const _Event_name = "NoneShellConfigModificationCapabilitiesModificationSudoersModificationCpuFingerprintFilesystemFingerprintMachineFingerprintOsFingerprintProcessFingerprintShobjDeletedAfterLoadJavaLibinstrumentLoadJavaDebugWireProtoLoadCorePatternAccessSchedDebugAccessSysrqAccessUnprivilegedBpfConfigAccessSslCertificateAccessCredentialsFilesAccessOsStatusFingerprintPamConfigModificationPackageRepoConfigModificationCodeModificationThroughProcfsProcessCodeModificationProcessMemoryAccessContainerEscapeAttemptOsNetworkFingerprint"
+const _Event_name = "NoneShellConfigModificationCapabilitiesModificationSudoersModificationCpuFingerprintFilesystemFingerprintMachineFingerprintOsFingerprintProcessFingerprintShobjDeletedAfterLoadJavaLibinstrumentLoadJavaDebugWireProtoLoadCorePatternAccessSchedDebugAccessSysrqAccessUnprivilegedBpfConfigAccessSslCertificateAccessCredentialsFilesAccessOsStatusFingerprintPamConfigModificationPackageRepoConfigModificationCodeModificationThroughProcfsProcessCodeModificationProcessMemoryAccessContainerEscapeAttemptOsNetworkFingerprintInformational"
 
-var _Event_index = [...]uint16{0, 4, 27, 51, 70, 84, 105, 123, 136, 154, 175, 196, 218, 235, 251, 262, 289, 309, 331, 350, 371, 400, 429, 452, 471, 493, 513}
+var _Event_index = [...]uint16{0, 4, 27, 51, 70, 84, 105, 123, 136, 154, 175, 196, 218, 235, 251, 262, 289, 309, 331, 350, 371, 400, 429, 452, 471, 493, 513, 526}
 
 func (i Event) String() string {
 	if i >= Event(len(_Event_index)-1) {
