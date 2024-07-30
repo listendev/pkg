@@ -17,6 +17,7 @@ const (
 	MachineFingerprint            Event = 6
 	None                          Event = 0
 	OsFingerprint                 Event = 7
+	OsNetworkFingerprint          Event = 25
 	OsStatusFingerprint           Event = 18
 	PackageRepoConfigModification Event = 20
 	PamConfigModification         Event = 19
