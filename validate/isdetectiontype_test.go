@@ -56,3 +56,41 @@ func TestIsDetectionTypeValidator(t *testing.T) {
 	}
 	require.Equal(t, fieldsWithError, maps.Keys(fields))
 }
+
+func TestIsDetectionTypeValidatorDetectingWrongStringRepresentation(t *testing.T) {
+	invalid := test{
+		AsEnum:      detectiontype.Informational,
+		AsSnakeCase: "informational",
+		AsCamelCase: "AaaBbb", // String representation
+	}
+	fieldsWithError := []string{
+		"AsCamelCase",
+	}
+	errors := Singleton.Struct(invalid).(ValidationErrors)
+	fields := map[string]string{}
+	for _, err := range errors {
+		errMsg := err.Translate(Translator)
+		assert.True(t, strings.HasSuffix(errMsg, "a valid detection event type"))
+		fields[err.Field()] = errMsg
+	}
+	require.Equal(t, fieldsWithError, maps.Keys(fields))
+}
+
+func TestIsDetectionTypeValidatorDetectingWrongCaseRepresentation(t *testing.T) {
+	invalid := test{
+		AsEnum:      detectiontype.OsNetworkFingerprint,
+		AsSnakeCase: "osnetwork_fingerprint",
+		AsCamelCase: "OsNetworkFingerprint",
+	}
+	fieldsWithError := []string{
+		"AsSnakeCase",
+	}
+	errors := Singleton.Struct(invalid).(ValidationErrors)
+	fields := map[string]string{}
+	for _, err := range errors {
+		errMsg := err.Translate(Translator)
+		assert.True(t, strings.HasSuffix(errMsg, "a valid detection event type"))
+		fields[err.Field()] = errMsg
+	}
+	require.Equal(t, fieldsWithError, maps.Keys(fields))
+}
