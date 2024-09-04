@@ -1,0 +1,4 @@
+package: informationaltype
+output: informationaltype.gen.go
+generate:
+  models: true

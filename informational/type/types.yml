@@ -1,0 +1,40 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: Informational Types Model
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: The Engineering Team
+    email: engineering@garnet.ai
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /temp-event-type:
+    post:
+      operationId: temp-informtional-event-type
+      description: This is just to let openapi-codegen generate the Informational Event Type model.
+      responses:
+        default:
+          description: The Informational Event Type model.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+components:
+  schemas:
+    Event:
+      type: integer
+      format: uint64
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+      x-enumNames:
+        - "none"
+        - "change_summary"
+        - "pull_summary"
+        - "flows_summary"
+        - "detections_summary"
