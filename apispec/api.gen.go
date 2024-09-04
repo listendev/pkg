@@ -96,6 +96,19 @@ type GitHubEventContext struct {
 // GitHubPipelineEventContext defines model for GitHubPipelineEventContext.
 type GitHubPipelineEventContext = GitHubEventContext
 
+// InformationalEvent defines model for InformationalEvent.
+type InformationalEvent struct {
+	Data struct {
+		Body interface{} `json:"body"`
+		Head interface{} `json:"head"`
+
+		// UniqueId Unique SHA256 identifier
+		UniqueId string `json:"unique_id"`
+	} `json:"data"`
+	GithubContext GitHubDetectionEventContext `json:"github_context"`
+	Type          string                      `human:"the informational event type" json:"type" validate:"mandatory,is_informational_event_type=case"`
+}
+
 // PipelineEvent defines model for PipelineEvent.
 type PipelineEvent struct {
 	Data          interface{}                `json:"data"`
@@ -108,6 +121,9 @@ type PostApiV1DependenciesEventJSONRequestBody = DependencyEvent
 
 // PostApiV1DetectionsEventJSONRequestBody defines body for PostApiV1DetectionsEvent for application/json ContentType.
 type PostApiV1DetectionsEventJSONRequestBody = DetectionEvent
+
+// PostApiV1InformationalEventJSONRequestBody defines body for PostApiV1InformationalEvent for application/json ContentType.
+type PostApiV1InformationalEventJSONRequestBody = InformationalEvent
 
 // PostApiV1PipelineEventJSONRequestBody defines body for PostApiV1PipelineEvent for application/json ContentType.
 type PostApiV1PipelineEventJSONRequestBody = PipelineEvent
@@ -195,6 +211,11 @@ type ClientInterface interface {
 
 	PostApiV1DetectionsEvent(ctx context.Context, body PostApiV1DetectionsEventJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// PostApiV1InformationalEventWithBody request with any body
+	PostApiV1InformationalEventWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	PostApiV1InformationalEvent(ctx context.Context, body PostApiV1InformationalEventJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// PostApiV1PipelineEventWithBody request with any body
 	PostApiV1PipelineEventWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -239,6 +260,30 @@ func (c *Client) PostApiV1DetectionsEventWithBody(ctx context.Context, contentTy
 
 func (c *Client) PostApiV1DetectionsEvent(ctx context.Context, body PostApiV1DetectionsEventJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewPostApiV1DetectionsEventRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PostApiV1InformationalEventWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostApiV1InformationalEventRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PostApiV1InformationalEvent(ctx context.Context, body PostApiV1InformationalEventJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostApiV1InformationalEventRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -353,6 +398,46 @@ func NewPostApiV1DetectionsEventRequestWithBody(server string, contentType strin
 	return req, nil
 }
 
+// NewPostApiV1InformationalEventRequest calls the generic PostApiV1InformationalEvent builder with application/json body
+func NewPostApiV1InformationalEventRequest(server string, body PostApiV1InformationalEventJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewPostApiV1InformationalEventRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewPostApiV1InformationalEventRequestWithBody generates requests for PostApiV1InformationalEvent with any type of body
+func NewPostApiV1InformationalEventRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/informational/event")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewPostApiV1PipelineEventRequest calls the generic PostApiV1PipelineEvent builder with application/json body
 func NewPostApiV1PipelineEventRequest(server string, body PostApiV1PipelineEventJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -446,6 +531,11 @@ type ClientWithResponsesInterface interface {
 
 	PostApiV1DetectionsEventWithResponse(ctx context.Context, body PostApiV1DetectionsEventJSONRequestBody, reqEditors ...RequestEditorFn) (*PostApiV1DetectionsEventResponse, error)
 
+	// PostApiV1InformationalEventWithBodyWithResponse request with any body
+	PostApiV1InformationalEventWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1InformationalEventResponse, error)
+
+	PostApiV1InformationalEventWithResponse(ctx context.Context, body PostApiV1InformationalEventJSONRequestBody, reqEditors ...RequestEditorFn) (*PostApiV1InformationalEventResponse, error)
+
 	// PostApiV1PipelineEventWithBodyWithResponse request with any body
 	PostApiV1PipelineEventWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1PipelineEventResponse, error)
 
@@ -492,6 +582,29 @@ func (r PostApiV1DetectionsEventResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r PostApiV1DetectionsEventResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type PostApiV1InformationalEventResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON401      *Error
+	JSON500      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r PostApiV1InformationalEventResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PostApiV1InformationalEventResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -553,6 +666,23 @@ func (c *ClientWithResponses) PostApiV1DetectionsEventWithResponse(ctx context.C
 		return nil, err
 	}
 	return ParsePostApiV1DetectionsEventResponse(rsp)
+}
+
+// PostApiV1InformationalEventWithBodyWithResponse request with arbitrary body returning *PostApiV1InformationalEventResponse
+func (c *ClientWithResponses) PostApiV1InformationalEventWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1InformationalEventResponse, error) {
+	rsp, err := c.PostApiV1InformationalEventWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostApiV1InformationalEventResponse(rsp)
+}
+
+func (c *ClientWithResponses) PostApiV1InformationalEventWithResponse(ctx context.Context, body PostApiV1InformationalEventJSONRequestBody, reqEditors ...RequestEditorFn) (*PostApiV1InformationalEventResponse, error) {
+	rsp, err := c.PostApiV1InformationalEvent(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostApiV1InformationalEventResponse(rsp)
 }
 
 // PostApiV1PipelineEventWithBodyWithResponse request with arbitrary body returning *PostApiV1PipelineEventResponse
@@ -638,6 +768,39 @@ func ParsePostApiV1DetectionsEventResponse(rsp *http.Response) (*PostApiV1Detect
 	return response, nil
 }
 
+// ParsePostApiV1InformationalEventResponse parses an HTTP response from a PostApiV1InformationalEventWithResponse call
+func ParsePostApiV1InformationalEventResponse(rsp *http.Response) (*PostApiV1InformationalEventResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PostApiV1InformationalEventResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParsePostApiV1PipelineEventResponse parses an HTTP response from a PostApiV1PipelineEventWithResponse call
 func ParsePostApiV1PipelineEventResponse(rsp *http.Response) (*PostApiV1PipelineEventResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -679,6 +842,9 @@ type ServerInterface interface {
 	// Create a new detection event
 	// (POST /api/v1/detections/event)
 	PostApiV1DetectionsEvent(c *gin.Context)
+	// Create a new informational event
+	// (POST /api/v1/informational/event)
+	PostApiV1InformationalEvent(c *gin.Context)
 	// Create a new pipeline event
 	// (POST /api/v1/pipeline/event)
 	PostApiV1PipelineEvent(c *gin.Context)
@@ -721,6 +887,21 @@ func (siw *ServerInterfaceWrapper) PostApiV1DetectionsEvent(c *gin.Context) {
 	}
 
 	siw.Handler.PostApiV1DetectionsEvent(c)
+}
+
+// PostApiV1InformationalEvent operation middleware
+func (siw *ServerInterfaceWrapper) PostApiV1InformationalEvent(c *gin.Context) {
+
+	c.Set(JWTScopes, []string{"write:informationalevents", "project_id"})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.PostApiV1InformationalEvent(c)
 }
 
 // PostApiV1PipelineEvent operation middleware
@@ -767,38 +948,40 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 
 	router.POST(options.BaseURL+"/api/v1/dependencies/event", wrapper.PostApiV1DependenciesEvent)
 	router.POST(options.BaseURL+"/api/v1/detections/event", wrapper.PostApiV1DetectionsEvent)
+	router.POST(options.BaseURL+"/api/v1/informational/event", wrapper.PostApiV1InformationalEvent)
 	router.POST(options.BaseURL+"/api/v1/pipeline/event", wrapper.PostApiV1PipelineEvent)
 }
 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
