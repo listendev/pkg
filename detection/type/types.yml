@@ -12,11 +12,11 @@ info:
 paths:
   /temp-event-type:
     post:
-      operationId: temp-event-type
+      operationId: temp-deteciton-event-type
       description: This is just to let openapi-codegen generate the Detection Event Type model.
       responses:
         default:
-          description: The Ecosystem model.
+          description: The Detection Event Type model.
           content:
             application/json:
               schema:
@@ -53,7 +53,6 @@ components:
         - 23
         - 24
         - 25
-        - 26
       x-enumNames:
         - "none"
         - "shell_config_modification"
@@ -81,4 +80,3 @@ components:
         - "process_memory_access"
         - "container_escape_attempt"
         - "os_network_fingerprint"
-        - "informational"
