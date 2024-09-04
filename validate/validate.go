@@ -12,6 +12,7 @@ import (
 	"github.com/listendev/pkg/analysisrequest"
 	detectiontype "github.com/listendev/pkg/detection/type"
 	"github.com/listendev/pkg/ecosystem"
+	informationaltype "github.com/listendev/pkg/informational/type"
 	"github.com/listendev/pkg/models/category"
 	"github.com/listendev/pkg/models/severity"
 	"github.com/listendev/pkg/verdictcode"
@@ -105,6 +106,42 @@ func init() {
 				detEvt, err := detectiontype.FromUint64(f.Uint())
 
 				return err == nil && detEvt != detectiontype.None
+			}
+		}
+
+		panic(fmt.Sprintf("bad field type: %T", f.Interface()))
+	}); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterValidation("is_informational_event_type", func(fl validator.FieldLevel) bool {
+		f := fl.Field()
+
+		kind := reflect.String
+		opt := informationaltype.DefaultCase
+		switch fl.Param() {
+		case "enum":
+			kind = reflect.Uint64
+		case "singlequotes":
+			opt = informationaltype.SingleQuotes
+		case "withvalue":
+			opt = informationaltype.WithValue
+		case "case":
+			opt = informationaltype.SnakeCase
+		default:
+			opt = informationaltype.DefaultCase
+		}
+
+		switch kind {
+		case reflect.String:
+			if f.Kind() == reflect.String {
+				return slices.Contains(informationaltype.EventTypesAsStrings(opt), f.String())
+			}
+		case reflect.Uint64:
+			if f.Kind() == reflect.Uint64 {
+				detEvt, err := informationaltype.FromUint64(f.Uint())
+
+				return err == nil && detEvt != informationaltype.None
 			}
 		}
 
@@ -217,6 +254,21 @@ func init() {
 		},
 		func(ut ut.Translator, fe validator.FieldError) string {
 			t, _ := ut.T("is_detection_event_type", fe.Field())
+
+			return t
+		},
+	); err != nil {
+		panic(err)
+	}
+
+	if err := Singleton.RegisterTranslation(
+		"is_informational_event_type",
+		Translator,
+		func(ut ut.Translator) error {
+			return ut.Add("is_informational_event_type", "{0} must be a valid informational event type", true)
+		},
+		func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("is_informational_event_type", fe.Field())
 
 			return t
 		},
