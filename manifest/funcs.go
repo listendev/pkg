@@ -82,7 +82,6 @@ func Existing(paths []string) (map[Manifest][]string, map[Manifest][]error) {
 	if err != nil {
 		for _, e := range err.(validate.ValidationErrors) {
 			field, idx := fromFieldError(e)
-			// spew.Dump(field.String())
 			messageErr := fmt.Errorf(e.Translate(validate.Translator))
 			if _, ok := errorsMap[field]; !ok {
 				errorsMap[field] = []error{messageErr}
