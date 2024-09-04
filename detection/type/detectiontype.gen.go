@@ -12,7 +12,6 @@ const (
 	CpuFingerprint                Event = 4
 	CredentialsFilesAccess        Event = 17
 	FilesystemFingerprint         Event = 5
-	Informational                 Event = 26
 	JavaDebugWireProtoLoad        Event = 11
 	JavaLibinstrumentLoad         Event = 10
 	MachineFingerprint            Event = 6
