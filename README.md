@@ -30,4 +30,5 @@ go generate -x ./lockfile
 go generate -x ./manifest
 go generate -x ./apispec
 go generate -x ./detection/type
+go generate -x ./informational/type
 ```
