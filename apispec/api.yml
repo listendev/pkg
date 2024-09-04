@@ -10,6 +10,35 @@ servers:
   - url: https://core.listen.dev
 
 paths:
+  /api/v1/informational/event:
+    post:
+      summary: Create a new informational event
+      description: This endpoint allows for the creation of a new informational event.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InformationalEvent'
+      responses:
+        "202":
+          description: Event created successfully
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      security:
+        - JWT:
+            - "write:informationalevents"
+            - "project_id"
   /api/v1/detections/event:
     post:
       summary: Create a new detection event
@@ -274,6 +303,39 @@ components:
           x-oapi-codegen-extra-tags:
             validate: mandatory,is_detection_event_type=case
             human: the detection event type
+        data:
+          type: object
+          required:
+            - unique_id
+            - head
+            - body
+          properties:
+            unique_id:
+              type: string
+              pattern: "^[0-9a-f]{64}$"
+              description: Unique SHA256 identifier
+            head:
+              type: object
+              x-go-type: interface{}
+            body:
+              type: object
+              x-go-type: interface{}
+        github_context:
+          $ref: "#/components/schemas/GitHubDetectionEventContext"
+      required:
+        - type
+        - data
+        - github_context
+    GitHubInformationalEventContext:
+      $ref: "#/components/schemas/GitHubEventContext"
+    InformationalEvent:
+      type: object
+      properties:
+        type:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: mandatory,is_informational_event_type=case
+            human: the informational event type
         data:
           type: object
           required:
