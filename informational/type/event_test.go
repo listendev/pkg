@@ -16,6 +16,7 @@ func TestEventTypesAsStringsOptions(t *testing.T) {
 	require.Contains(t, EventTypesAsStrings(DefaultCase), PullSummary.String())
 	require.Contains(t, EventTypesAsStrings(SnakeCase), FlowsSummary.Case())
 	require.Contains(t, EventTypesAsStrings(SnakeCase, SingleQuotes), fmt.Sprintf("'%s'", DetectionsSummary.Case()))
+	require.Contains(t, EventTypesAsStrings(SingleQuotes, WithValue), fmt.Sprintf("'%s' = %d", Summary, Summary))
 }
 
 func TestFromUint64(t *testing.T) {
