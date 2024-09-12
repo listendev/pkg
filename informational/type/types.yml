@@ -32,9 +32,11 @@ components:
         - 2
         - 3
         - 4
+        - 5
       x-enumNames:
         - "none"
         - "change_summary"
         - "pull_summary"
         - "flows_summary"
         - "detections_summary"
+        - "summary"
