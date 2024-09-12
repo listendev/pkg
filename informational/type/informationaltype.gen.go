@@ -10,6 +10,7 @@ const (
 	FlowsSummary      Event = 3
 	None              Event = 0
 	PullSummary       Event = 2
+	Summary           Event = 5
 )
 
 // Event defines model for Event.

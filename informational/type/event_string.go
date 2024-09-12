@@ -13,11 +13,12 @@ func _() {
 	_ = x[FlowsSummary-3]
 	_ = x[None-0]
 	_ = x[PullSummary-2]
+	_ = x[Summary-5]
 }
 
-const _Event_name = "NoneChangeSummaryPullSummaryFlowsSummaryDetectionsSummary"
+const _Event_name = "NoneChangeSummaryPullSummaryFlowsSummaryDetectionsSummarySummary"
 
-var _Event_index = [...]uint8{0, 4, 17, 28, 40, 57}
+var _Event_index = [...]uint8{0, 4, 17, 28, 40, 57, 64}
 
 func (i Event) String() string {
 	if i >= Event(len(_Event_index)-1) {
