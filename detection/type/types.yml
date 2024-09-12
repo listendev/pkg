@@ -12,7 +12,7 @@ info:
 paths:
   /temp-event-type:
     post:
-      operationId: temp-deteciton-event-type
+      operationId: temp-detection-event-type
       description: This is just to let openapi-codegen generate the Detection Event Type model.
       responses:
         default:
