@@ -15,6 +15,7 @@ const (
 	JavaDebugWireProtoLoad        Event = 11
 	JavaLibinstrumentLoad         Event = 10
 	MachineFingerprint            Event = 6
+	NetworkFileCopy               Event = 26
 	None                          Event = 0
 	OsFingerprint                 Event = 7
 	OsNetworkFingerprint          Event = 25
