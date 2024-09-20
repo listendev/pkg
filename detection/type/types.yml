@@ -53,6 +53,7 @@ components:
         - 23
         - 24
         - 25
+        - 26
       x-enumNames:
         - "none"
         - "shell_config_modification"
@@ -80,3 +81,4 @@ components:
         - "process_memory_access"
         - "container_escape_attempt"
         - "os_network_fingerprint"
+        - "network_file_copy"
