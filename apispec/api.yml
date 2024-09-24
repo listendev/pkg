@@ -10,6 +10,33 @@ servers:
   - url: https://core.listen.dev
 
 paths:
+  /api/v1/settings:
+    get:
+      summary: Get the settings for the current project
+      description: This endpoint allows for the retrieval of the settings for the current project.
+      security:
+        - JWT:
+            - "project_id"
+            - "read:settings"
+      responses:
+        "200":
+          description: Settings retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Settings"
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /api/v1/informational/event:
     post:
       summary: Create a new informational event
@@ -144,6 +171,38 @@ components:
           type: string
         message:
           type: string
+    Settings:
+      type: object
+      properties:
+        project_id:
+          type: string
+          description: The id of the project that the settings belongs to
+          x-oapi-codegen-extra-tags:
+            bson: "project_id"
+        policies:
+          type: object
+          description: The policies associated with the settings
+          additionalProperties:
+            type: object
+            properties:
+              observe:
+                type: boolean
+          x-oapi-codegen-extra-tags:
+            bson: "policies"
+        tokens:
+          type: object
+          description: The tokens associated with the settings
+          additionalProperties:
+            type: object
+            properties:
+              key:
+                type: string
+          x-oapi-codegen-extra-tags:
+            bson: "tokens"
+      required:
+        - id
+        - project_id
+        - policies
     # see: https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
     GitHubEventContext:
       type: object
