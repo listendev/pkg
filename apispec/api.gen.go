@@ -116,6 +116,22 @@ type PipelineEvent struct {
 	Type          string                     `json:"type"`
 }
 
+// Settings defines model for Settings.
+type Settings struct {
+	// Policies The policies associated with the settings
+	Policies map[string]struct {
+		Observe *bool `json:"observe,omitempty"`
+	} `bson:"policies" json:"policies"`
+
+	// ProjectId The id of the project that the settings belongs to
+	ProjectId string `bson:"project_id" json:"project_id"`
+
+	// Tokens The tokens associated with the settings
+	Tokens *map[string]struct {
+		Key *string `json:"key,omitempty"`
+	} `bson:"tokens" json:"tokens,omitempty"`
+}
+
 // PostApiV1DependenciesEventJSONRequestBody defines body for PostApiV1DependenciesEvent for application/json ContentType.
 type PostApiV1DependenciesEventJSONRequestBody = DependencyEvent
 
@@ -220,6 +236,9 @@ type ClientInterface interface {
 	PostApiV1PipelineEventWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	PostApiV1PipelineEvent(ctx context.Context, body PostApiV1PipelineEventJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetApiV1Settings request
+	GetApiV1Settings(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) PostApiV1DependenciesEventWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -308,6 +327,18 @@ func (c *Client) PostApiV1PipelineEventWithBody(ctx context.Context, contentType
 
 func (c *Client) PostApiV1PipelineEvent(ctx context.Context, body PostApiV1PipelineEventJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewPostApiV1PipelineEventRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetApiV1Settings(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetApiV1SettingsRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -478,6 +509,33 @@ func NewPostApiV1PipelineEventRequestWithBody(server string, contentType string,
 	return req, nil
 }
 
+// NewGetApiV1SettingsRequest generates requests for GetApiV1Settings
+func NewGetApiV1SettingsRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/settings")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -540,6 +598,9 @@ type ClientWithResponsesInterface interface {
 	PostApiV1PipelineEventWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1PipelineEventResponse, error)
 
 	PostApiV1PipelineEventWithResponse(ctx context.Context, body PostApiV1PipelineEventJSONRequestBody, reqEditors ...RequestEditorFn) (*PostApiV1PipelineEventResponse, error)
+
+	// GetApiV1SettingsWithResponse request
+	GetApiV1SettingsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetApiV1SettingsResponse, error)
 }
 
 type PostApiV1DependenciesEventResponse struct {
@@ -634,6 +695,30 @@ func (r PostApiV1PipelineEventResponse) StatusCode() int {
 	return 0
 }
 
+type GetApiV1SettingsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Settings
+	JSON401      *Error
+	JSON500      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r GetApiV1SettingsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetApiV1SettingsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 // PostApiV1DependenciesEventWithBodyWithResponse request with arbitrary body returning *PostApiV1DependenciesEventResponse
 func (c *ClientWithResponses) PostApiV1DependenciesEventWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1DependenciesEventResponse, error) {
 	rsp, err := c.PostApiV1DependenciesEventWithBody(ctx, contentType, body, reqEditors...)
@@ -700,6 +785,15 @@ func (c *ClientWithResponses) PostApiV1PipelineEventWithResponse(ctx context.Con
 		return nil, err
 	}
 	return ParsePostApiV1PipelineEventResponse(rsp)
+}
+
+// GetApiV1SettingsWithResponse request returning *GetApiV1SettingsResponse
+func (c *ClientWithResponses) GetApiV1SettingsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetApiV1SettingsResponse, error) {
+	rsp, err := c.GetApiV1Settings(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetApiV1SettingsResponse(rsp)
 }
 
 // ParsePostApiV1DependenciesEventResponse parses an HTTP response from a PostApiV1DependenciesEventWithResponse call
@@ -834,6 +928,46 @@ func ParsePostApiV1PipelineEventResponse(rsp *http.Response) (*PostApiV1Pipeline
 	return response, nil
 }
 
+// ParseGetApiV1SettingsResponse parses an HTTP response from a GetApiV1SettingsWithResponse call
+func ParseGetApiV1SettingsResponse(rsp *http.Response) (*GetApiV1SettingsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetApiV1SettingsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Settings
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// Create a new dependency event
@@ -848,6 +982,9 @@ type ServerInterface interface {
 	// Create a new pipeline event
 	// (POST /api/v1/pipeline/event)
 	PostApiV1PipelineEvent(c *gin.Context)
+	// Get the settings for the current project
+	// (GET /api/v1/settings)
+	GetApiV1Settings(c *gin.Context)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -919,6 +1056,21 @@ func (siw *ServerInterfaceWrapper) PostApiV1PipelineEvent(c *gin.Context) {
 	siw.Handler.PostApiV1PipelineEvent(c)
 }
 
+// GetApiV1Settings operation middleware
+func (siw *ServerInterfaceWrapper) GetApiV1Settings(c *gin.Context) {
+
+	c.Set(JWTScopes, []string{"project_id", "read:settings"})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetApiV1Settings(c)
+}
+
 // GinServerOptions provides options for the Gin server.
 type GinServerOptions struct {
 	BaseURL      string
@@ -950,38 +1102,43 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.POST(options.BaseURL+"/api/v1/detections/event", wrapper.PostApiV1DetectionsEvent)
 	router.POST(options.BaseURL+"/api/v1/informational/event", wrapper.PostApiV1InformationalEvent)
 	router.POST(options.BaseURL+"/api/v1/pipeline/event", wrapper.PostApiV1PipelineEvent)
+	router.GET(options.BaseURL+"/api/v1/settings", wrapper.GetApiV1Settings)
 }
 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+xa62/bNhD/VwSu32ZZfuRpYECzNlsz7EOBdO2wIBNo6mSxlUiVpJy4gf/3gaRsi7Kc",
-	"RxuvG8BPicV76e53x5+Nu0OEFyVnwJREkzskSQYFNv++hhJYAowszufAlH5UCl6CUBSMwIyqrJrGhDMF",
-	"t+b8hYAUTdAP0cZoVFuMfqXqTTVtGX1V6y57KOfkU5zSHOISq0xbS0ASQUtFOUMTdJEAUzSlIAOVQaAl",
-	"Ay0Z8NQ80Pr2aSUhCRQPBChBYQ7mOFk7DlRGZQDafUBlgKe8UqiH1KIENEFSCcpmOqA5iIQStR3JuwyC",
-	"+nDl3FjbGOHTj0D059twxsP6YcETyGX/fW12uewhAZ8rKiBBk6u1u147r9dts8seeg0KiA5nR2kSrPD2",
-	"0ylPFvrvfVFSpkCkmMDdUjvKACdPVKkY/VxBTJPtzP1hjoLLN2ejw6OArioqUA+VWCkQWujvq0F4isP0",
-	"+u7oYPliuzKtvG3c1dH27Ht2pe3rENtMdQOw1vpdKzydGo5LGhKewAxYCLdK4FDhmSlBVhVYv6SFZG25",
-	"BqMx1ENznNMEKwMZzBKsuFj0qIzX4rERj7X4TwRLQMt2TmpLBgWPwtO5EFzo+OAWF2Vu3qsAKfEMTNlw",
-	"pTIu6BdItLSLqkYZt7Kx7G3M3D1QyJVgV3z3Do8tnGNi8dZ4nfqZLi35tKPhrch6/Gx0o4wXEImKMRDR",
-	"DReforg2Fwkoechv9AHDBYQ8De1RqE+i+fAeR1pCUl1e1939NncYbJUPcaI4wWqndN2fG4XhaHxweHS8",
-	"pbDV60cH9qR/of+/XJu1qNQRu4Z1wtKc38QJlSVWJOuK6SOfulrTiuZJl6RpWDddqYx058uoWMRTgVm3",
-	"CwFpR3TD0TgqQMxgl0opuO47cNOlRAVrhSnnOWC20ugeDOawu+B1raI3kOc8/MDFrjdfqe8q3snp15ev",
-	"Yd1g79Fwais+P7JExWJ9PRSlaln+NptbgR4dnpyMhgen42+zy6pi2k7gt5nUacWCtObSnydHnQWx8glM",
-	"q5mjkOJcdqPWanDp2v+dsuq2y4MEMQcRVyJ3FTKlSjmJInvj9AkvOrUz7KqlKSaH42M4ItNpejo+mA5O",
-	"jg8O8fj45HQ8Oh6NknR0cowPx13GlKCzGehP8dOm4GosuQqXvACV2fLsVIm3ZtCqgzPTwTe6g6O+zUK0",
-	"0tLjKVx96C+K/OVjJ5dWkiUm8NC1VCzMFRHqMed8eJBF1Vfm6ippXBLOYLeD2g7hxkRtT8rGHHSmXnuG",
-	"dUyd7nnizoB19zrt5jZKE9QOYC3+OoDTgESr1M0K3MdOuoiiJyeenHhy4smJJyeenHhy4snJdyInnpN4",
-	"TuI5iecknpN4TuI5ieck/wVO8paWkFMGnpt4buK5iecmnpt4buK5iecm35ebXLCUiwLrDOLcr1f9f9er",
-	"aLOQj1uxclT2sGblMN7dsHoCGr4m5Z28u5HxJlZw+OUs/GsQnsbXPz4MlicmxFw+pBJULS51hDYLv314",
-	"Z7oJsADxi6kHmpinPbueau47c7oJSF9WtkC6hlpfu8V2fRMKTHM0QcBmlIEZEy9nWDBQfUxRD1kiafY6",
-	"zzciwTvAhc6L22Q5lQpYP4F5YBIog7O3FzoQqux3k1KbnIOQVn7YH/QH2gwvgenDCRr3B/2xbcrMvHKE",
-	"SxrNh9F6SZWCjGANEi47t1CpDIAlJadMBTjXl1KQcmH2UYkAg+KApwEOGNw091+N4T4yEQkjdpGgCXrL",
-	"pTor6fvh60YU5/Viq64ySPVzPeJMTW10uCxzSoyZ6KO039Qs3h5CY3vBuNVfmpWbB7LkTFpsjAaj7UwY",
-	"bfvKkASyIgSkTKs8X+i0HwyGzxaxXZM0cbYnr7sheTgY7N/phR4FerbZCzGAWnDTVWhyVffTFboRVMFk",
-	"AwODAn2dloLrdtQj/np53UOyKgqsv9WgVyalOwBkHG2AW0/x54etsyN7L2pXIewXs87itYfsvwHZOuVP",
-	"R6yDHQewzk3/zJjtIB734LaDb+4Huh2OPHz3D18HDU+FcAeUHBiXNZV7ZgSvzD4IXpfQ7ge3rg8P2f1D",
-	"dlX+p6LVhY2NxrqVxon5iWn9uxLhAvobNo2W18t/AgAA//+L6kz9jjYAAA==",
+	"H4sIAAAAAAAC/+xbW2/bOhL+KwK3b2tZvuRqYIFm22ybxT4ESLddbJBjUNLIYiORKkk5cQP/9wOSkixK",
+	"shO38ek5gJ4Si5yLZr4ZfjTGTyhgacYoUCnQ7AmJIIYU63/fQwY0BBqsLpdApXqUcZYBlwT0hgWRce7P",
+	"A0YlPOr1NxwiNEN/8zZKvUKj94HIj7nfUPqukF0PUMKC+3lEEphnWMZKWwgi4CSThFE0Q1chUEkiAsKR",
+	"MThqp6N2OizSD5S8eZoLCB3JHA6SE1iCXg4rw46MiXBAmXeIcLDPcokGSK4yQDMkJCd0oRxaAg9JINue",
+	"fIrBKRZL41rbRgnzv0KgPj+6C+YWD1MWQiKGnwu16/UAcfiWEw4hmt1W5gbNuN411a4H6D1ICJQ7W1IT",
+	"YonbT30WrtTfXV4SKoFHOICntTIUAw73FMkp+ZbDnITtyP1XLzk3Hy8mxycOKTPK0QBlWErgatNvtyP3",
+	"HLvR3dPJ0fpNOzONuG3MFd4OzHt2he3HEFsPdQ2wRvtTwz0VGoYz4gYshAVQFx4lx67EC52COE+xekkD",
+	"yUJzAUataICWOCEhlhoymIZYMr4aEDGvts/19rna/o8AC0DrZkwKTRoFL8LTJeeMK//gEadZot8rBSHw",
+	"AnTacC5jxsl3CNVuG1W1NLaisR5s1Dw9k8hyY5d/O5tHC+c4MHirvU7xTKU2uN9S8GZL1X42sl7MUvB4",
+	"Tilw74Hxe29eqPM4ZMxlD2qB4hRcFrlmyVUr3nK8w5DaIYhKr21ut84tChvpQyyQLMBy6+6iPjcC48n0",
+	"6PjktCXQqvWTI7MyvFL/31RqDSqVx7ZiFbAoYQ/zkIgMyyDu8ukr820pPydJ2LVTF6wdrkh4qvKFl67m",
+	"Pse02wSHqMO78WTqpcAXsE0k40zVHdjhkjyHSsBnLAFMS4nuxqAXuxNe5Mr7CEnC3C+Mb3vzUnxb8s7O",
+	"fzx9Ne0aey+GU1Pw9ZHFczpXx0OayYbmn9PZcvTk+OxsMj46n/6cXpqnfjOAP6dShRXzoNGX/nd20pkQ",
+	"sz8EP19YAhFORDdqjQQTtv7/EJo/dlkQwJfA5zlPbIFYykzMPM+cOMOApZ3SMbbFoggHx9NTOAl8Pzqf",
+	"Hvmjs9OjYzw9PTufTk4nkzCanJ3i42mXMsnJYgHq03y/Lli2JVvghqUgY5OerSLzVg8qKzjWFfygKtgb",
+	"mih4pZRqT275YbhKk7cv7VxKSGQ4gOeOpXSljwhXtTnrw7Msqjgyy6OkdkhYjd00atOEax212SlrfdDq",
+	"es0e1tF1uvuJ3QOq6rXKzS6UOqgtwBr8dQCnBolGqusZ2MVOuohiT056ctKTk56c9OSkJyc9OenJyS8i",
+	"Jz0n6TlJz0l6TtJzkp6T9Jyk5yR/Bk5yTTJICIWem/TcpOcmPTfpuUnPTXpu0nOTX8tNrmjEeIpVBHHS",
+	"j1f9dcerSD2RLxuxskQOMGZlMd7tsNoDDT8S8k7eXYt4HSvY/X7h/n/kns/v/v48WPYOyA1ISajJnR2L",
+	"jCUkKK8AYUhMTq7tPdYn5uvGUAtgdSiuO0y3ZzpLkw4WggUESwidByJjPeEpSk+7hjx3INIXWn/1Omsz",
+	"P6dEO2tYOULCcq602OnIGEvLDceHhKm/knVykRd4tHFCx4fdA90j2vew6h7pe0Ggja1DhLl4i1al6vZV",
+	"e+PBJiFtWGpOFOScyNWNKhzzwv/+8kkbAsyB/0u3CTTTTwdmalojTq9unFccynijWouSV9WAzVQxpJgk",
+	"aIaALggFfXq9XWBOQQ4xQQNk7jc6YpebLc4nwGk7rgkREugwhKWj61o4F9dXyhEizZU5UyqXwIXZPx6O",
+	"hiOlhmVA1eIMTYej4dScFbF+ZQ9nxFuOvWp2moDwoOpdTHQORxPhAA0zRqh0cKK4khMxrrMbcNDNVcEb",
+	"OxQe6mPZWvEQaY+43nYVohm6ZkJeZOTz+H3Ni8ti3lrlGIT8Z3Hy6lZjvMNZlpBAq/G+CvMFgmmDzzXJ",
+	"5tx7A0zqsqgfiIxRYbAxGU3akdDS5pUhdEQeBCBElCfJSoX9aDR+NY/N9K72s0kI7MHd49Ho8Eav1Aml",
+	"jlzD0xwoNm6qCs1ui3q6RQ+cSJhtYKBRIOxqvVvfDZDI0xSryzZ6p0O6BUDa0Aa4Bbl4fdhao9s7UVu6",
+	"cFjMWr8H6CH7R0C2CPn+iLWwYwHWIqCvjNkOPrwDtx3XoMNAt8NQD9/Dw9dCw74Q7oCSBeOsuGG8MoJL",
+	"tc+C175nHQa3to0esoeHbJn+fdFqw8YCqqjdPxewL0KLHxjipLyuVbezCsM55yrBhadtyH4Ag9ibzb2n",
+	"AZrXS0ZloyMf5Vr1o8kejNvAaF0jOeBwVqGogcIPIF8EC+OTMS60Kf1lfPUNfMA4DDcXPLS+W/8eAAD/",
+	"/86MwNS4OwAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
