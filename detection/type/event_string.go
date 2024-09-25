@@ -14,17 +14,25 @@ func _() {
 	_ = x[CorePatternAccess-12]
 	_ = x[CpuFingerprint-4]
 	_ = x[CredentialsFilesAccess-17]
+	_ = x[DenialOfServiceExec-31]
+	_ = x[ExecFromUnusualDir-32]
+	_ = x[FileAttributeChange-33]
 	_ = x[FilesystemFingerprint-5]
+	_ = x[HiddenElfExec-30]
 	_ = x[JavaDebugWireProtoLoad-11]
 	_ = x[JavaLibinstrumentLoad-10]
 	_ = x[MachineFingerprint-6]
-	_ = x[NetworkFileCopy-26]
+	_ = x[NetFilecopyToolExec-26]
+	_ = x[NetScanToolExec-27]
+	_ = x[NetSniffToolExec-28]
+	_ = x[NetSuspiciousToolExec-29]
 	_ = x[None-0]
 	_ = x[OsFingerprint-7]
 	_ = x[OsNetworkFingerprint-25]
 	_ = x[OsStatusFingerprint-18]
 	_ = x[PackageRepoConfigModification-20]
 	_ = x[PamConfigModification-19]
+	_ = x[PasswdUsage-34]
 	_ = x[ProcessCodeModification-22]
 	_ = x[ProcessFingerprint-8]
 	_ = x[ProcessMemoryAccess-23]
@@ -37,9 +45,9 @@ func _() {
 	_ = x[UnprivilegedBpfConfigAccess-15]
 }
 
-const _Event_name = "NoneShellConfigModificationCapabilitiesModificationSudoersModificationCpuFingerprintFilesystemFingerprintMachineFingerprintOsFingerprintProcessFingerprintShobjDeletedAfterLoadJavaLibinstrumentLoadJavaDebugWireProtoLoadCorePatternAccessSchedDebugAccessSysrqAccessUnprivilegedBpfConfigAccessSslCertificateAccessCredentialsFilesAccessOsStatusFingerprintPamConfigModificationPackageRepoConfigModificationCodeModificationThroughProcfsProcessCodeModificationProcessMemoryAccessContainerEscapeAttemptOsNetworkFingerprintNetworkFileCopy"
+const _Event_name = "NoneShellConfigModificationCapabilitiesModificationSudoersModificationCpuFingerprintFilesystemFingerprintMachineFingerprintOsFingerprintProcessFingerprintShobjDeletedAfterLoadJavaLibinstrumentLoadJavaDebugWireProtoLoadCorePatternAccessSchedDebugAccessSysrqAccessUnprivilegedBpfConfigAccessSslCertificateAccessCredentialsFilesAccessOsStatusFingerprintPamConfigModificationPackageRepoConfigModificationCodeModificationThroughProcfsProcessCodeModificationProcessMemoryAccessContainerEscapeAttemptOsNetworkFingerprintNetFilecopyToolExecNetScanToolExecNetSniffToolExecNetSuspiciousToolExecHiddenElfExecDenialOfServiceExecExecFromUnusualDirFileAttributeChangePasswdUsage"
 
-var _Event_index = [...]uint16{0, 4, 27, 51, 70, 84, 105, 123, 136, 154, 175, 196, 218, 235, 251, 262, 289, 309, 331, 350, 371, 400, 429, 452, 471, 493, 513, 528}
+var _Event_index = [...]uint16{0, 4, 27, 51, 70, 84, 105, 123, 136, 154, 175, 196, 218, 235, 251, 262, 289, 309, 331, 350, 371, 400, 429, 452, 471, 493, 513, 532, 547, 563, 584, 597, 616, 634, 653, 664}
 
 func (i Event) String() string {
 	if i >= Event(len(_Event_index)-1) {
