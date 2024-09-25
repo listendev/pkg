@@ -54,6 +54,14 @@ components:
         - 24
         - 25
         - 26
+        - 27
+        - 28
+        - 29
+        - 30
+        - 31
+        - 32
+        - 33
+        - 34
       x-enumNames:
         - "none"
         - "shell_config_modification"
@@ -81,4 +89,12 @@ components:
         - "process_memory_access"
         - "container_escape_attempt"
         - "os_network_fingerprint"
-        - "network_file_copy"
+        - "net_filecopy_tool_exec"
+        - "net_scan_tool_exec"
+        - "net_sniff_tool_exec"
+        - "net_suspicious_tool_exec"
+        - "hidden_elf_exec"
+        - "denial_of_service_exec"
+        - "exec_from_unusual_dir"
+        - "file_attribute_change"
+        - "passwd_usage"
