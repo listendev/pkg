@@ -1,12 +1,17 @@
 package apispec
 
-import "strings"
+import (
+	"fmt"
+	"sort"
+	"strings"
+)
 
 type SettingsOptioner func(*SettingsOptions)
 
 type SettingsOptions struct {
-	prefix    string
-	separator string
+	prefix      string
+	separator   string
+	dquoteValue bool
 }
 
 // WithPrefix is an option to set a prefix.
@@ -23,6 +28,12 @@ func WithSeparator(separator string) SettingsOptioner {
 	}
 }
 
+func WithValueDoubleQuotes() SettingsOptioner {
+	return func(opts *SettingsOptions) {
+		opts.dquoteValue = true
+	}
+}
+
 func (s *Settings) TokensMap(options ...SettingsOptioner) map[string]string {
 	// Apply options
 	opts := &SettingsOptions{
@@ -33,20 +44,37 @@ func (s *Settings) TokensMap(options ...SettingsOptioner) map[string]string {
 	}
 
 	result := make(map[string]string)
+	suffix := "token"
 
 	if s.Tokens != nil {
 		for tokenName, tokenData := range *s.Tokens {
 			if tokenData.Key != nil {
-				// Create the key in uppercase format
 				prefix := opts.prefix
 				if prefix != "" {
 					prefix += opts.separator
 				}
-				key := strings.ToUpper(prefix+tokenName+opts.separator) + "TOKEN"
-				result[key] = *tokenData.Key
+				// Create the key in uppercase format
+				key := strings.ToUpper(prefix + tokenName + opts.separator + suffix)
+				val := *tokenData.Key
+				if opts.dquoteValue {
+					val = fmt.Sprintf("%q", val)
+				}
+				result[key] = val
 			}
 		}
 	}
 
 	return result
+}
+
+func (s *Settings) TokensSlice(options ...SettingsOptioner) []string {
+	tokensMap := s.TokensMap(append([]SettingsOptioner{WithValueDoubleQuotes()}, options...)...)
+
+	res := []string{}
+	for k, v := range tokensMap {
+		res = append(res, fmt.Sprintf("%s=%s", k, v))
+	}
+	sort.Strings(res)
+
+	return res
 }
