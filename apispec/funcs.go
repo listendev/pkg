@@ -9,14 +9,14 @@ type SettingsOptions struct {
 	separator string
 }
 
-// WithPrefix is an option to set a prefix
+// WithPrefix is an option to set a prefix.
 func WithPrefix(prefix string) SettingsOptioner {
 	return func(opts *SettingsOptions) {
 		opts.prefix = prefix
 	}
 }
 
-// WithPrefix is an option to set a separator
+// WithPrefix is an option to set a separator.
 func WithSeparator(separator string) SettingsOptioner {
 	return func(opts *SettingsOptions) {
 		opts.separator = separator
