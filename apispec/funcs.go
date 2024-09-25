@@ -68,7 +68,7 @@ func (s *Settings) TokensMap(options ...SettingsOptioner) map[string]string {
 }
 
 func (s *Settings) TokensSlice(options ...SettingsOptioner) []string {
-	tokensMap := s.TokensMap(append([]SettingsOptioner{WithValueDoubleQuotes()}, options...)...)
+	tokensMap := s.TokensMap(options...)
 
 	res := []string{}
 	for k, v := range tokensMap {
