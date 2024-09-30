@@ -62,6 +62,8 @@ components:
         - 32
         - 33
         - 34
+        - 35
+        - 36
       x-enumNames:
         - "none"
         - "shell_config_modification"
@@ -98,3 +100,5 @@ components:
         - "exec_from_unusual_dir"
         - "file_attribute_change"
         - "passwd_usage"
+        - "net_suspicious_tool_shell"
+        - "code_on_the_fly_attempt"
