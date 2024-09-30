@@ -7,6 +7,7 @@ package detectiontype
 const (
 	CapabilitiesModification      Event = 2
 	CodeModificationThroughProcfs Event = 21
+	CodeOnTheFlyAttempt           Event = 36
 	ContainerEscapeAttempt        Event = 24
 	CorePatternAccess             Event = 12
 	CpuFingerprint                Event = 4
@@ -23,6 +24,7 @@ const (
 	NetScanToolExec               Event = 27
 	NetSniffToolExec              Event = 28
 	NetSuspiciousToolExec         Event = 29
+	NetSuspiciousToolShell        Event = 35
 	None                          Event = 0
 	OsFingerprint                 Event = 7
 	OsNetworkFingerprint          Event = 25
