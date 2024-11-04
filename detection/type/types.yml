@@ -64,6 +64,11 @@ components:
         - 34
         - 35
         - 36
+        - 37
+        - 38
+        - 39
+        - 40
+        - 41
       x-enumNames:
         - "none"
         - "shell_config_modification"
@@ -96,9 +101,14 @@ components:
         - "net_sniff_tool_exec"
         - "net_suspicious_tool_exec"
         - "hidden_elf_exec"
-        - "denial_of_service_exec"
+        - "denial_of_service_tools"
         - "exec_from_unusual_dir"
         - "file_attribute_change"
         - "passwd_usage"
         - "net_suspicious_tool_shell"
-        - "code_on_the_fly_attempt"
+        - "code_on_the_fly"
+        - "binary_executed_by_loader"
+        - "interpreter_shell_spawn"
+        - "net_mitm_tool_exec"
+        - "runc_suspicious_exec"
+        - "global_shlib_modification"

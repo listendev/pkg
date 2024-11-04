@@ -8,22 +8,26 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
+	_ = x[BinaryExecutedByLoader-37]
 	_ = x[CapabilitiesModification-2]
 	_ = x[CodeModificationThroughProcfs-21]
-	_ = x[CodeOnTheFlyAttempt-36]
+	_ = x[CodeOnTheFly-36]
 	_ = x[ContainerEscapeAttempt-24]
 	_ = x[CorePatternAccess-12]
 	_ = x[CpuFingerprint-4]
 	_ = x[CredentialsFilesAccess-17]
-	_ = x[DenialOfServiceExec-31]
+	_ = x[DenialOfServiceTools-31]
 	_ = x[ExecFromUnusualDir-32]
 	_ = x[FileAttributeChange-33]
 	_ = x[FilesystemFingerprint-5]
+	_ = x[GlobalShlibModification-41]
 	_ = x[HiddenElfExec-30]
+	_ = x[InterpreterShellSpawn-38]
 	_ = x[JavaDebugWireProtoLoad-11]
 	_ = x[JavaLibinstrumentLoad-10]
 	_ = x[MachineFingerprint-6]
 	_ = x[NetFilecopyToolExec-26]
+	_ = x[NetMitmToolExec-39]
 	_ = x[NetScanToolExec-27]
 	_ = x[NetSniffToolExec-28]
 	_ = x[NetSuspiciousToolExec-29]
@@ -38,6 +42,7 @@ func _() {
 	_ = x[ProcessCodeModification-22]
 	_ = x[ProcessFingerprint-8]
 	_ = x[ProcessMemoryAccess-23]
+	_ = x[RuncSuspiciousExec-40]
 	_ = x[SchedDebugAccess-13]
 	_ = x[ShellConfigModification-1]
 	_ = x[ShobjDeletedAfterLoad-9]
@@ -47,9 +52,9 @@ func _() {
 	_ = x[UnprivilegedBpfConfigAccess-15]
 }
 
-const _Event_name = "NoneShellConfigModificationCapabilitiesModificationSudoersModificationCpuFingerprintFilesystemFingerprintMachineFingerprintOsFingerprintProcessFingerprintShobjDeletedAfterLoadJavaLibinstrumentLoadJavaDebugWireProtoLoadCorePatternAccessSchedDebugAccessSysrqAccessUnprivilegedBpfConfigAccessSslCertificateAccessCredentialsFilesAccessOsStatusFingerprintPamConfigModificationPackageRepoConfigModificationCodeModificationThroughProcfsProcessCodeModificationProcessMemoryAccessContainerEscapeAttemptOsNetworkFingerprintNetFilecopyToolExecNetScanToolExecNetSniffToolExecNetSuspiciousToolExecHiddenElfExecDenialOfServiceExecExecFromUnusualDirFileAttributeChangePasswdUsageNetSuspiciousToolShellCodeOnTheFlyAttempt"
+const _Event_name = "NoneShellConfigModificationCapabilitiesModificationSudoersModificationCpuFingerprintFilesystemFingerprintMachineFingerprintOsFingerprintProcessFingerprintShobjDeletedAfterLoadJavaLibinstrumentLoadJavaDebugWireProtoLoadCorePatternAccessSchedDebugAccessSysrqAccessUnprivilegedBpfConfigAccessSslCertificateAccessCredentialsFilesAccessOsStatusFingerprintPamConfigModificationPackageRepoConfigModificationCodeModificationThroughProcfsProcessCodeModificationProcessMemoryAccessContainerEscapeAttemptOsNetworkFingerprintNetFilecopyToolExecNetScanToolExecNetSniffToolExecNetSuspiciousToolExecHiddenElfExecDenialOfServiceToolsExecFromUnusualDirFileAttributeChangePasswdUsageNetSuspiciousToolShellCodeOnTheFlyBinaryExecutedByLoaderInterpreterShellSpawnNetMitmToolExecRuncSuspiciousExecGlobalShlibModification"
 
-var _Event_index = [...]uint16{0, 4, 27, 51, 70, 84, 105, 123, 136, 154, 175, 196, 218, 235, 251, 262, 289, 309, 331, 350, 371, 400, 429, 452, 471, 493, 513, 532, 547, 563, 584, 597, 616, 634, 653, 664, 686, 705}
+var _Event_index = [...]uint16{0, 4, 27, 51, 70, 84, 105, 123, 136, 154, 175, 196, 218, 235, 251, 262, 289, 309, 331, 350, 371, 400, 429, 452, 471, 493, 513, 532, 547, 563, 584, 597, 617, 635, 654, 665, 687, 699, 721, 742, 757, 775, 798}
 
 func (i Event) String() string {
 	if i >= Event(len(_Event_index)-1) {

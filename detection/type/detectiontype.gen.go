@@ -5,22 +5,26 @@ package detectiontype
 
 // Defines values for Event.
 const (
+	BinaryExecutedByLoader        Event = 37
 	CapabilitiesModification      Event = 2
 	CodeModificationThroughProcfs Event = 21
-	CodeOnTheFlyAttempt           Event = 36
+	CodeOnTheFly                  Event = 36
 	ContainerEscapeAttempt        Event = 24
 	CorePatternAccess             Event = 12
 	CpuFingerprint                Event = 4
 	CredentialsFilesAccess        Event = 17
-	DenialOfServiceExec           Event = 31
+	DenialOfServiceTools          Event = 31
 	ExecFromUnusualDir            Event = 32
 	FileAttributeChange           Event = 33
 	FilesystemFingerprint         Event = 5
+	GlobalShlibModification       Event = 41
 	HiddenElfExec                 Event = 30
+	InterpreterShellSpawn         Event = 38
 	JavaDebugWireProtoLoad        Event = 11
 	JavaLibinstrumentLoad         Event = 10
 	MachineFingerprint            Event = 6
 	NetFilecopyToolExec           Event = 26
+	NetMitmToolExec               Event = 39
 	NetScanToolExec               Event = 27
 	NetSniffToolExec              Event = 28
 	NetSuspiciousToolExec         Event = 29
@@ -35,6 +39,7 @@ const (
 	ProcessCodeModification       Event = 22
 	ProcessFingerprint            Event = 8
 	ProcessMemoryAccess           Event = 23
+	RuncSuspiciousExec            Event = 40
 	SchedDebugAccess              Event = 13
 	ShellConfigModification       Event = 1
 	ShobjDeletedAfterLoad         Event = 9
