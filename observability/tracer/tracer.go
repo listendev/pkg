@@ -2,7 +2,7 @@ package tracer
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"io"
 	"os"
 	"time"
@@ -21,9 +21,9 @@ import (
 func ExporterBuilder(ctx context.Context, addr string, filePath string) (sdktrace.SpanExporter, error) {
 	if addr == "" {
 		if filePath == "" {
-			return nil, fmt.Errorf("no address or file path provided, cannot make a span exporter")
+			return nil, errors.New("no address or file path provided, cannot make a span exporter")
 		}
-		f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_APPEND|os.O_CREATE|os.O_TRUNC, 0644)
+		f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_APPEND|os.O_CREATE|os.O_TRUNC, 0o644)
 		if err != nil {
 			return nil, err
 		}

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 
 	"github.com/listendev/pkg/ecosystem"
 	"github.com/listendev/pkg/npm"
@@ -12,14 +11,14 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-var _ AnalysisRequest = (*NPM)(nil)
-var _ Publisher = (*NPM)(nil)
-var _ Deliverer = (*NPM)(nil)
-var _ Results = (*NPM)(nil)
-
 var (
-	errNPMNameEmpty = errors.New("NPM package name is empty")
+	_ AnalysisRequest = (*NPM)(nil)
+	_ Publisher       = (*NPM)(nil)
+	_ Deliverer       = (*NPM)(nil)
+	_ Results         = (*NPM)(nil)
 )
+
+var errNPMNameEmpty = errors.New("NPM package name is empty")
 
 type NPMFillError struct {
 	Err error
@@ -51,7 +50,7 @@ type NPM struct {
 func NewNPM(request Type, snowflake string, priority uint8, force bool, name, version, digest string) (AnalysisRequest, error) {
 	tc := request.Components()
 	if !tc.HasEcosystem() {
-		return nil, fmt.Errorf("couldn't instantiate an analysis request for NPM from a type without ecosystem at all")
+		return nil, errors.New("couldn't instantiate an analysis request for NPM from a type without ecosystem at all")
 	}
 	if tc.Ecosystem == ecosystem.Npm {
 		return &NPM{
@@ -69,7 +68,7 @@ func NewNPM(request Type, snowflake string, priority uint8, force bool, name, ve
 		}, nil
 	}
 
-	return nil, fmt.Errorf("couldn't instantiate an analysis request for NPM")
+	return nil, errors.New("couldn't instantiate an analysis request for NPM")
 }
 
 func (arn *NPM) UnmarshalJSON(data []byte) error {
@@ -174,10 +173,10 @@ func (arn NPM) ResultsPath() ResultUploadPath {
 func (arn NPM) Switch(t Type) (AnalysisRequest, error) {
 	c := t.Components()
 	if !c.HasEcosystem() {
-		return nil, fmt.Errorf("couldn't switch the current NPM analysis request to an analysis request with a type without ecosystem")
+		return nil, errors.New("couldn't switch the current NPM analysis request to an analysis request with a type without ecosystem")
 	}
 	if c.Ecosystem != ecosystem.Npm {
-		return nil, fmt.Errorf("couldn't switch the current NPM analysis request to a non NPM one")
+		return nil, errors.New("couldn't switch the current NPM analysis request to a non NPM one")
 	}
 	arn.RequestType = t
 

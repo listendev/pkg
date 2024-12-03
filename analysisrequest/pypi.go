@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 
 	"github.com/listendev/pkg/ecosystem"
 	"github.com/listendev/pkg/observability/tracer"
@@ -12,14 +11,14 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-var _ AnalysisRequest = (*PyPi)(nil)
-var _ Publisher = (*PyPi)(nil)
-var _ Deliverer = (*PyPi)(nil)
-var _ Results = (*PyPi)(nil)
-
 var (
-	errPyPiNameEmpty = errors.New("PyPi package name is empty")
+	_ AnalysisRequest = (*PyPi)(nil)
+	_ Publisher       = (*PyPi)(nil)
+	_ Deliverer       = (*PyPi)(nil)
+	_ Results         = (*PyPi)(nil)
 )
+
+var errPyPiNameEmpty = errors.New("PyPi package name is empty")
 
 type PyPiFillError struct {
 	Err error
@@ -53,7 +52,7 @@ type PyPi struct {
 func NewPyPi(request Type, snowflake string, priority uint8, force bool, name, version, digest string) (AnalysisRequest, error) {
 	tc := request.Components()
 	if !tc.HasEcosystem() {
-		return nil, fmt.Errorf("couldn't instantiate an analysis request for PyPi from a type without ecosystem at all")
+		return nil, errors.New("couldn't instantiate an analysis request for PyPi from a type without ecosystem at all")
 	}
 	if tc.Ecosystem == ecosystem.Pypi {
 		return &PyPi{
@@ -71,7 +70,7 @@ func NewPyPi(request Type, snowflake string, priority uint8, force bool, name, v
 		}, nil
 	}
 
-	return nil, fmt.Errorf("couldn't instantiate an analysis request for PyPi")
+	return nil, errors.New("couldn't instantiate an analysis request for PyPi")
 }
 
 func (arp PyPi) PackageName() string {

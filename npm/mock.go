@@ -3,7 +3,7 @@ package npm
 import (
 	"context"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"os"
 	"path"
 )
@@ -39,7 +39,7 @@ func (r *MockRegistryClient) GetPackageList(_ context.Context, name string) (*Pa
 		return nil, err
 	}
 	if packageList.Name != name {
-		return nil, fmt.Errorf("GetPackageList: name mismatch")
+		return nil, errors.New("GetPackageList: name mismatch")
 	}
 
 	return &packageList, nil
@@ -52,7 +52,7 @@ func (r *MockRegistryClient) GetPackageVersion(_ context.Context, name, _ string
 		return nil, err
 	}
 	if packageVersion.Name != name {
-		return nil, fmt.Errorf("GetPackageVersion: name mismatch")
+		return nil, errors.New("GetPackageVersion: name mismatch")
 	}
 
 	return &packageVersion, nil
@@ -65,7 +65,7 @@ func (r *MockRegistryClient) GetPackageLatestVersion(_ context.Context, name str
 		return nil, err
 	}
 	if packageVersion.Name != name {
-		return nil, fmt.Errorf("GetPackageVersion: name mismatch")
+		return nil, errors.New("GetPackageVersion: name mismatch")
 	}
 
 	return &packageVersion, nil

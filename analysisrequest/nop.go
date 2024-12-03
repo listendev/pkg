@@ -4,10 +4,12 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-var _ AnalysisRequest = (*NOP)(nil)
-var _ Publisher = (*NOP)(nil)
-var _ Deliverer = (*NOP)(nil)
-var _ Results = (*NOP)(nil)
+var (
+	_ AnalysisRequest = (*NOP)(nil)
+	_ Publisher       = (*NOP)(nil)
+	_ Deliverer       = (*NOP)(nil)
+	_ Results         = (*NOP)(nil)
+)
 
 type NOP struct {
 	base

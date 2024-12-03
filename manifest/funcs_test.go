@@ -1,7 +1,7 @@
 package manifest
 
 import (
-	"fmt"
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -73,7 +73,7 @@ func TestExisting(t *testing.T) {
 		{
 			input:   []string{"package.json"},
 			want:    map[Manifest][]string{},
-			wantErr: map[Manifest][]error{PackageJSON: {fmt.Errorf("package.json not found")}},
+			wantErr: map[Manifest][]error{PackageJSON: {errors.New("package.json not found")}},
 		},
 		{
 			input:   []string{"testdata/package.json", "testdata/package.json"},

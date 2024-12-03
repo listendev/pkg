@@ -1,6 +1,7 @@
 package npm
 
 import (
+	"errors"
 	"fmt"
 	"time"
 )
@@ -15,7 +16,7 @@ type PackageList struct {
 func (l *PackageList) LatestVersionTime() (*time.Time, error) {
 	t, ok := l.Time[l.DistTags.Latest]
 	if !ok {
-		return nil, fmt.Errorf("couldn't find the release time of the latest version")
+		return nil, errors.New("couldn't find the release time of the latest version")
 	}
 
 	return &t, nil

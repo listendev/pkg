@@ -14,9 +14,7 @@ import (
 	"github.com/listendev/pkg/pypi"
 )
 
-var (
-	errBuilderInvalidAnalysisRequest = errors.New("invalid analysis request")
-)
+var errBuilderInvalidAnalysisRequest = errors.New("invalid analysis request")
 
 type builder struct {
 	ctx                context.Context
@@ -28,7 +26,7 @@ type builder struct {
 func NewBuilder(ctx context.Context) (*builder, error) {
 	t := tracer.FromContext(ctx)
 	if t == nil {
-		return nil, fmt.Errorf("couldn't retrieve the tracer from context")
+		return nil, errors.New("couldn't retrieve the tracer from context")
 	}
 
 	return &builder{
@@ -196,8 +194,7 @@ func (b *builder) FromJSON(body []byte) (AnalysisRequest, error) {
 	return nil, errBuilderInvalidAnalysisRequest
 }
 
-type noOpBuilder struct {
-}
+type noOpBuilder struct{}
 
 //nolint:revive // we are doing this on purpose (for now)
 func NewNoOpBuilder() *noOpBuilder {

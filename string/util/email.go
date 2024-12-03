@@ -11,9 +11,7 @@ const (
 	emailPattern = `(?i)(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})`
 )
 
-var (
-	emailRegex = regexp.MustCompile(emailPattern)
-)
+var emailRegex = regexp.MustCompile(emailPattern)
 
 func MatchEmails(s string) []string {
 	res := emailRegex.FindAllString(s, -1)

@@ -3,6 +3,7 @@ package models
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"time"
@@ -21,9 +22,7 @@ const (
 	NPMPackageVersionMetadataKey = "npm_package_version"
 )
 
-var (
-	CompactMetadata = true
-)
+var CompactMetadata = true
 
 func NewEmptyVerdict(eco ecosystem.Ecosystem, org, pkg, version, digest, file string) (*Verdict, error) {
 	now := time.Now()
@@ -76,10 +75,10 @@ func (o *Verdict) Validate() error {
 		// We assume o.Code has been already validated, thus we expect its Type() method to never error
 		if err == nil {
 			if ft != ct {
-				all["Code"] = fmt.Errorf("verdict code is not coherent with the results file and its associated analysis type")
+				all["Code"] = errors.New("verdict code is not coherent with the results file and its associated analysis type")
 			}
 			if !o.Code.UniquelyIdentifies() && o.Fingerprint == "" {
-				all["CodeInstance"] = fmt.Errorf("a fingerprint is mandatory because the verdict code is not uniquely identifying it")
+				all["CodeInstance"] = errors.New("a fingerprint is mandatory because the verdict code is not uniquely identifying it")
 			}
 		}
 	}

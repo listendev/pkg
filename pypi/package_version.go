@@ -8,9 +8,7 @@ import (
 	"golang.org/x/exp/maps"
 )
 
-var (
-	ErrNoDist = errors.New("could not find a version with 'sdist' package type")
-)
+var ErrNoDist = errors.New("could not find a version with 'sdist' package type")
 
 type MaintainerType string
 

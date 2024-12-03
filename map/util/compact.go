@@ -6,7 +6,7 @@ import (
 )
 
 func Compact(input map[string]interface{}) (map[string]interface{}, error) {
-	var output = make(map[string]interface{})
+	output := make(map[string]interface{})
 
 	if err := stockmap.Walk(input, func(value interface{}, path []string, isLeaf bool) error {
 		if !typeutil.IsEmpty(value) {

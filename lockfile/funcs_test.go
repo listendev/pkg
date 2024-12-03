@@ -1,7 +1,7 @@
 package lockfile
 
 import (
-	"fmt"
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -80,12 +80,12 @@ func TestExisting(t *testing.T) {
 		{
 			input:   []string{"package-lock.json"},
 			want:    map[Lockfile][]string{},
-			wantErr: map[Lockfile][]error{PackageLockJSON: {fmt.Errorf("package-lock.json not found")}},
+			wantErr: map[Lockfile][]error{PackageLockJSON: {errors.New("package-lock.json not found")}},
 		},
 		{
 			input:   []string{"somedir/poetry.lock"},
 			want:    map[Lockfile][]string{},
-			wantErr: map[Lockfile][]error{PoetryLock: {fmt.Errorf("somedir/poetry.lock not found")}},
+			wantErr: map[Lockfile][]error{PoetryLock: {errors.New("somedir/poetry.lock not found")}},
 		},
 		{
 			input:   []string{"testdata/poetry.lock", "testdata/package-lock.json"},
@@ -95,12 +95,12 @@ func TestExisting(t *testing.T) {
 		{
 			input:   []string{"unk/poetry.lock", "testdata/package-lock.json"},
 			want:    map[Lockfile][]string{PackageLockJSON: {"testdata/package-lock.json"}},
-			wantErr: map[Lockfile][]error{PoetryLock: {fmt.Errorf("unk/poetry.lock not found")}},
+			wantErr: map[Lockfile][]error{PoetryLock: {errors.New("unk/poetry.lock not found")}},
 		},
 		{
 			input:   []string{"testdata/package-lock.json", "testdata/poetry.lock", "unk/poetry.lock", "testdata/1/poetry.lock", "boh/package-lock.json"},
 			want:    map[Lockfile][]string{PackageLockJSON: {"testdata/package-lock.json"}, PoetryLock: {"testdata/poetry.lock", "testdata/1/poetry.lock"}},
-			wantErr: map[Lockfile][]error{PoetryLock: {fmt.Errorf("unk/poetry.lock not found")}, PackageLockJSON: {fmt.Errorf("boh/package-lock.json not found")}},
+			wantErr: map[Lockfile][]error{PoetryLock: {errors.New("unk/poetry.lock not found")}, PackageLockJSON: {errors.New("boh/package-lock.json not found")}},
 		},
 	}
 

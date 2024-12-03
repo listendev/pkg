@@ -7,9 +7,7 @@ import (
 
 var _ BasicAnalysisRequest = (*base)(nil)
 
-var (
-	errBaseSnowflakeEmpty = errors.New("missing snowflake ID")
-)
+var errBaseSnowflakeEmpty = errors.New("missing snowflake ID")
 
 // base is a struct containing the fields common to all the analysis requests.
 //

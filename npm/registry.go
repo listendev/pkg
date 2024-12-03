@@ -14,8 +14,10 @@ import (
 
 var _ Registry = (*RegistryClient)(nil)
 
-const defaultRegistryBaseURL = "https://registry.npmjs.org"
-const defaultUserAgent = "listendev/pkg/npm"
+const (
+	defaultRegistryBaseURL = "https://registry.npmjs.org"
+	defaultUserAgent       = "listendev/pkg/npm"
+)
 
 var (
 	ErrPackageNotFound        = errors.New("package not found")
