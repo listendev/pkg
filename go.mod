@@ -19,6 +19,7 @@ require (
 	github.com/iancoleman/strcase v0.3.0
 	github.com/leodido/go-npmpackagename v0.2.0
 	github.com/leodido/go-urn v1.4.0
+	github.com/oapi-codegen/runtime v1.1.1
 	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
@@ -34,6 +35,7 @@ require (
 )
 
 require (
+	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/bytedance/sonic v1.12.5 // indirect
 	github.com/bytedance/sonic/loader v0.2.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect

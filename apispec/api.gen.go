@@ -20,10 +20,19 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/listendev/pkg/models"
 	"github.com/listendev/pkg/type/int64string"
+	"github.com/oapi-codegen/runtime"
 )
 
 const (
 	JWTScopes = "JWT.Scopes"
+)
+
+// Defines values for JibrilConfigLogLevel.
+const (
+	JibrilConfigLogLevelDebug JibrilConfigLogLevel = "debug"
+	JibrilConfigLogLevelError JibrilConfigLogLevel = "error"
+	JibrilConfigLogLevelInfo  JibrilConfigLogLevel = "info"
+	JibrilConfigLogLevelWarn  JibrilConfigLogLevel = "warn"
 )
 
 // DependencyEvent defines model for DependencyEvent.
@@ -109,6 +118,26 @@ type InformationalEvent struct {
 	Type          string                      `human:"the informational event type" json:"type" validate:"mandatory,is_informational_event_type=case"`
 }
 
+// JibrilConfig defines model for JibrilConfig.
+type JibrilConfig struct {
+	Cardinal  bool                 `json:"cardinal"`
+	ChopLines bool                 `json:"chop-lines"`
+	Daemon    bool                 `json:"daemon"`
+	Event     []string             `json:"event"`
+	Extension []string             `json:"extension"`
+	LogLevel  JibrilConfigLogLevel `json:"log-level"`
+	NoHealth  bool                 `json:"no-health"`
+	Notify    bool                 `json:"notify"`
+	Plugin    []string             `json:"plugin"`
+	Printer   []string             `json:"printer"`
+	Profiler  bool                 `json:"profiler"`
+	Stderr    string               `json:"stderr"`
+	Stdout    string               `json:"stdout"`
+}
+
+// JibrilConfigLogLevel defines model for JibrilConfig.LogLevel.
+type JibrilConfigLogLevel string
+
 // PipelineEvent defines model for PipelineEvent.
 type PipelineEvent struct {
 	Data          interface{}                `json:"data"`
@@ -130,6 +159,12 @@ type Settings struct {
 	Tokens *map[string]struct {
 		Key *string `json:"key,omitempty"`
 	} `bson:"tokens" json:"tokens,omitempty"`
+}
+
+// GetConfigParams defines parameters for GetConfig.
+type GetConfigParams struct {
+	// WorkflowId The workflow ID to fetch the configuration for.
+	WorkflowId string `form:"workflow_id" json:"workflow_id"`
 }
 
 // PostApiV1DependenciesEventJSONRequestBody defines body for PostApiV1DependenciesEvent for application/json ContentType.
@@ -217,6 +252,9 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
+	// GetConfig request
+	GetConfig(ctx context.Context, params *GetConfigParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// PostApiV1DependenciesEventWithBody request with any body
 	PostApiV1DependenciesEventWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -239,6 +277,18 @@ type ClientInterface interface {
 
 	// GetApiV1Settings request
 	GetApiV1Settings(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+func (c *Client) GetConfig(ctx context.Context, params *GetConfigParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetConfigRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
 }
 
 func (c *Client) PostApiV1DependenciesEventWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -347,6 +397,51 @@ func (c *Client) GetApiV1Settings(ctx context.Context, reqEditors ...RequestEdit
 		return nil, err
 	}
 	return c.Client.Do(req)
+}
+
+// NewGetConfigRequest generates requests for GetConfig
+func NewGetConfigRequest(server string, params *GetConfigParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/config")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "workflow_id", runtime.ParamLocationQuery, params.WorkflowId); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
 }
 
 // NewPostApiV1DependenciesEventRequest calls the generic PostApiV1DependenciesEvent builder with application/json body
@@ -579,6 +674,9 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
+	// GetConfigWithResponse request
+	GetConfigWithResponse(ctx context.Context, params *GetConfigParams, reqEditors ...RequestEditorFn) (*GetConfigResponse, error)
+
 	// PostApiV1DependenciesEventWithBodyWithResponse request with any body
 	PostApiV1DependenciesEventWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1DependenciesEventResponse, error)
 
@@ -601,6 +699,30 @@ type ClientWithResponsesInterface interface {
 
 	// GetApiV1SettingsWithResponse request
 	GetApiV1SettingsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetApiV1SettingsResponse, error)
+}
+
+type GetConfigResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *JibrilConfig
+	JSON401      *Error
+	JSON500      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r GetConfigResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetConfigResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
 }
 
 type PostApiV1DependenciesEventResponse struct {
@@ -719,6 +841,15 @@ func (r GetApiV1SettingsResponse) StatusCode() int {
 	return 0
 }
 
+// GetConfigWithResponse request returning *GetConfigResponse
+func (c *ClientWithResponses) GetConfigWithResponse(ctx context.Context, params *GetConfigParams, reqEditors ...RequestEditorFn) (*GetConfigResponse, error) {
+	rsp, err := c.GetConfig(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetConfigResponse(rsp)
+}
+
 // PostApiV1DependenciesEventWithBodyWithResponse request with arbitrary body returning *PostApiV1DependenciesEventResponse
 func (c *ClientWithResponses) PostApiV1DependenciesEventWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1DependenciesEventResponse, error) {
 	rsp, err := c.PostApiV1DependenciesEventWithBody(ctx, contentType, body, reqEditors...)
@@ -794,6 +925,46 @@ func (c *ClientWithResponses) GetApiV1SettingsWithResponse(ctx context.Context, 
 		return nil, err
 	}
 	return ParseGetApiV1SettingsResponse(rsp)
+}
+
+// ParseGetConfigResponse parses an HTTP response from a GetConfigWithResponse call
+func ParseGetConfigResponse(rsp *http.Response) (*GetConfigResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetConfigResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest JibrilConfig
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
 }
 
 // ParsePostApiV1DependenciesEventResponse parses an HTTP response from a PostApiV1DependenciesEventWithResponse call
@@ -970,6 +1141,9 @@ func ParseGetApiV1SettingsResponse(rsp *http.Response) (*GetApiV1SettingsRespons
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// Get the configuration for the current project and workflow_id to inject in jibril
+	// (GET /api/v1/config)
+	GetConfig(c *gin.Context, params GetConfigParams)
 	// Create a new dependency event
 	// (POST /api/v1/dependencies/event)
 	PostApiV1DependenciesEvent(c *gin.Context)
@@ -995,6 +1169,41 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(c *gin.Context)
+
+// GetConfig operation middleware
+func (siw *ServerInterfaceWrapper) GetConfig(c *gin.Context) {
+
+	var err error
+
+	c.Set(JWTScopes, []string{"project_id", "read:settings"})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetConfigParams
+
+	// ------------- Required query parameter "workflow_id" -------------
+
+	if paramValue := c.Query("workflow_id"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument workflow_id is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "workflow_id", c.Request.URL.Query(), &params.WorkflowId)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter workflow_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetConfig(c, params)
+}
 
 // PostApiV1DependenciesEvent operation middleware
 func (siw *ServerInterfaceWrapper) PostApiV1DependenciesEvent(c *gin.Context) {
@@ -1098,6 +1307,7 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
+	router.GET(options.BaseURL+"/api/v1/config", wrapper.GetConfig)
 	router.POST(options.BaseURL+"/api/v1/dependencies/event", wrapper.PostApiV1DependenciesEvent)
 	router.POST(options.BaseURL+"/api/v1/detections/event", wrapper.PostApiV1DetectionsEvent)
 	router.POST(options.BaseURL+"/api/v1/informational/event", wrapper.PostApiV1InformationalEvent)
@@ -1108,37 +1318,42 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
-	"/86MwNS4OwAA",
+	"H4sIAAAAAAAC/+xbbW/juBH+K4J632pZiZ1XAwVuu7u9zaEfFsj2rugiNShqZHEjkVqScuIL/N8Lknqj",
+	"RDvxrnPXA/QpscgZDmeemXkoUE8+ZnnBKFAp/MWTL3AKOdL/voMCaAwUb96vgUr1qOCsAC4J6AkrItMy",
+	"WmJGJTzq8R84JP7C/0vYKg0rjeFPRH4oo57St5XsduJnDN8vE5LBskAyVdpiEJiTQhJG/YV/EwOVJCEg",
+	"PJmCp2Z6aqbHEv1AyZunpYDYk8zjIDmBNejhuFnYkykRHqjlPSI8FLFS+hNfbgrwF76QnNCVMmgNPCZY",
+	"Di35lIJXDdaLa22tEhZ9Aax+PwYrFlQPcxZDJqa/VGq324nP4WtJOMT+4nOz3KTv17u+2u3EfwcSsDJn",
+	"R2hiJNHwacTijfq7z0pCJfAEYXjaqoVSQPGBIiUlX0tYknjouX/pIe/2w5vZ+YVH6ohyf+IXSErgatJ/",
+	"P58E1yhI7p4uzrY/DCPT81u7XGXtxOzT5bZvQ2zX1R3AGu1PPfOUaxgqSIBZDCugATxKjgKJVjoEaZkj",
+	"tUkDyUpzBUataOKvUUZiJDVkEI2RZHwzIWLZTF/q6Us1/W8YCfC3fZ9UmjQKXoSn95wzruyDR5QXmd5X",
+	"DkKgFeiwoVKmjJPfIFazbVR1wjjwxnbSqnl6JpD1RJd9e4vHAOcIG7x1tlM9U6HF9zsS3kxpyk8rG6Ys",
+	"h5CXlAIPHxi/D5eVupBDwQL2oAYoyiFgSWCGAjUSrk/3LKRmCKLCay+3X+cOhb3w+QxLhpHcObvKz1bg",
+	"dDY/O7+4HAgMcv3izIxMb9T/t41ag0plsa1YOSzJ2MMyJqJAEqcum76wyJaKSpLFrpk6YW13JSJUmS/C",
+	"fLOMOKLuJTgkDutOZ/MwB76CXSIFZyrvwHaX5CU0AhFjGSBaS7gLgx50B7yKVfgBsowFvzK+a+e1+K7g",
+	"XV1/e/g62jX2XgynvuDxkcVLulTtIS9kT/P36RwYenF+dTU7Pbuef59eWuZR34Hfp1K5FXHcq0v/vrpw",
+	"BsTMjyEqV5ZAgjLhRq2RYMLW/09Cy0fXCgL4Gviy5JktkEpZiEUYmo4zxSx3SqfIFksShM/nl3CBoyi5",
+	"np9FJ1eXZ+dofnl1PZ9dzmZxMru6ROdzlzLJyWoF6tfysCpYlyVb4JblIFMTnp0iy0ENqjM41Rn8oDI4",
+	"nBovhLWUKk9B/WO6ybMfX1q5lJAoEIbn2lK+0S0iUGXO+vEsi6paZt1KOk3CKuymUJsi3Kmo/UrZqYNW",
+	"1evXMEfVcdcTuwY02Wulm50oXVBbgDX4cwCnA4leqLsR2MdOXERxJCcjORnJyUhORnIykpORnIzk5A8i",
+	"JyMnGTnJyElGTjJykpGTjJxk5CT/D5zkIykgIxRGbjJyk5GbjNxk5CYjNxm5ychN/lhuckMTxnOkPIiy",
+	"8XrVn/d6FekG8mVXrCyRV7hm9TOJOMneMpqQ1RA/GPGYUJR1dt0p6zhlRaDosnCPxwhyw5OHY1DDmEjI",
+	"hZPOVA8Q52ijRR4lUFEx75eLZWwVZLAG00tomSs/KbcqP+keNvEfEFfFCfSdsztHiaQsSAFlhrkPd0OZ",
+	"JMnGPVZk5YocaHPBdYodKsQSkll33jpmCBkDd9+HEzJWR5Znr8O1nmxkGr0WGrr+6tg1afHUgKPxXTe+",
+	"jdNaT9SIcWHYOrXtLo0HVLRvKRvOs2OnanTrHQp+exP85yS4Xt799fmCd3BS34KUhJr6Y/uiYBnB9TE2",
+	"jompKx/tOdYvFunm5gLV1rH08F5yvaSHhGCYIAmx90Bkqm8pi9pS10XlPVU1Elp/s52twb8SdfYhZQiJ",
+	"67vR1UxPpkhaZngRZEz9lczJp19gUWuE9g+7B3qAt+9h487DFzjarPUabq52Meg2ugV3djxpAzKEpeb1",
+	"uOREbm5V4pgN//zrJ70QIA78H7rV+Qv9dGJu/mvE6dHWeHUOMNboOq4aFaMSmZvxkCOS+Qsf6IpQ0Azs",
+	"xxXiFOQUEVVv9Blde+x9O8X7BCgf+jUjQgKdxrD2dF4L783HG3/iZwQDFTorKn0qqpyARJqH6qNLc15p",
+	"teiCQKR5ZVQoc9bATU/zT6cn0xM1gRVA1eDCn09PpnPDlVLtrhAVJFyfhrhp2Ctwfg9AhAc0Lhih0kOZ",
+	"Oh54CeMaDNVHCCir08EoK7lmGc00XHKuCEqdLIjGXkNbif6cgVA9Qqj3RdOIqa+NN4puYn/h/wSy4hZq",
+	"ExzlIIELf/HZlaC1du/mndKegMSp20C1kOqp/tcStL+rIHTs87tQNa9TTL125dedmiwKRoVB5ezkpEZV",
+	"1VJQUWQEawPCL8JwkFbfvu5gMSwNWnvndbFuPg6JPVFiDEIkZZbpzn52cno0c8y9eocd/Sv150f0wc5F",
+	"b1TfVWTYnKA8qCa2tUJjRVeJz3ap4YDiRVPY7lQMRZnnKv807o4LbW1TnX3NlzsERNgw2YKJQ1MRczCW",
+	"scRDHoWH7kdBWvEwpT4yId8U5JfTdx0r3ldf+yjIg5B/r859Rwle/6urXhtQubUd5M9s6AktbbY8Ynwn",
+	"xh84kbBoYaBRIOw+2wP7W+3SHQDqAbc62h4fttaHQ3tRW5vwupi1vkYbIft7QLZy+eGItbBjAdZ6/XFk",
+	"zDrexuzBreMl3OtA17HQCN/Xh6+FhkMh7ICSBeOiejdwZATXap8Fr/2G5HVwa68xQvb1IVuH/1C02rCx",
+	"gCo6b46OcLJs3qvsYN7OA6NG7G37xuLVTmbNGuOp7Pc9lT0HC2OTWdy8LLDfp2DGYdp9qXK3/V8AAAD/",
+	"//YU0tg2QgAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
