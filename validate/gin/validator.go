@@ -52,7 +52,8 @@ func (v *Validator) ValidateStruct(obj any) error {
 	case reflect.Slice, reflect.Array:
 		count := value.Len()
 		validateRet := make(binding.SliceValidationError, 0)
-		for i := 0; i < count; i++ {
+
+		for i := range count {
 			if err := v.ValidateStruct(value.Index(i).Interface()); err != nil {
 				validateRet = append(validateRet, err)
 			}
@@ -72,7 +73,7 @@ func eventuallyMany(err error) error {
 		return nil
 	}
 
-	validationErrors, _ := err.(validate.ValidationErrors)
+	validationErrors, _ := err.(validate.ValidationError)
 	// TODO: check the input not having `validate.ValidationErrors` type
 	if len(validationErrors) == 0 {
 		return nil

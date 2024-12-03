@@ -14,8 +14,10 @@ import (
 
 var _ Registry = (*RegistryClient)(nil)
 
-const defaultRegistryBaseURL = "https://pypi.org"
-const defaultUserAgent = "listendev/pkg/pypi"
+const (
+	defaultRegistryBaseURL = "https://pypi.org"
+	defaultUserAgent       = "listendev/pkg/pypi"
+)
 
 var (
 	ErrPackageNotFound            = errors.New("package not found")

@@ -23,18 +23,13 @@ jobs:
   lint:
     name: lint
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go: [ '1.21' ]
-    steps:
-      - name: Set up go
-        uses: actions/setup-go@v4
-        with:
-          go-version: ${{ matrix.go }}
-          check-latest: true
 
-      - name: Checkout the source code
-        uses: actions/checkout@v3
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
 
       - name: Verify the dependencies
         run: |
@@ -44,6 +39,4 @@ jobs:
       - name: Lint
         uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.57.1
-          args: --timeout 20m0s --verbose --out-${IGNORE_FUTURE_WARNINGS}format tab
-
+          version: v1.62.0

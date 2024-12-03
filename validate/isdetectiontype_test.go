@@ -46,7 +46,7 @@ func TestIsDetectionTypeValidator(t *testing.T) {
 		"AsSnakeCase": true,
 		"AsCamelCase": true,
 	}
-	errors := Singleton.Struct(invalid).(ValidationErrors)
+	errors := Singleton.Struct(invalid).(ValidationError)
 	fields := map[string]bool{}
 	for _, err := range errors {
 		errMsg := err.Translate(Translator)
@@ -67,7 +67,7 @@ func TestNoneIsNotAValidDetectionType(t *testing.T) {
 		"AsSnakeCase": true,
 		"AsCamelCase": true,
 	}
-	errors := Singleton.Struct(invalid).(ValidationErrors)
+	errors := Singleton.Struct(invalid).(ValidationError)
 	fields := map[string]bool{}
 	for _, err := range errors {
 		errMsg := err.Translate(Translator)
@@ -86,7 +86,7 @@ func TestIsDetectionTypeValidatorDetectingWrongStringRepresentation(t *testing.T
 	fieldsWithError := map[string]bool{
 		"AsCamelCase": true,
 	}
-	errors := Singleton.Struct(invalid).(ValidationErrors)
+	errors := Singleton.Struct(invalid).(ValidationError)
 	fields := map[string]bool{}
 	for _, err := range errors {
 		errMsg := err.Translate(Translator)
@@ -105,7 +105,7 @@ func TestIsDetectionTypeValidatorDetectingWrongCaseRepresentation(t *testing.T) 
 	fieldsWithError := map[string]bool{
 		"AsSnakeCase": true,
 	}
-	errors := Singleton.Struct(invalid).(ValidationErrors)
+	errors := Singleton.Struct(invalid).(ValidationError)
 	fields := map[string]bool{}
 	for _, err := range errors {
 		errMsg := err.Translate(Translator)

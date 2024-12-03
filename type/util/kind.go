@@ -2,7 +2,7 @@ package typeutil
 
 import "reflect"
 
-// Dectect whether the concrete underlying value of the given input is one or more
+// Detect whether the concrete underlying value of the given input is one or more
 // Kinds of value.
 func IsKind(in interface{}, kinds ...reflect.Kind) bool {
 	var inT reflect.Type

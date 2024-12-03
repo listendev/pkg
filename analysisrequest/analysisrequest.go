@@ -55,5 +55,5 @@ type Results interface {
 }
 
 type Builder interface {
-	FromJSON([]byte) (AnalysisRequest, error)
+	FromJSON(data []byte) (AnalysisRequest, error)
 }

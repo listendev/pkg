@@ -2,6 +2,7 @@ package npm
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -30,7 +31,7 @@ func NewPackageJSONFromDir(dir string) (*PackageJSON, error) {
 func NewPackageJSONFromReader(reader io.Reader) (*PackageJSON, error) {
 	ret := &PackageJSON{}
 	if err := json.NewDecoder(reader).Decode(ret); err != nil {
-		return nil, fmt.Errorf("couldn't instantiate from the input package.json contents")
+		return nil, errors.New("couldn't instantiate from the input package.json contents")
 	}
 
 	return ret, nil
@@ -45,7 +46,7 @@ func readPackageJSON(dir string) (io.Reader, error) {
 			return nil, fmt.Errorf("directory %s does not contain a package.json file", dir)
 		}
 
-		return nil, fmt.Errorf("couldn't read the package.json file")
+		return nil, errors.New("couldn't read the package.json file")
 	}
 
 	return f, nil

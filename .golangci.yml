@@ -1,37 +1,93 @@
 linters:
   disable-all: true
   enable:
-  - bodyclose
-  - copyloopvar
-  - durationcheck
   - errcheck
-  - errname
-  - goconst
-  - gocritic
-  - gocyclo
-  - godot
-  - gofmt
-  # - goheader
-  - goimports
-  # - gosec
   - gosimple
   - govet
   - ineffassign
+  - staticcheck
+  - unused
+  - asasalint
+  - asciicheck
+  - bidichk
+  - bodyclose
+  - canonicalheader
+  # - containedctx
+  - contextcheck
+  - copyloopvar
+  - decorder
+  - dogsled
+  # - dupl
+  - dupword
+  - durationcheck
+  # - errchkjson
+  - errname
+  # - errorlint
+  - fatcontext
+  - forbidigo
+  # - forcetypeassert
+  - gci
+  - ginkgolinter
+  - gocheckcompilerdirectives
+  # - gochecknoinits
+  - gochecksumtype
+  # - gocognit
+  - goconst
+  - gocritic
+  - gocyclo
+  # - godot
+  # - godox
+  - gofmt
+  - gofumpt
+  - goheader
+  - goimports
+  - gomoddirectives
+  - gomodguard
+  - goprintffuncname
+  # - gosec
+  - gosmopolitan
+  - grouper
+  - iface
+  - importas
+  # - inamedparam
+  - interfacebloat
+  # - intrange
+  - loggercheck
+  # - maintidx
   - makezero
+  - mirror
+  - misspell
+  - musttag
   - nakedret
   - nilerr
-  - nilnil
   - nlreturn
   - noctx
   - nolintlint
+  - nonamedreturns
+  - nosprintfhostport
+  - perfsprint
+  - prealloc
   - predeclared
+  - promlinter
+  - protogetter
+  - reassign
   - revive
-  - staticcheck
+  - rowserrcheck
+  - sloglint
+  - spancheck
+  - sqlclosecheck
   - stylecheck
-  - typecheck
+  - tagalign
+  - tenv
+  - testableexamples
+  - thelper
+  - tparallel
   - unconvert
-  - unused
+  - unparam
+  - usestdlibvars
+  - wastedassign
   - whitespace
+  - zerologlint
 
 linters-settings:
   gofmt:

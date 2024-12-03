@@ -12,13 +12,11 @@ const (
 	letterIdxMax  = 63 / letterIdxBits   // Number of letter indices fitting in 63 bits
 )
 
-var (
-	src = rand.New(rand.NewSource(time.Now().UnixNano()))
-)
+var src = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 // Range generates a random number between min and max.
-func Range(min, max int) int {
-	return rand.Intn(max-min) + min
+func Range(minimum, maximum int) int {
+	return rand.Intn(maximum-minimum) + minimum
 }
 
 // String generates a random string with length n.

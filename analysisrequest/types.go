@@ -2,6 +2,7 @@ package analysisrequest
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -77,17 +78,17 @@ func createType(f Framework, c Collector, cAction string, e ecosystem.Ecosystem,
 	u.ID = string(f)
 	u.SS = string(c)
 	if len(cAction) > 0 {
-		u.SS += fmt.Sprintf(",%s", cAction)
+		u.SS += "," + cAction
 	}
 	if e != 0 {
-		u.SS += fmt.Sprintf("!%s", e.Case())
+		u.SS += "!" + e.Case()
 		if len(eAction) > 0 {
-			u.SS += fmt.Sprintf(",%s", eAction)
+			u.SS += "," + eAction
 		}
 	}
 
 	if len(format) > 0 {
-		u.SS += fmt.Sprintf(".%s", format)
+		u.SS += "." + format
 	}
 
 	return u.String()
@@ -145,7 +146,7 @@ func Types() []Type {
 func ToType(s string) (Type, error) {
 	uu, ok := urn.Parse([]byte(s))
 	if !ok {
-		return 0, fmt.Errorf("cannot convert non URN input to types")
+		return 0, errors.New("cannot convert non URN input to types")
 	}
 	uuu := uu.Normalize()
 
@@ -282,7 +283,7 @@ func componentsFromString(n *urn.URN) TypeComponents {
 func (t Type) MarshalJSON() ([]byte, error) {
 	u := t.ToURN()
 	if u == nil {
-		return nil, fmt.Errorf("couldn't marshal because type is not an URN")
+		return nil, errors.New("couldn't marshal because type is not an URN")
 	}
 
 	return json.Marshal(u.String())

@@ -2,8 +2,10 @@ package threadid
 
 import "context"
 
-type ThreadID int
-type ctxKey struct{}
+type (
+	ThreadID int
+	ctxKey   struct{}
+)
 
 func FromContext(ctx context.Context) ThreadID {
 	id, ok := ctx.Value(ctxKey{}).(ThreadID)

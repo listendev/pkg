@@ -80,9 +80,9 @@ func Existing(paths []string) (map[Manifest][]string, map[Manifest][]error) {
 
 	err := validate.Singleton.Var(manifestsMap, "filevalue")
 	if err != nil {
-		for _, e := range err.(validate.ValidationErrors) {
+		for _, e := range err.(validate.ValidationError) {
 			field, idx := fromFieldError(e)
-			messageErr := fmt.Errorf(e.Translate(validate.Translator))
+			messageErr := fmt.Errorf("%s", e.Translate(validate.Translator))
 			if _, ok := errorsMap[field]; !ok {
 				errorsMap[field] = []error{messageErr}
 			} else {

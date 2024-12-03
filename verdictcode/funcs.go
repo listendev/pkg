@@ -2,6 +2,7 @@ package verdictcode
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/XANi/goneric"
@@ -50,7 +51,7 @@ func FromUint64(input uint64, deprecatedToo bool) (Code, error) {
 	return UNK, fmt.Errorf("couldn't find a code matching input (%d)", input)
 }
 
-// FromString converst the input string to a Code.
+// FromString converts the input string to a Code.
 //
 // It returns only Code instanced that are associated to an analysis request type.
 func FromString(input string, deprecatedToo bool) (Code, error) {
@@ -113,10 +114,10 @@ func (c Code) Type(deprecatedToo bool) (analysisrequest.Type, error) {
 		}
 	}
 
-	return analysisrequest.Nop, fmt.Errorf("not found")
+	return analysisrequest.Nop, errors.New("not found")
 }
 
-// UniquelyIdentifies tells whether the receving Code uniquely identifies a verdict.
+// UniquelyIdentifies tells whether the receiving Code uniquely identifies a verdict.
 //
 // A code uniquely identifies a verdict when a collector can only generate one instance of a verdict with such a code
 // for the tuple (ecosystem, package, version, collector itself).

@@ -88,10 +88,10 @@ func Existing(paths []string) (map[Lockfile][]string, map[Lockfile][]error) {
 
 	err := validate.Singleton.Var(lockfilesMap, "filevalue")
 	if err != nil {
-		for _, e := range err.(validate.ValidationErrors) {
+		for _, e := range err.(validate.ValidationError) {
 			field, idx := fromFieldError(e)
 			// spew.Dump(field.String())
-			messageErr := fmt.Errorf(e.Translate(validate.Translator))
+			messageErr := fmt.Errorf("%s", e.Translate(validate.Translator))
 			if _, ok := errorsMap[field]; !ok {
 				errorsMap[field] = []error{messageErr}
 			} else {

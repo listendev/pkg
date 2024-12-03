@@ -46,7 +46,7 @@ func TestIsInformationalTypeValidator(t *testing.T) {
 		"AsSnakeCase": true,
 		"AsCamelCase": true,
 	}
-	errors := Singleton.Struct(invalid).(ValidationErrors)
+	errors := Singleton.Struct(invalid).(ValidationError)
 	fields := map[string]bool{}
 	for _, err := range errors {
 		errMsg := err.Translate(Translator)
@@ -67,7 +67,7 @@ func TestNoneIsNotAValidInformationalType(t *testing.T) {
 		"AsSnakeCase": true,
 		"AsCamelCase": true,
 	}
-	errors := Singleton.Struct(invalid).(ValidationErrors)
+	errors := Singleton.Struct(invalid).(ValidationError)
 	fields := map[string]bool{}
 	for _, err := range errors {
 		errMsg := err.Translate(Translator)
@@ -86,7 +86,7 @@ func TestIsInformationalTypeValidatorDetectingWrongStringRepresentation(t *testi
 	fieldsWithError := map[string]bool{
 		"AsCamelCase": true,
 	}
-	errors := Singleton.Struct(invalid).(ValidationErrors)
+	errors := Singleton.Struct(invalid).(ValidationError)
 	fields := map[string]bool{}
 	for _, err := range errors {
 		errMsg := err.Translate(Translator)
@@ -105,7 +105,7 @@ func TestIsInformationalTypeValidatorDetectingWrongCaseRepresentation(t *testing
 	fieldsWithError := map[string]bool{
 		"AsSnakeCase": true,
 	}
-	errors := Singleton.Struct(invalid).(ValidationErrors)
+	errors := Singleton.Struct(invalid).(ValidationError)
 	fields := map[string]bool{}
 	for _, err := range errors {
 		errMsg := err.Translate(Translator)
