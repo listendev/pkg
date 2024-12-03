@@ -19,7 +19,7 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-type ValidationErrors = validator.ValidationErrors
+type ValidationError = validator.ValidationErrors
 
 // Singleton is the validator singleton instance.
 //
@@ -523,8 +523,8 @@ func init() {
 func Validate(o interface{}) []error {
 	if err := Singleton.Struct(o); err != nil {
 		all := []error{}
-		for _, e := range err.(ValidationErrors) {
-			all = append(all, fmt.Errorf(e.Translate(Translator)))
+		for _, e := range err.(ValidationError) {
+			all = append(all, fmt.Errorf("%s", e.Translate(Translator)))
 		}
 
 		return all

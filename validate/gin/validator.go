@@ -72,7 +72,7 @@ func eventuallyMany(err error) error {
 		return nil
 	}
 
-	validationErrors, _ := err.(validate.ValidationErrors)
+	validationErrors, _ := err.(validate.ValidationError)
 	// TODO: check the input not having `validate.ValidationErrors` type
 	if len(validationErrors) == 0 {
 		return nil

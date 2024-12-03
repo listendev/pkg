@@ -17,8 +17,8 @@ var (
 )
 
 // Range generates a random number between min and max.
-func Range(min, max int) int {
-	return rand.Intn(max-min) + min
+func Range(minumum, maximum int) int {
+	return rand.Intn(maximum-minumum) + minumum
 }
 
 // String generates a random string with length n.

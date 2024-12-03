@@ -62,8 +62,8 @@ func (o *Verdict) HasExpired() bool {
 func (o *Verdict) Validate() error {
 	all := map[string]error{}
 	if err := validate.Singleton.Struct(o); err != nil {
-		for _, e := range err.(validate.ValidationErrors) {
-			all[e.StructField()] = fmt.Errorf(e.Translate(validate.Translator))
+		for _, e := range err.(validate.ValidationError) {
+			all[e.StructField()] = fmt.Errorf("%s", e.Translate(validate.Translator))
 		}
 	}
 	// When there aren't already errors on the File field and on the Code field...
@@ -89,8 +89,8 @@ func (o *Verdict) Validate() error {
 		if o.Org != "" {
 			if err := validate.Singleton.Var(o.Org, "npmorg"); err != nil {
 				var orgErr error
-				for _, e := range err.(validate.ValidationErrors) {
-					orgErr = fmt.Errorf(e.Translate(validate.Translator))
+				for _, e := range err.(validate.ValidationError) {
+					orgErr = fmt.Errorf("%s", e.Translate(validate.Translator))
 
 					break
 				}
@@ -100,8 +100,8 @@ func (o *Verdict) Validate() error {
 		}
 		if err := validate.Singleton.Var(o.Digest, "shasum"); err != nil {
 			var digestErr error
-			for _, e := range err.(validate.ValidationErrors) {
-				digestErr = fmt.Errorf(e.Translate(validate.Translator))
+			for _, e := range err.(validate.ValidationError) {
+				digestErr = fmt.Errorf("%s", e.Translate(validate.Translator))
 
 				break
 			}
@@ -110,8 +110,8 @@ func (o *Verdict) Validate() error {
 	case ecosystem.Pypi:
 		if err := validate.Singleton.Var(o.Org, "pypiorg"); err != nil {
 			var orgErr error
-			for _, e := range err.(validate.ValidationErrors) {
-				orgErr = fmt.Errorf(e.Translate(validate.Translator))
+			for _, e := range err.(validate.ValidationError) {
+				orgErr = fmt.Errorf("%s", e.Translate(validate.Translator))
 
 				break
 			}
@@ -119,8 +119,8 @@ func (o *Verdict) Validate() error {
 		}
 		if err := validate.Singleton.Var(o.Digest, "blake2b_256"); err != nil {
 			var digestErr error
-			for _, e := range err.(validate.ValidationErrors) {
-				digestErr = fmt.Errorf(e.Translate(validate.Translator))
+			for _, e := range err.(validate.ValidationError) {
+				digestErr = fmt.Errorf("%s", e.Translate(validate.Translator))
 
 				break
 			}
@@ -143,7 +143,7 @@ func (o *Verdict) Validate() error {
 			ret += e.Error()
 		}
 
-		return fmt.Errorf(ret)
+		return fmt.Errorf("%s", ret)
 	}
 
 	return nil
