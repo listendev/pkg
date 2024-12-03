@@ -3,6 +3,9 @@ info:
   version: 1.0.0
   title: api
   description: listen.dev Events API
+  license: 
+    name: Proprietary
+    url: https://listen.dev
   contact:
     name: The Engineering Team
     email: engineering@garnet.ai
@@ -25,6 +28,41 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Settings"
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/v1/config:
+    get:
+      operationId: getConfig
+      summary: Get the configuration for the current project and workflow_id to inject in jibril
+      description: This endpoint allows for the retrieval of the configuration for the current project and workflow_id to inject in jibril.
+      security:
+        - JWT:
+            - "project_id"
+            - "read:settings"
+      parameters:
+        - name: workflow_id
+          in: query
+          required: true
+          description: The workflow ID to fetch the configuration for.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Settings retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JibrilConfig"
         "401":
           description: "Unauthorized"
           content:
@@ -418,3 +456,59 @@ components:
         - type
         - data
         - github_context
+    JibrilConfig:
+      type: object
+      required:
+        - log-level
+        - stdout
+        - stderr
+        - chop-lines
+        - no-health
+        - profiler
+        - cardinal
+        - daemon
+        - notify
+        - extension
+        - plugin
+        - printer
+        - event
+      properties:
+        log-level:
+          type: string
+          enum:
+            - info
+            - debug
+            - warn
+            - error
+        stdout:
+          type: string
+        stderr:
+          type: string
+        chop-lines:
+          type: boolean
+        no-health:
+          type: boolean
+        profiler:
+          type: boolean
+        cardinal:
+          type: boolean
+        daemon:
+          type: boolean
+        notify:
+          type: boolean
+        extension:
+          type: array
+          items:
+            type: string
+        plugin:
+          type: array
+          items:
+            type: string
+        printer:
+          type: array
+          items:
+            type: string
+        event:
+          type: array
+          items:
+            type: string
