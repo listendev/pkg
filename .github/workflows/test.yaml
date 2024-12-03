@@ -6,18 +6,18 @@ on:
     branches:
       - main
   pull_request:
+
 jobs:
   test:
     name: test
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go: [ '1.21' ]
+
     steps:
+      - uses: actions/checkout@v4
+      
       - uses: actions/setup-go@v5
         with:
-          go-version: ${{ matrix.go }}
-      - uses: actions/checkout@v4
+          go-version-file: 'go.mod'
+      
       - name: test
         run: go test -race -v ./...
-
