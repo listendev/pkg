@@ -163,8 +163,8 @@ type Settings struct {
 
 // GetConfigParams defines parameters for GetConfig.
 type GetConfigParams struct {
-	// WorkflowId The workflow ID to fetch the configuration for.
-	WorkflowId string `form:"workflow_id" json:"workflow_id"`
+	// GithubWorkflowRef The github_workflow_ref to fetch the configuration for.
+	GithubWorkflowRef string `form:"github_workflow_ref" json:"github_workflow_ref"`
 }
 
 // PostApiV1DependenciesEventJSONRequestBody defines body for PostApiV1DependenciesEvent for application/json ContentType.
@@ -421,7 +421,7 @@ func NewGetConfigRequest(server string, params *GetConfigParams) (*http.Request,
 	if params != nil {
 		queryValues := queryURL.Query()
 
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "workflow_id", runtime.ParamLocationQuery, params.WorkflowId); err != nil {
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "github_workflow_ref", runtime.ParamLocationQuery, params.GithubWorkflowRef); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
@@ -1141,7 +1141,7 @@ func ParseGetApiV1SettingsResponse(rsp *http.Response) (*GetApiV1SettingsRespons
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-	// Get the configuration for the current project and workflow_id to inject in jibril
+	// Get the configuration for the current project and github_workflow_ref to inject in jibril
 	// (GET /api/v1/config)
 	GetConfig(c *gin.Context, params GetConfigParams)
 	// Create a new dependency event
@@ -1180,18 +1180,18 @@ func (siw *ServerInterfaceWrapper) GetConfig(c *gin.Context) {
 	// Parameter object where we will unmarshal all parameters from the context
 	var params GetConfigParams
 
-	// ------------- Required query parameter "workflow_id" -------------
+	// ------------- Required query parameter "github_workflow_ref" -------------
 
-	if paramValue := c.Query("workflow_id"); paramValue != "" {
+	if paramValue := c.Query("github_workflow_ref"); paramValue != "" {
 
 	} else {
-		siw.ErrorHandler(c, fmt.Errorf("Query argument workflow_id is required, but not found"), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Query argument github_workflow_ref is required, but not found"), http.StatusBadRequest)
 		return
 	}
 
-	err = runtime.BindQueryParameter("form", true, true, "workflow_id", c.Request.URL.Query(), &params.WorkflowId)
+	err = runtime.BindQueryParameter("form", true, true, "github_workflow_ref", c.Request.URL.Query(), &params.GithubWorkflowRef)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter workflow_id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter github_workflow_ref: %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -1319,7 +1319,7 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 var swaggerSpec = []string{
 
 	"H4sIAAAAAAAC/+xbbW/juBH+K4J632pZiZ1XAwVuu7u9zaEfFsj2rugiNShqZHEjkVqScuIL/N8Lknqj",
-	"RDvxrnPXA/QpscgZDmeemXkoUE8+ZnnBKFAp/MWTL3AKOdL/voMCaAwUb96vgUr1qOCsAC4J6AkrItMy",
+	"RDvxbnzXA/QpscgZDmeemXkoUE8+ZnnBKFAp/MWTL3AKOdL/voMCaAwUb96vgUr1qOCsAC4J6AkrItMy",
 	"WmJGJTzq8R84JP7C/0vYKg0rjeFPRH4oo57St5XsduJnDN8vE5LBskAyVdpiEJiTQhJG/YV/EwOVJCEg",
 	"PJmCp2Z6aqbHEv1AyZunpYDYk8zjIDmBNejhuFnYkykRHqjlPSI8FLFS+hNfbgrwF76QnNCVMmgNPCZY",
 	"Di35lIJXDdaLa22tEhZ9Aax+PwYrFlQPcxZDJqa/VGq324nP4WtJOMT+4nOz3KTv17u+2u3EfwcSsDJn",
@@ -1330,30 +1330,30 @@ var swaggerSpec = []string{
 	"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",
-	"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",
+	"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",
-	"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",
-	"//YU0tg2QgAA",
+	"67vR1UxPpkhaZngRZEz9lczJp19gUWuE9g+7B3qAt+9h487DFzjarHUMN1e7GHQb3YI7O560ARnCUvN6",
+	"XHIiN7cqccyGf/71k14IEAf+D93q/IV+OjE3/zXi9GhrvDoHGGt0HVeNilGJzM14yBHJ/IUPdEUoaAb2",
+	"4wpxCnKKiKo3+oyuPfa+neJ9ApQP/ZoRIYFOY1h7Oq+F9+bjjT/xM4KBCp0VlT4VVU5AIs1D9dGlOa+0",
+	"WnRBINK8MiqUOWvgpqf5p9OT6YmawAqganDhz6cn07nhSql2V4gKEq5PQ9w07BU4vwcgwgMaF4xQ6aFM",
+	"HQ+8hHENhuojBJTV6WCUlVyzjGYaLjlXBKVOFkRjr6o9XfbqSeYRqmcQ6n3RdGLq600YhTexv/B/Allx",
+	"DLUZjnKQwIW/+OxK1B2rJCBx6jZYLah6rP+1BO3/KigOTX4XwuY1i6njrry7U5NFwagwaJ2dnNRoq1oN",
+	"KoqMYG1I+EUYbtLq29c1LOalwWx7oi7izUcjsSdKjEGIpMwy3fHPTk5fzRxz395hR/+q/fkr+mDnojeq",
+	"HyuSbE5WHlQT2xqisaOrx2e7BHFA8aIpeHcqhqLMc5WXGofHgby2rc7O5sseAiJsmG7BxKGpijkYC1ni",
+	"IY/CQ/ejIa14mGofmZBvCvLL6buOFe+rr4EU9EHIv1fnwlcJYv+rrF6bUDm2HeTRbOgJLW22PGJ9J9Yf",
+	"OJGwaGGgUSDsPtwD/Vvt0h0A6gG3Ovq+PmytD4v2orY24biYtb5WGyH7e0C2cvnhiLWwYwHWej3yyph1",
+	"vK3Zg1vHS7rjQNex0Ajf48PXQsOhEHZAyYJxUb07eGUE12qfBa/9BuU4uLXXGCF7fMjW4T8UrTZsLKCK",
+	"zpulVzh5Nu9ddjBw50FSI/a2faNxtBNas8Z4Ovt9T2fPwcLYZBY3LxHs9y2YcZh2X7rcbf8XAAD//0n7",
+	"M51WQgAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
