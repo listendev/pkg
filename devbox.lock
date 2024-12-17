@@ -1,0 +1,197 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "go@1.23.1": {
+      "last_modified": "2024-09-10T15:01:03Z",
+      "resolved": "github:NixOS/nixpkgs/5ed627539ac84809c78b2dd6d26a5cebeb5ae269#go_1_23",
+      "source": "devbox-search",
+      "version": "1.23.1",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/nvaay1c4banbccyvv6ba1gzyqpypjmfq-go-1.23.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/nvaay1c4banbccyvv6ba1gzyqpypjmfq-go-1.23.1"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/9ylsay11jb3p6yarkmlz0fin76cdypwa-go-1.23.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/9ylsay11jb3p6yarkmlz0fin76cdypwa-go-1.23.1"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/zkg5xhyx2rs03dq0qp14nqlx9ff1y5c5-go-1.23.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/zkg5xhyx2rs03dq0qp14nqlx9ff1y5c5-go-1.23.1"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/mi0ybwsm6pmxzv9hsm6bcbqaq1pkf8wh-go-1.23.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/mi0ybwsm6pmxzv9hsm6bcbqaq1pkf8wh-go-1.23.1"
+        }
+      }
+    },
+    "golangci-lint@1.62.0": {
+      "last_modified": "2024-11-16T04:25:12Z",
+      "resolved": "github:NixOS/nixpkgs/34a626458d686f1b58139620a8b2793e9e123bba#golangci-lint",
+      "source": "devbox-search",
+      "version": "1.62.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/3n3m7z2y3wsgsd69r551jqqc1zrq8lwj-golangci-lint-1.62.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/3n3m7z2y3wsgsd69r551jqqc1zrq8lwj-golangci-lint-1.62.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/kcp7197947lansarn4x4ddnyh8m7hw0z-golangci-lint-1.62.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/kcp7197947lansarn4x4ddnyh8m7hw0z-golangci-lint-1.62.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/ymg3531fpln5b8bfwnf9gq7c1sr81f2y-golangci-lint-1.62.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/ymg3531fpln5b8bfwnf9gq7c1sr81f2y-golangci-lint-1.62.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/3vzfj43k05qsxdhiphw60j3gfvv6yhak-golangci-lint-1.62.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/3vzfj43k05qsxdhiphw60j3gfvv6yhak-golangci-lint-1.62.0"
+        }
+      }
+    },
+    "oapi-codegen@2.4.1": {
+      "last_modified": "2024-11-28T07:51:56Z",
+      "resolved": "github:NixOS/nixpkgs/226216574ada4c3ecefcbbec41f39ce4655f78ef#oapi-codegen",
+      "source": "devbox-search",
+      "version": "2.4.1",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/j02qqilwx2pgq895d2p6pqr18vivy22m-oapi-codegen-2.4.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/j02qqilwx2pgq895d2p6pqr18vivy22m-oapi-codegen-2.4.1"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/ll46ps632z5hzf2h90lrdk3k01c8k9m9-oapi-codegen-2.4.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/ll46ps632z5hzf2h90lrdk3k01c8k9m9-oapi-codegen-2.4.1"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/f0ni882bcdr0f176my4a62mpc0b4gnba-oapi-codegen-2.4.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/f0ni882bcdr0f176my4a62mpc0b4gnba-oapi-codegen-2.4.1"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/7sh8xf74c1mgbb9asa8p2400sl7qdrpd-oapi-codegen-2.4.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/7sh8xf74c1mgbb9asa8p2400sl7qdrpd-oapi-codegen-2.4.1"
+        }
+      }
+    },
+    "redocly@1.25.5": {
+      "last_modified": "2024-10-13T23:44:06Z",
+      "resolved": "github:NixOS/nixpkgs/d4f247e89f6e10120f911e2e2d2254a050d0f732#redocly",
+      "source": "devbox-search",
+      "version": "1.25.5",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/dh5drss0hxdr4x3d2k9bwvbfzyf4b1j1-redocly-1.25.5",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/dh5drss0hxdr4x3d2k9bwvbfzyf4b1j1-redocly-1.25.5"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/f5v52p7xwnfnhzf9z1gxr524js0hbg42-redocly-1.25.5",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/f5v52p7xwnfnhzf9z1gxr524js0hbg42-redocly-1.25.5"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/rc8xpdx1kr32b0vk52l50cg8wij09g92-redocly-1.25.5",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/rc8xpdx1kr32b0vk52l50cg8wij09g92-redocly-1.25.5"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/p0qa8fc77lxcc5635v83f0w8klwprvdj-redocly-1.25.5",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/p0qa8fc77lxcc5635v83f0w8klwprvdj-redocly-1.25.5"
+        }
+      }
+    }
+  }
+}
