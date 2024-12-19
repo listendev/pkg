@@ -35,6 +35,32 @@ const (
 	JibrilConfigLogLevelWarn  JibrilConfigLogLevel = "warn"
 )
 
+// Defines values for NetPolicyDefaultMode.
+const (
+	Alert   NetPolicyDefaultMode = "alert"
+	Both    NetPolicyDefaultMode = "both"
+	Enforce NetPolicyDefaultMode = "enforce"
+	None    NetPolicyDefaultMode = "none"
+)
+
+// Defines values for NetPolicyDefaultPolicy.
+const (
+	NetPolicyDefaultPolicyAllow NetPolicyDefaultPolicy = "allow"
+	NetPolicyDefaultPolicyDeny  NetPolicyDefaultPolicy = "deny"
+)
+
+// Defines values for NetPolicyDomainResolution.
+const (
+	All      NetPolicyDomainResolution = "all"
+	Declared NetPolicyDomainResolution = "declared"
+)
+
+// Defines values for NetPolicyRulesPolicy.
+const (
+	NetPolicyRulesPolicyAllow NetPolicyRulesPolicy = "allow"
+	NetPolicyRulesPolicyDeny  NetPolicyRulesPolicy = "deny"
+)
+
 // DependencyEvent defines model for DependencyEvent.
 type DependencyEvent struct {
 	GithubContext GitHubDependencyEventContext `json:"github_context"`
@@ -138,6 +164,42 @@ type JibrilConfig struct {
 // JibrilConfigLogLevel defines model for JibrilConfig.LogLevel.
 type JibrilConfigLogLevel string
 
+// NetPolicy defines model for NetPolicy.
+type NetPolicy struct {
+	// DefaultMode The default enforcement mode for the network policy.  Options: `none`, `alert`, `enforce`, `both`.
+	DefaultMode NetPolicyDefaultMode `json:"default_mode"`
+
+	// DefaultPolicy The default policy applied to network traffic.  Options: `allow`, `deny`.
+	DefaultPolicy NetPolicyDefaultPolicy `json:"default_policy"`
+
+	// DomainResolution Specifies the scope of domain resolution for the policy. Options: `all`, `declared`.
+	DomainResolution NetPolicyDomainResolution `json:"domain_resolution"`
+
+	// Rules A list of rules defining network policies for specific CIDR ranges or domains.
+	Rules []struct {
+		// Cidr A CIDR block specifying the network range for the rule.  Only one of `cidr` or `domain` should be provided per rule.
+		Cidr *string `json:"cidr"`
+
+		// Domain A domain name to which the rule applies.  Only one of `cidr` or `domain` should be provided per rule.
+		Domain *string `json:"domain"`
+
+		// Policy The policy action to apply to traffic matching the rule.  Options: `allow`, `deny`.
+		Policy NetPolicyRulesPolicy `json:"policy"`
+	} `json:"rules"`
+}
+
+// NetPolicyDefaultMode The default enforcement mode for the network policy.  Options: `none`, `alert`, `enforce`, `both`.
+type NetPolicyDefaultMode string
+
+// NetPolicyDefaultPolicy The default policy applied to network traffic.  Options: `allow`, `deny`.
+type NetPolicyDefaultPolicy string
+
+// NetPolicyDomainResolution Specifies the scope of domain resolution for the policy. Options: `all`, `declared`.
+type NetPolicyDomainResolution string
+
+// NetPolicyRulesPolicy The policy action to apply to traffic matching the rule.  Options: `allow`, `deny`.
+type NetPolicyRulesPolicy string
+
 // PipelineEvent defines model for PipelineEvent.
 type PipelineEvent struct {
 	Data          interface{}                `json:"data"`
@@ -164,6 +226,12 @@ type Settings struct {
 // GetConfigParams defines parameters for GetConfig.
 type GetConfigParams struct {
 	// GithubWorkflowRef The github_workflow_ref to fetch the configuration for.
+	GithubWorkflowRef string `form:"github_workflow_ref" json:"github_workflow_ref"`
+}
+
+// GetNetPolicyParams defines parameters for GetNetPolicy.
+type GetNetPolicyParams struct {
+	// GithubWorkflowRef The reference of the GitHub workflow associated with this request.  Used to retrieve network policies specific to a workflow.
 	GithubWorkflowRef string `form:"github_workflow_ref" json:"github_workflow_ref"`
 }
 
@@ -270,6 +338,9 @@ type ClientInterface interface {
 
 	PostApiV1InformationalEvent(ctx context.Context, body PostApiV1InformationalEventJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetNetPolicy request
+	GetNetPolicy(ctx context.Context, params *GetNetPolicyParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// PostApiV1PipelineEventWithBody request with any body
 	PostApiV1PipelineEventWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -353,6 +424,18 @@ func (c *Client) PostApiV1InformationalEventWithBody(ctx context.Context, conten
 
 func (c *Client) PostApiV1InformationalEvent(ctx context.Context, body PostApiV1InformationalEventJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewPostApiV1InformationalEventRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetNetPolicy(ctx context.Context, params *GetNetPolicyParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetNetPolicyRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -564,6 +647,51 @@ func NewPostApiV1InformationalEventRequestWithBody(server string, contentType st
 	return req, nil
 }
 
+// NewGetNetPolicyRequest generates requests for GetNetPolicy
+func NewGetNetPolicyRequest(server string, params *GetNetPolicyParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/netpolicy")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "github_workflow_ref", runtime.ParamLocationQuery, params.GithubWorkflowRef); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewPostApiV1PipelineEventRequest calls the generic PostApiV1PipelineEvent builder with application/json body
 func NewPostApiV1PipelineEventRequest(server string, body PostApiV1PipelineEventJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -692,6 +820,9 @@ type ClientWithResponsesInterface interface {
 
 	PostApiV1InformationalEventWithResponse(ctx context.Context, body PostApiV1InformationalEventJSONRequestBody, reqEditors ...RequestEditorFn) (*PostApiV1InformationalEventResponse, error)
 
+	// GetNetPolicyWithResponse request
+	GetNetPolicyWithResponse(ctx context.Context, params *GetNetPolicyParams, reqEditors ...RequestEditorFn) (*GetNetPolicyResponse, error)
+
 	// PostApiV1PipelineEventWithBodyWithResponse request with any body
 	PostApiV1PipelineEventWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1PipelineEventResponse, error)
 
@@ -788,6 +919,31 @@ func (r PostApiV1InformationalEventResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r PostApiV1InformationalEventResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetNetPolicyResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *NetPolicy
+	JSON400      *Error
+	JSON401      *Error
+	JSON500      *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r GetNetPolicyResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetNetPolicyResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -899,6 +1055,15 @@ func (c *ClientWithResponses) PostApiV1InformationalEventWithResponse(ctx contex
 		return nil, err
 	}
 	return ParsePostApiV1InformationalEventResponse(rsp)
+}
+
+// GetNetPolicyWithResponse request returning *GetNetPolicyResponse
+func (c *ClientWithResponses) GetNetPolicyWithResponse(ctx context.Context, params *GetNetPolicyParams, reqEditors ...RequestEditorFn) (*GetNetPolicyResponse, error) {
+	rsp, err := c.GetNetPolicy(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetNetPolicyResponse(rsp)
 }
 
 // PostApiV1PipelineEventWithBodyWithResponse request with arbitrary body returning *PostApiV1PipelineEventResponse
@@ -1066,6 +1231,53 @@ func ParsePostApiV1InformationalEventResponse(rsp *http.Response) (*PostApiV1Inf
 	return response, nil
 }
 
+// ParseGetNetPolicyResponse parses an HTTP response from a GetNetPolicyWithResponse call
+func ParseGetNetPolicyResponse(rsp *http.Response) (*GetNetPolicyResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetNetPolicyResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest NetPolicy
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParsePostApiV1PipelineEventResponse parses an HTTP response from a PostApiV1PipelineEventWithResponse call
 func ParsePostApiV1PipelineEventResponse(rsp *http.Response) (*PostApiV1PipelineEventResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -1153,6 +1365,9 @@ type ServerInterface interface {
 	// Create a new informational event
 	// (POST /api/v1/informational/event)
 	PostApiV1InformationalEvent(c *gin.Context)
+	// Get the network policy for the current project and github_workflow_ref
+	// (GET /api/v1/netpolicy)
+	GetNetPolicy(c *gin.Context, params GetNetPolicyParams)
 	// Create a new pipeline event
 	// (POST /api/v1/pipeline/event)
 	PostApiV1PipelineEvent(c *gin.Context)
@@ -1250,6 +1465,41 @@ func (siw *ServerInterfaceWrapper) PostApiV1InformationalEvent(c *gin.Context) {
 	siw.Handler.PostApiV1InformationalEvent(c)
 }
 
+// GetNetPolicy operation middleware
+func (siw *ServerInterfaceWrapper) GetNetPolicy(c *gin.Context) {
+
+	var err error
+
+	c.Set(JWTScopes, []string{"project_id", "read:settings"})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetNetPolicyParams
+
+	// ------------- Required query parameter "github_workflow_ref" -------------
+
+	if paramValue := c.Query("github_workflow_ref"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument github_workflow_ref is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "github_workflow_ref", c.Request.URL.Query(), &params.GithubWorkflowRef)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter github_workflow_ref: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetNetPolicy(c, params)
+}
+
 // PostApiV1PipelineEvent operation middleware
 func (siw *ServerInterfaceWrapper) PostApiV1PipelineEvent(c *gin.Context) {
 
@@ -1311,6 +1561,7 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.POST(options.BaseURL+"/api/v1/dependencies/event", wrapper.PostApiV1DependenciesEvent)
 	router.POST(options.BaseURL+"/api/v1/detections/event", wrapper.PostApiV1DetectionsEvent)
 	router.POST(options.BaseURL+"/api/v1/informational/event", wrapper.PostApiV1InformationalEvent)
+	router.GET(options.BaseURL+"/api/v1/netpolicy", wrapper.GetNetPolicy)
 	router.POST(options.BaseURL+"/api/v1/pipeline/event", wrapper.PostApiV1PipelineEvent)
 	router.GET(options.BaseURL+"/api/v1/settings", wrapper.GetApiV1Settings)
 }
@@ -1318,42 +1569,51 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
-	"M51WQgAA",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

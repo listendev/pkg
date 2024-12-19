@@ -75,6 +75,52 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /api/v1/netpolicy:
+    get:
+      operationId: getNetPolicy
+      summary: Get the network policy for the current project and github_workflow_ref
+      description: >
+        This endpoint allows for the retrieval of the network policy for the current project. 
+        You can optionally specify a GitHub workflow reference using the `github_workflow_ref` query parameter.
+      parameters:
+        - name: github_workflow_ref
+          in: query
+          description: >
+            The reference of the GitHub workflow associated with this request. 
+            Used to retrieve network policies specific to a workflow.
+          required: true
+          schema:
+            type: string
+            example: "example_workflow_ref"
+      security:
+        - JWT:
+            - "project_id"
+            - "read:settings"
+      responses:
+        "200":
+          description: Network policy retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NetPolicy"
+        "400":
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /api/v1/informational/event:
     post:
       summary: Create a new informational event
@@ -512,3 +558,72 @@ components:
           type: array
           items:
             type: string
+    NetPolicy:
+      type: object
+      properties:
+        default_mode:
+          type: string
+          description: >
+            The default enforcement mode for the network policy. 
+            Options: `none`, `alert`, `enforce`, `both`.
+          enum:
+            - none
+            - alert
+            - enforce
+            - both
+          example: "enforce"
+        default_policy:
+          type: string
+          description: >
+            The default policy applied to network traffic. 
+            Options: `allow`, `deny`.
+          enum:
+            - allow
+            - deny
+          example: "deny"
+        domain_resolution:
+          type: string
+          description: >
+            Specifies the scope of domain resolution for the policy.
+            Options: `all`, `declared`.
+          enum:
+            - all
+            - declared
+          example: "all"
+        rules:
+          type: array
+          description: >
+            A list of rules defining network policies for specific CIDR ranges or domains.
+          items:
+            type: object
+            properties:
+              cidr:
+                type: string
+                description: >
+                  A CIDR block specifying the network range for the rule. 
+                  Only one of `cidr` or `domain` should be provided per rule.
+                example: "192.168.0.0/24"
+                nullable: true
+              domain:
+                type: string
+                description: >
+                  A domain name to which the rule applies. 
+                  Only one of `cidr` or `domain` should be provided per rule.
+                example: "example.com"
+                nullable: true
+              policy:
+                type: string
+                description: >
+                  The policy action to apply to traffic matching the rule. 
+                  Options: `allow`, `deny`.
+                enum:
+                  - allow
+                  - deny
+                example: "allow"
+            required:
+              - policy
+      required:
+        - default_mode
+        - default_policy
+        - domain_resolution
+        - rules
