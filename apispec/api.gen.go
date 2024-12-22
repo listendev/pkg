@@ -35,30 +35,44 @@ const (
 	JibrilConfigLogLevelWarn  JibrilConfigLogLevel = "warn"
 )
 
-// Defines values for NetPolicyDefaultMode.
+// Defines values for NetworkPolicyCidrMode.
 const (
-	Alert   NetPolicyDefaultMode = "alert"
-	Both    NetPolicyDefaultMode = "both"
-	Enforce NetPolicyDefaultMode = "enforce"
-	None    NetPolicyDefaultMode = "none"
+	NetworkPolicyCidrModeAlert   NetworkPolicyCidrMode = "alert"
+	NetworkPolicyCidrModeBoth    NetworkPolicyCidrMode = "both"
+	NetworkPolicyCidrModeBypass  NetworkPolicyCidrMode = "bypass"
+	NetworkPolicyCidrModeEnforce NetworkPolicyCidrMode = "enforce"
 )
 
-// Defines values for NetPolicyDefaultPolicy.
+// Defines values for NetworkPolicyCidrPolicy.
 const (
-	NetPolicyDefaultPolicyAllow NetPolicyDefaultPolicy = "allow"
-	NetPolicyDefaultPolicyDeny  NetPolicyDefaultPolicy = "deny"
+	NetworkPolicyCidrPolicyAllow NetworkPolicyCidrPolicy = "allow"
+	NetworkPolicyCidrPolicyDeny  NetworkPolicyCidrPolicy = "deny"
 )
 
-// Defines values for NetPolicyDomainResolution.
+// Defines values for NetworkPolicyResolveMode.
 const (
-	All      NetPolicyDomainResolution = "all"
-	Declared NetPolicyDomainResolution = "declared"
+	NetworkPolicyResolveModeAlert   NetworkPolicyResolveMode = "alert"
+	NetworkPolicyResolveModeBoth    NetworkPolicyResolveMode = "both"
+	NetworkPolicyResolveModeBypass  NetworkPolicyResolveMode = "bypass"
+	NetworkPolicyResolveModeEnforce NetworkPolicyResolveMode = "enforce"
 )
 
-// Defines values for NetPolicyRulesPolicy.
+// Defines values for NetworkPolicyResolvePolicy.
 const (
-	NetPolicyRulesPolicyAllow NetPolicyRulesPolicy = "allow"
-	NetPolicyRulesPolicyDeny  NetPolicyRulesPolicy = "deny"
+	NetworkPolicyResolvePolicyAllow NetworkPolicyResolvePolicy = "allow"
+	NetworkPolicyResolvePolicyDeny  NetworkPolicyResolvePolicy = "deny"
+)
+
+// Defines values for NetworkPolicyRulesPolicy.
+const (
+	Allow NetworkPolicyRulesPolicy = "allow"
+	Deny  NetworkPolicyRulesPolicy = "deny"
+)
+
+// Defines values for NetworkPolicyRulesType.
+const (
+	CIDR   NetworkPolicyRulesType = "CIDR"
+	Domain NetworkPolicyRulesType = "Domain"
 )
 
 // DependencyEvent defines model for DependencyEvent.
@@ -164,41 +178,53 @@ type JibrilConfig struct {
 // JibrilConfigLogLevel defines model for JibrilConfig.LogLevel.
 type JibrilConfigLogLevel string
 
-// NetPolicy defines model for NetPolicy.
-type NetPolicy struct {
-	// DefaultMode The default enforcement mode for the network policy.  Options: `none`, `alert`, `enforce`, `both`.
-	DefaultMode NetPolicyDefaultMode `json:"default_mode"`
+// NetworkPolicy defines model for NetworkPolicy.
+type NetworkPolicy struct {
+	// CidrMode Mode for handling CIDR traffic.
+	CidrMode NetworkPolicyCidrMode `json:"cidr_mode"`
 
-	// DefaultPolicy The default policy applied to network traffic.  Options: `allow`, `deny`.
-	DefaultPolicy NetPolicyDefaultPolicy `json:"default_policy"`
+	// CidrPolicy Default policy for CIDR traffic.
+	CidrPolicy NetworkPolicyCidrPolicy `json:"cidr_policy"`
 
-	// DomainResolution Specifies the scope of domain resolution for the policy. Options: `all`, `declared`.
-	DomainResolution NetPolicyDomainResolution `json:"domain_resolution"`
+	// ResolveMode Mode for handling domain resolution.
+	ResolveMode NetworkPolicyResolveMode `json:"resolve_mode"`
 
-	// Rules A list of rules defining network policies for specific CIDR ranges or domains.
+	// ResolvePolicy Default policy for domain resolution.
+	ResolvePolicy NetworkPolicyResolvePolicy `json:"resolve_policy"`
+
+	// Rules List of network policy rules.
 	Rules []struct {
-		// Cidr A CIDR block specifying the network range for the rule.  Only one of `cidr` or `domain` should be provided per rule.
-		Cidr *string `json:"cidr"`
+		// Cidr CIDR range for the rule (if type is CIDR).
+		Cidr *string `json:"cidr,omitempty"`
 
-		// Domain A domain name to which the rule applies.  Only one of `cidr` or `domain` should be provided per rule.
-		Domain *string `json:"domain"`
+		// Domain Domain for the rule (if type is Domain).
+		Domain *string `json:"domain,omitempty"`
 
-		// Policy The policy action to apply to traffic matching the rule.  Options: `allow`, `deny`.
-		Policy NetPolicyRulesPolicy `json:"policy"`
+		// Policy Policy for the rule.
+		Policy NetworkPolicyRulesPolicy `json:"policy"`
+
+		// Type The type of rule, either CIDR or Domain.
+		Type NetworkPolicyRulesType `json:"type"`
 	} `json:"rules"`
 }
 
-// NetPolicyDefaultMode The default enforcement mode for the network policy.  Options: `none`, `alert`, `enforce`, `both`.
-type NetPolicyDefaultMode string
+// NetworkPolicyCidrMode Mode for handling CIDR traffic.
+type NetworkPolicyCidrMode string
 
-// NetPolicyDefaultPolicy The default policy applied to network traffic.  Options: `allow`, `deny`.
-type NetPolicyDefaultPolicy string
+// NetworkPolicyCidrPolicy Default policy for CIDR traffic.
+type NetworkPolicyCidrPolicy string
 
-// NetPolicyDomainResolution Specifies the scope of domain resolution for the policy. Options: `all`, `declared`.
-type NetPolicyDomainResolution string
+// NetworkPolicyResolveMode Mode for handling domain resolution.
+type NetworkPolicyResolveMode string
 
-// NetPolicyRulesPolicy The policy action to apply to traffic matching the rule.  Options: `allow`, `deny`.
-type NetPolicyRulesPolicy string
+// NetworkPolicyResolvePolicy Default policy for domain resolution.
+type NetworkPolicyResolvePolicy string
+
+// NetworkPolicyRulesPolicy Policy for the rule.
+type NetworkPolicyRulesPolicy string
+
+// NetworkPolicyRulesType The type of rule, either CIDR or Domain.
+type NetworkPolicyRulesType string
 
 // PipelineEvent defines model for PipelineEvent.
 type PipelineEvent struct {
@@ -231,7 +257,7 @@ type GetConfigParams struct {
 
 // GetNetPolicyParams defines parameters for GetNetPolicy.
 type GetNetPolicyParams struct {
-	// GithubWorkflowRef The reference of the GitHub workflow associated with this request.  Used to retrieve network policies specific to a workflow.
+	// GithubWorkflowRef The reference of the GitHub workflow associated with this request. Used to retrieve network policies specific to a workflow.
 	GithubWorkflowRef string `form:"github_workflow_ref" json:"github_workflow_ref"`
 }
 
@@ -928,7 +954,7 @@ func (r PostApiV1InformationalEventResponse) StatusCode() int {
 type GetNetPolicyResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *NetPolicy
+	JSON200      *NetworkPolicy
 	JSON400      *Error
 	JSON401      *Error
 	JSON500      *Error
@@ -1246,7 +1272,7 @@ func ParseGetNetPolicyResponse(rsp *http.Response) (*GetNetPolicyResponse, error
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest NetPolicy
+		var dest NetworkPolicy
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1569,51 +1595,49 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
+	"3wAAAP//P08V7XVLAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

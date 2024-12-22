@@ -1,25 +1,26 @@
-openapi: "3.0.3"
+openapi: 3.0.3
 info:
   version: 1.0.0
   title: api
   description: listen.dev Events API
-  license: 
+  license:
     name: Proprietary
-    url: https://listen.dev
+    url: "https://listen.dev"
   contact:
     name: The Engineering Team
     email: engineering@garnet.ai
 servers:
-  - url: https://core.listen.dev
-
+  - url: "https://core.listen.dev"
 paths:
   /api/v1/settings:
     get:
       summary: Get the settings for the current project
-      description: This endpoint allows for the retrieval of the settings for the current project.
+      description: >-
+        This endpoint allows for the retrieval of the settings for the current
+        project.
       security:
         - JWT:
-            - "project_id"
+            - project_id
             - "read:settings"
       responses:
         "200":
@@ -29,13 +30,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/Settings"
         "401":
-          description: "Unauthorized"
+          description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
         "500":
-          description: "Internal server error"
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -43,11 +44,15 @@ paths:
   /api/v1/config:
     get:
       operationId: getConfig
-      summary: Get the configuration for the current project and github_workflow_ref to inject in jibril
-      description: This endpoint allows for the retrieval of the configuration for the current project and github_workflow_ref to inject in jibril.
+      summary: >-
+        Get the configuration for the current project and github_workflow_ref to
+        inject in jibril
+      description: >-
+        This endpoint allows for the retrieval of the configuration for the
+        current project and github_workflow_ref to inject in jibril.
       security:
         - JWT:
-            - "project_id"
+            - project_id
             - "read:settings"
       parameters:
         - name: github_workflow_ref
@@ -64,13 +69,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/JibrilConfig"
         "401":
-          description: "Unauthorized"
+          description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
         "500":
-          description: "Internal server error"
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -80,21 +85,22 @@ paths:
       operationId: getNetPolicy
       summary: Get the network policy for the current project and github_workflow_ref
       description: >
-        This endpoint allows for the retrieval of the network policy for the current project. 
-        You can optionally specify a GitHub workflow reference using the `github_workflow_ref` query parameter.
+        This endpoint allows for the retrieval of the network policy for the
+        current project. You can optionally specify a GitHub workflow reference
+        using the `github_workflow_ref` query parameter.
       parameters:
         - name: github_workflow_ref
           in: query
           description: >
-            The reference of the GitHub workflow associated with this request. 
+            The reference of the GitHub workflow associated with this request.
             Used to retrieve network policies specific to a workflow.
           required: true
           schema:
             type: string
-            example: "example_workflow_ref"
+            example: example_workflow_ref
       security:
         - JWT:
-            - "project_id"
+            - project_id
             - "read:settings"
       responses:
         "200":
@@ -102,7 +108,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/NetPolicy"
+                $ref: "#/components/schemas/NetworkPolicy"
         "400":
           description: Bad Request - Missing or invalid parameters
           content:
@@ -130,18 +136,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/InformationalEvent'
+              $ref: "#/components/schemas/InformationalEvent"
       responses:
         "202":
           description: Event created successfully
         "401":
-          description: "Unauthorized"
+          description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
         "500":
-          description: "Internal server error"
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -149,7 +155,7 @@ paths:
       security:
         - JWT:
             - "write:informationalevents"
-            - "project_id"
+            - project_id
   /api/v1/detections/event:
     post:
       summary: Create a new detection event
@@ -159,18 +165,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DetectionEvent'
+              $ref: "#/components/schemas/DetectionEvent"
       responses:
         "202":
           description: Event created successfully
         "401":
-          description: "Unauthorized"
+          description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
         "500":
-          description: "Internal server error"
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -178,7 +184,7 @@ paths:
       security:
         - JWT:
             - "write:detectionevents"
-            - "project_id"
+            - project_id
   /api/v1/pipeline/event:
     post:
       summary: Create a new pipeline event
@@ -193,13 +199,13 @@ paths:
         "202":
           description: Event created successfully
         "401":
-          description: "Unauthorized"
+          description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
         "500":
-          description: "Internal server error"
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -207,7 +213,7 @@ paths:
       security:
         - JWT:
             - "write:pipelineevents"
-            - "project_id"
+            - project_id
   /api/v1/dependencies/event:
     post:
       summary: Create a new dependency event
@@ -222,13 +228,13 @@ paths:
         "202":
           description: Event created successfully
         "401":
-          description: "Unauthorized"
+          description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
         "500":
-          description: "Internal server error"
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -236,8 +242,7 @@ paths:
       security:
         - JWT:
             - "write:dependencyevents"
-            - "project_id"
-
+            - project_id
 components:
   securitySchemes:
     JWT:
@@ -247,7 +252,8 @@ components:
   schemas:
     Error:
       type: object
-      required: [message]
+      required:
+        - message
       example:
         message: Unauthorized
       properties:
@@ -262,7 +268,7 @@ components:
           type: string
           description: The id of the project that the settings belongs to
           x-oapi-codegen-extra-tags:
-            bson: "project_id"
+            bson: project_id
         policies:
           type: object
           description: The policies associated with the settings
@@ -272,7 +278,7 @@ components:
               observe:
                 type: boolean
           x-oapi-codegen-extra-tags:
-            bson: "policies"
+            bson: policies
         tokens:
           type: object
           description: The tokens associated with the settings
@@ -282,12 +288,11 @@ components:
               key:
                 type: string
           x-oapi-codegen-extra-tags:
-            bson: "tokens"
+            bson: tokens
       required:
         - id
         - project_id
         - policies
-    # see: https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
     GitHubEventContext:
       type: object
       required:
@@ -317,32 +322,32 @@ components:
         - workspace
       properties:
         action:
-          example: "actionscheckout"
+          example: actionscheckout
           type: string
         action_path:
-          example: "/home/runner/work/_actions/repo-owner/name-of-action-repo/v1"
+          example: /home/runner/work/_actions/repo-owner/name-of-action-repo/v1
           type: string
         action_repository:
-          example: "repo-owner/name-of-action-repo"
+          example: repo-owner/name-of-action-repo
           type: string
         actor:
-          example: "octocat"
+          example: octocat
           type: string
         actor_id:
           example: "1234567"
           type: string
           x-go-type: int64string.Int64String
         event_name:
-          example: "workflow_dispatch"
+          example: workflow_dispatch
           type: string
         job:
-          example: "build"
+          example: build
           type: string
         ref:
-          example: "refs/heads/my_branch"
+          example: refs/heads/my_branch
           type: string
         ref_name:
-          example: "123/merge"
+          example: 123/merge
           type: string
         ref_protected:
           example: true
@@ -350,14 +355,14 @@ components:
         ref_type:
           type: string
         repository:
-          example: "octocat/Hello-World"
+          example: octocat/Hello-World
           type: string
         repository_id:
           example: "123456789"
           type: string
           x-go-type: int64string.Int64String
         repository_owner:
-          example: "octocat"
+          example: octocat
           type: string
         repository_owner_id:
           example: "1234567"
@@ -376,31 +381,32 @@ components:
           type: string
           x-go-type: int64string.Int64String
         runner_arch:
-          example: "X86"
+          example: X86
           type: string
         runner_debug:
           example: false
           type: boolean
         runner_os:
-          example: "Linux"
+          example: Linux
           type: string
         server_url:
           example: "https://github.com"
           type: string
         sha:
-          example: "ffac537e6cbbf934b08745a378932722df287a53"
+          example: ffac537e6cbbf934b08745a378932722df287a53
           type: string
         triggering_actor:
-          example: "octocat"
+          example: octocat
           type: string
         workflow:
-          example: "Something"
+          example: Something
           type: string
         workflow_ref:
-          example: "octocat/hello-world/.github/workflows/my-workflow.yml@refs/heads/my_branch"
+          example: >-
+            octocat/hello-world/.github/workflows/my-workflow.yml@refs/heads/my_branch
           type: string
         workspace:
-          example: "/home/runner/work/my-repo-name/my-repo-name"
+          example: /home/runner/work/my-repo-name/my-repo-name
           type: string
     GitHubDependencyEventContext:
       $ref: "#/components/schemas/GitHubEventContext"
@@ -413,7 +419,9 @@ components:
           description: The verdict of the event
         lock_file_path:
           type: string
-          description: Identifies the file path of the lock file used to retrieve the dependency this event is about
+          description: >-
+            Identifies the file path of the lock file used to retrieve the
+            dependency this event is about
         github_context:
           $ref: "#/components/schemas/GitHubDependencyEventContext"
       required:
@@ -429,7 +437,7 @@ components:
           pattern: "^[a-zA-Z0-9_]+$"
         data:
           type: object
-          x-go-type: interface{}
+          x-go-type: "interface{}"
         github_context:
           $ref: "#/components/schemas/GitHubPipelineEventContext"
       required:
@@ -444,7 +452,7 @@ components:
         type:
           type: string
           x-oapi-codegen-extra-tags:
-            validate: mandatory,is_detection_event_type=case
+            validate: "mandatory,is_detection_event_type=case"
             human: the detection event type
         data:
           type: object
@@ -459,10 +467,10 @@ components:
               description: Unique SHA256 identifier
             head:
               type: object
-              x-go-type: interface{}
+              x-go-type: "interface{}"
             body:
               type: object
-              x-go-type: interface{}
+              x-go-type: "interface{}"
         github_context:
           $ref: "#/components/schemas/GitHubDetectionEventContext"
       required:
@@ -477,7 +485,7 @@ components:
         type:
           type: string
           x-oapi-codegen-extra-tags:
-            validate: mandatory,is_informational_event_type=case
+            validate: "mandatory,is_informational_event_type=case"
             human: the informational event type
         data:
           type: object
@@ -492,10 +500,10 @@ components:
               description: Unique SHA256 identifier
             head:
               type: object
-              x-go-type: interface{}
+              x-go-type: "interface{}"
             body:
               type: object
-              x-go-type: interface{}
+              x-go-type: "interface{}"
         github_context:
           $ref: "#/components/schemas/GitHubDetectionEventContext"
       required:
@@ -558,72 +566,67 @@ components:
           type: array
           items:
             type: string
-    NetPolicy:
+    NetworkPolicy:
       type: object
       properties:
-        default_mode:
+        cidr_mode:
           type: string
-          description: >
-            The default enforcement mode for the network policy. 
-            Options: `none`, `alert`, `enforce`, `both`.
           enum:
-            - none
+            - bypass
             - alert
             - enforce
             - both
-          example: "enforce"
-        default_policy:
+          description: Mode for handling CIDR traffic.
+        cidr_policy:
           type: string
-          description: >
-            The default policy applied to network traffic. 
-            Options: `allow`, `deny`.
           enum:
             - allow
             - deny
-          example: "deny"
-        domain_resolution:
+          description: Default policy for CIDR traffic.
+        resolve_mode:
           type: string
-          description: >
-            Specifies the scope of domain resolution for the policy.
-            Options: `all`, `declared`.
           enum:
-            - all
-            - declared
-          example: "all"
+            - bypass
+            - alert
+            - enforce
+            - both
+          description: Mode for handling domain resolution.
+        resolve_policy:
+          type: string
+          enum:
+            - allow
+            - deny
+          description: Default policy for domain resolution.
         rules:
           type: array
-          description: >
-            A list of rules defining network policies for specific CIDR ranges or domains.
           items:
             type: object
             properties:
+              type:
+                type: string
+                enum:
+                  - CIDR
+                  - Domain
+                description: "The type of rule, either CIDR or Domain."
               cidr:
                 type: string
-                description: >
-                  A CIDR block specifying the network range for the rule. 
-                  Only one of `cidr` or `domain` should be provided per rule.
-                example: "192.168.0.0/24"
-                nullable: true
+                description: CIDR range for the rule (if type is CIDR).
               domain:
                 type: string
-                description: >
-                  A domain name to which the rule applies. 
-                  Only one of `cidr` or `domain` should be provided per rule.
-                example: "example.com"
-                nullable: true
+                description: Domain for the rule (if type is Domain).
               policy:
                 type: string
-                description: >
-                  The policy action to apply to traffic matching the rule. 
-                  Options: `allow`, `deny`.
                 enum:
                   - allow
                   - deny
-                example: "allow"
+                description: Policy for the rule.
             required:
+              - type
               - policy
+          description: List of network policy rules.
       required:
-        - default_mode
-        - default_policy
-        - domain_resolution
+        - cidr_mode
+        - cidr_policy
+        - resolve_mode
+        - resolve_policy
         - rules
