@@ -249,15 +249,6 @@ type Settings struct {
 	} `bson:"tokens" json:"tokens,omitempty"`
 }
 
-// GetConfigParams defines parameters for GetConfig.
-type GetConfigParams struct {
-	// GithubRepository The owner and repository name. For example, octocat/Hello-World.
-	GithubRepository string `form:"github_repository" json:"github_repository"`
-
-	// GithubRepositoryId The GitHub repository ID.
-	GithubRepositoryId string `form:"github_repository_id" json:"github_repository_id"`
-}
-
 // GetNetPolicyParams defines parameters for GetNetPolicy.
 type GetNetPolicyParams struct {
 	// GithubRepository The owner and repository name. For example, octocat/Hello-World.
@@ -353,7 +344,7 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 // The interface specification for the client above.
 type ClientInterface interface {
 	// GetConfig request
-	GetConfig(ctx context.Context, params *GetConfigParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetConfig(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// PostApiV1DependenciesEventWithBody request with any body
 	PostApiV1DependenciesEventWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -382,8 +373,8 @@ type ClientInterface interface {
 	GetApiV1Settings(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-func (c *Client) GetConfig(ctx context.Context, params *GetConfigParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetConfigRequest(c.Server, params)
+func (c *Client) GetConfig(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetConfigRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -515,7 +506,7 @@ func (c *Client) GetApiV1Settings(ctx context.Context, reqEditors ...RequestEdit
 }
 
 // NewGetConfigRequest generates requests for GetConfig
-func NewGetConfigRequest(server string, params *GetConfigParams) (*http.Request, error) {
+func NewGetConfigRequest(server string) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -531,36 +522,6 @@ func NewGetConfigRequest(server string, params *GetConfigParams) (*http.Request,
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
-	}
-
-	if params != nil {
-		queryValues := queryURL.Query()
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "github_repository", runtime.ParamLocationQuery, params.GithubRepository); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "github_repository_id", runtime.ParamLocationQuery, params.GithubRepositoryId); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-		queryURL.RawQuery = queryValues.Encode()
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
@@ -859,7 +820,7 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
 	// GetConfigWithResponse request
-	GetConfigWithResponse(ctx context.Context, params *GetConfigParams, reqEditors ...RequestEditorFn) (*GetConfigResponse, error)
+	GetConfigWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetConfigResponse, error)
 
 	// PostApiV1DependenciesEventWithBodyWithResponse request with any body
 	PostApiV1DependenciesEventWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1DependenciesEventResponse, error)
@@ -1054,8 +1015,8 @@ func (r GetApiV1SettingsResponse) StatusCode() int {
 }
 
 // GetConfigWithResponse request returning *GetConfigResponse
-func (c *ClientWithResponses) GetConfigWithResponse(ctx context.Context, params *GetConfigParams, reqEditors ...RequestEditorFn) (*GetConfigResponse, error) {
-	rsp, err := c.GetConfig(ctx, params, reqEditors...)
+func (c *ClientWithResponses) GetConfigWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetConfigResponse, error) {
+	rsp, err := c.GetConfig(ctx, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -1409,9 +1370,9 @@ func ParseGetApiV1SettingsResponse(rsp *http.Response) (*GetApiV1SettingsRespons
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-	// Get the configuration for the current project and github_workflow_ref to inject in jibril
+	// Get configuratoin to inject in jibril
 	// (GET /api/v1/config)
-	GetConfig(c *gin.Context, params GetConfigParams)
+	GetConfig(c *gin.Context)
 	// Create a new dependency event
 	// (POST /api/v1/dependencies/event)
 	PostApiV1DependenciesEvent(c *gin.Context)
@@ -1444,42 +1405,7 @@ type MiddlewareFunc func(c *gin.Context)
 // GetConfig operation middleware
 func (siw *ServerInterfaceWrapper) GetConfig(c *gin.Context) {
 
-	var err error
-
 	c.Set(JWTScopes, []string{"project_id", "read:settings"})
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params GetConfigParams
-
-	// ------------- Required query parameter "github_repository" -------------
-
-	if paramValue := c.Query("github_repository"); paramValue != "" {
-
-	} else {
-		siw.ErrorHandler(c, fmt.Errorf("Query argument github_repository is required, but not found"), http.StatusBadRequest)
-		return
-	}
-
-	err = runtime.BindQueryParameter("form", true, true, "github_repository", c.Request.URL.Query(), &params.GithubRepository)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter github_repository: %w", err), http.StatusBadRequest)
-		return
-	}
-
-	// ------------- Required query parameter "github_repository_id" -------------
-
-	if paramValue := c.Query("github_repository_id"); paramValue != "" {
-
-	} else {
-		siw.ErrorHandler(c, fmt.Errorf("Query argument github_repository_id is required, but not found"), http.StatusBadRequest)
-		return
-	}
-
-	err = runtime.BindQueryParameter("form", true, true, "github_repository_id", c.Request.URL.Query(), &params.GithubRepositoryId)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter github_repository_id: %w", err), http.StatusBadRequest)
-		return
-	}
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -1488,7 +1414,7 @@ func (siw *ServerInterfaceWrapper) GetConfig(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetConfig(c, params)
+	siw.Handler.GetConfig(c)
 }
 
 // PostApiV1DependenciesEvent operation middleware
@@ -1655,49 +1581,49 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
-	"AAD//zaP9f6LTAAA",
+	"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",
+	"WUoAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

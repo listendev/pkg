@@ -44,31 +44,11 @@ paths:
   /api/v1/config:
     get:
       operationId: getConfig
-      summary: >-
-        Get the configuration for the current project and github_workflow_ref to
-        inject in jibril
-      description: >-
-        This endpoint allows for the retrieval of the configuration for the
-        current project and github_workflow_ref to inject in jibril.
+      summary: Get configuratoin to inject in jibril
       security:
         - JWT:
             - project_id
             - "read:settings"
-      parameters:
-        - name: github_repository
-          in: query
-          description: The owner and repository name. For example, octocat/Hello-World.
-          required: true
-          schema:
-            type: string
-            example: octocat/Hello-World
-        - name: github_repository_id
-          in: query
-          description: The GitHub repository ID.
-          required: true
-          schema:
-            type: string
-            example: "123456789"
       responses:
         "200":
           description: Settings retrieved successfully
