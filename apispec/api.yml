@@ -89,15 +89,20 @@ paths:
         current project. You can optionally specify a GitHub workflow reference
         using the `github_workflow_ref` query parameter.
       parameters:
-        - name: github_workflow_ref
+        - name: github_repository
           in: query
-          description: >
-            The reference of the GitHub workflow associated with this request.
-            Used to retrieve network policies specific to a workflow.
+          description: The owner and repository name. For example, octocat/Hello-World.
           required: true
           schema:
             type: string
-            example: example_workflow_ref
+            example: octocat/Hello-World
+        - name: github_repository_id
+          in: query
+          description: The GitHub repository ID.
+          required: true
+          schema:
+            type: string
+            example: "123456789"
       security:
         - JWT:
             - project_id
