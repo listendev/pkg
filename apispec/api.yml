@@ -55,12 +55,20 @@ paths:
             - project_id
             - "read:settings"
       parameters:
-        - name: github_workflow_ref
+        - name: github_repository
           in: query
+          description: The owner and repository name. For example, octocat/Hello-World.
           required: true
-          description: The github_workflow_ref to fetch the configuration for.
           schema:
             type: string
+            example: octocat/Hello-World
+        - name: github_repository_id
+          in: query
+          description: The GitHub repository ID.
+          required: true
+          schema:
+            type: string
+            example: "123456789"
       responses:
         "200":
           description: Settings retrieved successfully
