@@ -41,12 +41,14 @@ const (
 	NetworkPolicyCidrModeBoth    NetworkPolicyCidrMode = "both"
 	NetworkPolicyCidrModeBypass  NetworkPolicyCidrMode = "bypass"
 	NetworkPolicyCidrModeEnforce NetworkPolicyCidrMode = "enforce"
+	NetworkPolicyCidrModeNone    NetworkPolicyCidrMode = "none"
 )
 
 // Defines values for NetworkPolicyCidrPolicy.
 const (
 	NetworkPolicyCidrPolicyAllow NetworkPolicyCidrPolicy = "allow"
 	NetworkPolicyCidrPolicyDeny  NetworkPolicyCidrPolicy = "deny"
+	NetworkPolicyCidrPolicyNone  NetworkPolicyCidrPolicy = "none"
 )
 
 // Defines values for NetworkPolicyResolveMode.
@@ -55,24 +57,21 @@ const (
 	NetworkPolicyResolveModeBoth    NetworkPolicyResolveMode = "both"
 	NetworkPolicyResolveModeBypass  NetworkPolicyResolveMode = "bypass"
 	NetworkPolicyResolveModeEnforce NetworkPolicyResolveMode = "enforce"
+	NetworkPolicyResolveModeNone    NetworkPolicyResolveMode = "none"
 )
 
 // Defines values for NetworkPolicyResolvePolicy.
 const (
 	NetworkPolicyResolvePolicyAllow NetworkPolicyResolvePolicy = "allow"
 	NetworkPolicyResolvePolicyDeny  NetworkPolicyResolvePolicy = "deny"
+	NetworkPolicyResolvePolicyNone  NetworkPolicyResolvePolicy = "none"
 )
 
 // Defines values for NetworkPolicyRulesPolicy.
 const (
 	Allow NetworkPolicyRulesPolicy = "allow"
 	Deny  NetworkPolicyRulesPolicy = "deny"
-)
-
-// Defines values for NetworkPolicyRulesType.
-const (
-	CIDR   NetworkPolicyRulesType = "CIDR"
-	Domain NetworkPolicyRulesType = "Domain"
+	None  NetworkPolicyRulesPolicy = "none"
 )
 
 // DependencyEvent defines model for DependencyEvent.
@@ -193,19 +192,7 @@ type NetworkPolicy struct {
 	ResolvePolicy NetworkPolicyResolvePolicy `json:"resolve_policy"`
 
 	// Rules List of network policy rules.
-	Rules []struct {
-		// Cidr CIDR range for the rule (if type is CIDR).
-		Cidr *string `json:"cidr,omitempty"`
-
-		// Domain Domain for the rule (if type is Domain).
-		Domain *string `json:"domain,omitempty"`
-
-		// Policy Policy for the rule.
-		Policy NetworkPolicyRulesPolicy `json:"policy"`
-
-		// Type The type of rule, either CIDR or Domain.
-		Type NetworkPolicyRulesType `json:"type"`
-	} `json:"rules"`
+	Rules *[]NetworkPolicy_Rules_Item `json:"rules,omitempty"`
 }
 
 // NetworkPolicyCidrMode Mode for handling CIDR traffic.
@@ -223,8 +210,24 @@ type NetworkPolicyResolvePolicy string
 // NetworkPolicyRulesPolicy Policy for the rule.
 type NetworkPolicyRulesPolicy string
 
-// NetworkPolicyRulesType The type of rule, either CIDR or Domain.
-type NetworkPolicyRulesType string
+// NetworkPolicyRules0 defines model for .
+type NetworkPolicyRules0 = interface{}
+
+// NetworkPolicyRules1 defines model for .
+type NetworkPolicyRules1 = interface{}
+
+// NetworkPolicy_Rules_Item defines model for NetworkPolicy.rules.Item.
+type NetworkPolicy_Rules_Item struct {
+	// Cidr CIDR range for the rule (if applicable).
+	Cidr *string `json:"cidr,omitempty"`
+
+	// Domain Domain for the rule (if applicable).
+	Domain *string `json:"domain,omitempty"`
+
+	// Policy Policy for the rule.
+	Policy *NetworkPolicyRulesPolicy `json:"policy,omitempty"`
+	union  json.RawMessage
+}
 
 // PipelineEvent defines model for PipelineEvent.
 type PipelineEvent struct {
@@ -269,6 +272,130 @@ type PostApiV1InformationalEventJSONRequestBody = InformationalEvent
 
 // PostApiV1PipelineEventJSONRequestBody defines body for PostApiV1PipelineEvent for application/json ContentType.
 type PostApiV1PipelineEventJSONRequestBody = PipelineEvent
+
+// AsNetworkPolicyRules0 returns the union data inside the NetworkPolicy_Rules_Item as a NetworkPolicyRules0
+func (t NetworkPolicy_Rules_Item) AsNetworkPolicyRules0() (NetworkPolicyRules0, error) {
+	var body NetworkPolicyRules0
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromNetworkPolicyRules0 overwrites any union data inside the NetworkPolicy_Rules_Item as the provided NetworkPolicyRules0
+func (t *NetworkPolicy_Rules_Item) FromNetworkPolicyRules0(v NetworkPolicyRules0) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeNetworkPolicyRules0 performs a merge with any union data inside the NetworkPolicy_Rules_Item, using the provided NetworkPolicyRules0
+func (t *NetworkPolicy_Rules_Item) MergeNetworkPolicyRules0(v NetworkPolicyRules0) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsNetworkPolicyRules1 returns the union data inside the NetworkPolicy_Rules_Item as a NetworkPolicyRules1
+func (t NetworkPolicy_Rules_Item) AsNetworkPolicyRules1() (NetworkPolicyRules1, error) {
+	var body NetworkPolicyRules1
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromNetworkPolicyRules1 overwrites any union data inside the NetworkPolicy_Rules_Item as the provided NetworkPolicyRules1
+func (t *NetworkPolicy_Rules_Item) FromNetworkPolicyRules1(v NetworkPolicyRules1) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeNetworkPolicyRules1 performs a merge with any union data inside the NetworkPolicy_Rules_Item, using the provided NetworkPolicyRules1
+func (t *NetworkPolicy_Rules_Item) MergeNetworkPolicyRules1(v NetworkPolicyRules1) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t NetworkPolicy_Rules_Item) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	object := make(map[string]json.RawMessage)
+	if t.union != nil {
+		err = json.Unmarshal(b, &object)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if t.Cidr != nil {
+		object["cidr"], err = json.Marshal(t.Cidr)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'cidr': %w", err)
+		}
+	}
+
+	if t.Domain != nil {
+		object["domain"], err = json.Marshal(t.Domain)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'domain': %w", err)
+		}
+	}
+
+	if t.Policy != nil {
+		object["policy"], err = json.Marshal(t.Policy)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'policy': %w", err)
+		}
+	}
+	b, err = json.Marshal(object)
+	return b, err
+}
+
+func (t *NetworkPolicy_Rules_Item) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	if err != nil {
+		return err
+	}
+	object := make(map[string]json.RawMessage)
+	err = json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["cidr"]; found {
+		err = json.Unmarshal(raw, &t.Cidr)
+		if err != nil {
+			return fmt.Errorf("error reading 'cidr': %w", err)
+		}
+	}
+
+	if raw, found := object["domain"]; found {
+		err = json.Unmarshal(raw, &t.Domain)
+		if err != nil {
+			return fmt.Errorf("error reading 'domain': %w", err)
+		}
+	}
+
+	if raw, found := object["policy"]; found {
+		err = json.Unmarshal(raw, &t.Policy)
+		if err != nil {
+			return fmt.Errorf("error reading 'policy': %w", err)
+		}
+	}
+
+	return err
+}
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -1581,49 +1708,48 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
-	"WUoAAA==",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

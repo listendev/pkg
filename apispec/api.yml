@@ -565,6 +565,7 @@ components:
         cidr_mode:
           type: string
           enum:
+            - none
             - bypass
             - alert
             - enforce
@@ -573,12 +574,14 @@ components:
         cidr_policy:
           type: string
           enum:
+            - none
             - allow
             - deny
           description: Default policy for CIDR traffic.
         resolve_mode:
           type: string
           enum:
+            - none
             - bypass
             - alert
             - enforce
@@ -587,6 +590,7 @@ components:
         resolve_policy:
           type: string
           enum:
+            - none
             - allow
             - deny
           description: Default policy for domain resolution.
@@ -595,31 +599,25 @@ components:
           items:
             type: object
             properties:
-              type:
-                type: string
-                enum:
-                  - CIDR
-                  - Domain
-                description: "The type of rule, either CIDR or Domain."
               cidr:
                 type: string
-                description: CIDR range for the rule (if type is CIDR).
+                description: CIDR range for the rule (if applicable).
               domain:
                 type: string
-                description: Domain for the rule (if type is Domain).
+                description: Domain for the rule (if applicable).
               policy:
                 type: string
                 enum:
+                  - none
                   - allow
                   - deny
                 description: Policy for the rule.
-            required:
-              - type
-              - policy
+            oneOf:
+              - required: [cidr, policy]
+              - required: [domain, policy]
           description: List of network policy rules.
       required:
         - cidr_mode
         - cidr_policy
         - resolve_mode
         - resolve_policy
-        - rules
