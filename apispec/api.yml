@@ -612,9 +612,8 @@ components:
                   - allow
                   - deny
                 description: Policy for the rule.
-            oneOf:
-              - required: [cidr, policy]
-              - required: [domain, policy]
+            required:
+              - policy
           description: List of network policy rules.
       required:
         - cidr_mode
