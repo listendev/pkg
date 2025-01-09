@@ -637,12 +637,12 @@ components:
                 type: string
                 description: CIDR range for the rule (if applicable).
                 x-oapi-codegen-extra-tags:
-                  yaml: cidr
+                  yaml: cidr,omitempty
               domain:
                 type: string
                 description: Domain for the rule (if applicable).
                 x-oapi-codegen-extra-tags:
-                  yaml: domain
+                  yaml: domain,omitempty
               policy:
                 type: string
                 enum:
