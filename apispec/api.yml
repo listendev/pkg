@@ -527,38 +527,64 @@ components:
             - debug
             - warn
             - error
+          x-oapi-codegen-extra-tags:
+            yaml: log-level
         stdout:
           type: string
+          x-oapi-codegen-extra-tags:
+            yaml: stdout
         stderr:
           type: string
+          x-oapi-codegen-extra-tags:
+            yaml: stderr
         chop-lines:
           type: boolean
+          x-oapi-codegen-extra-tags:
+            yaml: chop-lines
         no-health:
           type: boolean
+          x-oapi-codegen-extra-tags:
+            yaml: no-health
         profiler:
           type: boolean
+          x-oapi-codegen-extra-tags:
+            yaml: profiler
         cardinal:
           type: boolean
+          x-oapi-codegen-extra-tags:
+            yaml: cardinal
         daemon:
           type: boolean
+          x-oapi-codegen-extra-tags:
+            yaml: daemon
         notify:
           type: boolean
+          x-oapi-codegen-extra-tags:
+            yaml: notify
         extension:
           type: array
           items:
             type: string
+          x-oapi-codegen-extra-tags:
+            yaml: extension
         plugin:
           type: array
           items:
             type: string
+          x-oapi-codegen-extra-tags:
+            yaml: plugin
         printer:
           type: array
           items:
             type: string
+          x-oapi-codegen-extra-tags:
+            yaml: printer
         event:
           type: array
           items:
             type: string
+          x-oapi-codegen-extra-tags:
+            yaml: event
     NetworkPolicy:
       type: object
       properties:
@@ -571,6 +597,8 @@ components:
             - enforce
             - both
           description: Mode for handling CIDR traffic.
+          x-oapi-codegen-extra-tags:
+            yaml: cidr_mode
         cidr_policy:
           type: string
           enum:
@@ -578,6 +606,8 @@ components:
             - allow
             - deny
           description: Default policy for CIDR traffic.
+          x-oapi-codegen-extra-tags:
+            yaml: cidr_policy
         resolve_mode:
           type: string
           enum:
@@ -587,6 +617,8 @@ components:
             - enforce
             - both
           description: Mode for handling domain resolution.
+          x-oapi-codegen-extra-tags:
+            yaml: resolve_mode
         resolve_policy:
           type: string
           enum:
@@ -594,6 +626,8 @@ components:
             - allow
             - deny
           description: Default policy for domain resolution.
+          x-oapi-codegen-extra-tags:
+            yaml: resolve_policy
         rules:
           type: array
           items:
@@ -602,9 +636,13 @@ components:
               cidr:
                 type: string
                 description: CIDR range for the rule (if applicable).
+                x-oapi-codegen-extra-tags:
+                  yaml: cidr
               domain:
                 type: string
                 description: Domain for the rule (if applicable).
+                x-oapi-codegen-extra-tags:
+                  yaml: domain
               policy:
                 type: string
                 enum:
@@ -612,9 +650,13 @@ components:
                   - allow
                   - deny
                 description: Policy for the rule.
+                x-oapi-codegen-extra-tags:
+                  yaml: policy
             required:
               - policy
           description: List of network policy rules.
+          x-oapi-codegen-extra-tags:
+            yaml: rules
       required:
         - cidr_mode
         - cidr_policy
