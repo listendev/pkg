@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"strconv"
 
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type Int64String int64
