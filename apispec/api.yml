@@ -662,6 +662,8 @@ components:
           description: Tags for easy lookup in db based on repository/workflow/job.
           additionalProperties:
             type: string
+          x-oapi-codegen-extra-tags:
+            yaml: "-"
       required:
         - cidr_mode
         - cidr_policy
