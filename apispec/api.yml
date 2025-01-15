@@ -657,6 +657,11 @@ components:
           description: List of network policy rules.
           x-oapi-codegen-extra-tags:
             yaml: rules
+        tags:
+          type: object
+          description: Tags for easy lookup in db based on repository/workflow/job.
+          additionalProperties:
+            type: string
       required:
         - cidr_mode
         - cidr_policy
